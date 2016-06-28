@@ -1,2 +1,2 @@
 # GGWebsite
-Personal Website，public personal article and tral picture,record life.
+Personal Website，public personal article and trip pictures,record life.
