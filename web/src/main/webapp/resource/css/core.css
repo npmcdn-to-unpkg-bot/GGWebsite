@@ -1,0 +1,15 @@
+.container {
+	text-align: center;
+}
+
+.container img {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.container .note {
+	display: inline-block;
+	vertical-align: middle;
+	color: #7CCD7C;
+	font-size: 120px;
+}
