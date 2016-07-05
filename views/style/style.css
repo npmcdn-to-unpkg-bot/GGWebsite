@@ -1,0 +1,113 @@
+/*
+Look a unidirectional unicorn!
+
+
+
+                                                         ,/
+                                                        //
+                                                      ,//
+                                          ___   /|   |//
+                                      `__/\_ --(/|___/-/
+                                   \|\_-\___ __-_`- /-/ \.
+                                  |\_-___,-\_____--/_)' ) \
+                                   \ -_ /     __ \( `( __`\|
+                                   `\__|      |\)\ ) /(/|
+           ,._____.,            ',--//-|      \  |  '   /
+          /     __. \,          / /,---|       \       /
+         / /    _. \  \        `/`_/ _,'        |     |
+        |  | ( (  \   |      ,/\'__/'/          |     |
+        |  \  \`--, `_/_------______/           \(   )/
+        | | \  \_. \,                            \___/\
+        | |  \_   \  \                                 \
+        \ \    \_ \   \   /                             \
+         \ \  \._  \__ \_|       |                       \
+          \ \___  \      \       |                        \
+           \__ \__ \  \_ |       \                         |
+           |  \_____ \  ____      |                        |
+           | \  \__ ---' .__\     |        |               |
+           \  \__ ---   /   )     |        \              /
+            \   \____/ / ()(      \          `---_       /|
+             \__________/(,--__    \_________.    |    ./ |
+               |     \ \  `---_\--,           \   \_,./   |
+               |      \  \_ ` \    /`---_______-\   \\    /
+                \      \.___,`|   /              \   \\   \
+                 \     |  \_ \|   \              (   |:    |
+                  \    \      \    |             /  / |    ;
+                   \    \      \    \          ( `_'   \  |
+                    \.   \      \.   \          `__/   |  |
+                      \   \       \.  \                |  |
+                       \   \        \  \               (  )
+                        \   |        \  |              |  |
+                         |  \         \ \              I  `
+                         ( __;        ( _;            ('-_';
+                         |___\        \___:            \___:
+
+*/
+body {
+    /*background: #444 url("./resource/debut_dark.png") repeat;*/
+    padding-top: 70px;
+}
+p{
+    /*p��ǩ�Զ�����*/
+    word-wrap: break-word;
+    word-break: normal;
+}
+
+#app {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.comments {
+    margin: 20px 0;
+}
+
+.comment {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.deleteBtn:hover {
+    float: right;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.deleteBtn {
+    float: right;
+    cursor: pointer;
+}
+
+textarea {
+    display: block;
+    width: 100%;
+    height: 70px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.comment-item {
+    color: #ffffff;
+}
+
+.comment-header {
+    color: #ffffff;
+}
+
+/*---------------------bootstrap��ʽ�޸�-------------------*/
+.btn {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+.fixed-bottom{
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+.alert{
+    cursor:pointer
+}
+
+

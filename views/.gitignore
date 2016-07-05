@@ -1,6 +1,5 @@
 .idea/
 .npmignore
-dist/
 node_modules/
-style/
-
+npm-debug.log
+/dist/scripts/

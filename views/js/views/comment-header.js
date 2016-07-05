@@ -36,7 +36,6 @@ var CommentHeader = React.createClass({
                             <li><a href='#Featurelayer'>要素配置</a></li>
                             <li><a href='#FeatureInfo'>弹出窗口配置</a></li>
                             <li><a href='#Widget'>组件配置</a></li>
-                            <li><a className='btn btn-default' onClick={this.onSubmit}>生成</a></li>
                         </ul>
                     </div>
                 </div>
