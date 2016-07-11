@@ -4,5 +4,6 @@
 <configuration>
 	<mappers>
 		<mapper resource="com/icreate/dao/UserDao.xml" />
+		<mapper resource="com/icreate/dao/MsgDataMapper.xml" />
 	</mappers>
 </configuration>

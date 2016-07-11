@@ -10,6 +10,8 @@
 	<!-- mybatis与spring整合 -->
 	<!-- 加载数据库配置文件 -->
 	<context:property-placeholder location="/WEB-INF/jdbc.properties" />
+	
+	
 	<!-- 配置数据源，使用c3p0连接池 -->
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		destroy-method="close">
@@ -17,7 +19,7 @@
 		<property name="jdbcUrl" value="${jdbc.url}"></property>
 		<property name="user" value="${jdbc.username}"></property>
 		<property name="password" value="${jdbc.password}"></property>
-		
+
 		<property name="initialPoolSize" value="${db.initialPoolSize}"></property>
 
 		<!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
@@ -46,9 +48,14 @@
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
 	</bean>
 
+	<bean id="msgDataService" class="com.icreate.service.impl.MsgDataServiceImpl">
+		<property name="msgDataMapper" ref="msgDataMapper"></property>
+	</bean>
+
 	<bean id="userService" class="com.icreate.service.impl.UserServiceImpl">
 		<property name="userDao" ref="userDao"></property>
 	</bean>
+
 
 
 </beans>

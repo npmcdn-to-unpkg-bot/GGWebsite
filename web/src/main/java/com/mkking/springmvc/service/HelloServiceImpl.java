@@ -21,6 +21,10 @@ public class HelloServiceImpl implements HelloService {
 		return listFruits;
 	}
 
+	public String test() {
+		return "succeed";
+	}
+
 	public String toString() {
 		String result = "";
 		for (String i : listFruits) {

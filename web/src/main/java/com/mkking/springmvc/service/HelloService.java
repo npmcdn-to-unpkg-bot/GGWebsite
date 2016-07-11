@@ -6,6 +6,8 @@ public interface HelloService {
 
 	public List<String> getListFruits();
 
+	public String test();
+
 	public String toString();
 
 }
