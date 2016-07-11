@@ -173,31 +173,6 @@ public class WeMsgFactoryImpl implements WeMsgFactory {
 		return result;
 	}
 
-	private String toUTF8(String s) {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < s.length(); i++) {
-			char c = s.charAt(i);
-			if (c >= 0 && c <= 255) {
-				sb.append(c);
-			} else {
-				byte[] b;
-				try {
-					b = Character.toString(c).getBytes("UTF-8");
-				} catch (Exception e) {
-					e.printStackTrace();
-					b = new byte[0];
-				}
-				for (int j = 0; j < b.length; j++) {
-					int k = b[j];
-					if (k < 0)
-						k += 256;
-					sb.append("%" + Integer.toHexString(k).toUpperCase());
-				}
-			}
-		}
-		return sb.toString();
-	}
-
 	public String msgSend(BaseData msg) {
 		getLog().info("MSG start send..............................");
 		String msgStr = "";
@@ -254,7 +229,7 @@ public class WeMsgFactoryImpl implements WeMsgFactory {
 				} catch (Exception e) {
 
 				}
-				content.appendChild(doc.createTextNode(msg.packageStr(reTest)));				
+				content.appendChild(doc.createTextNode(msg.packageStr(reTest)));
 				xml.appendChild(content);
 
 				// 将student作为子元素添加到树的根节点school

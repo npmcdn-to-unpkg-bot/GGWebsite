@@ -3,6 +3,7 @@ package com.mkking.springmvc.web;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -124,18 +125,15 @@ public class HelloController {
 			String msgStr = wmf.msgSend(msgMod);
 			reult = msgStr;
 		} catch (Exception e) {
-			reult = "ceshi";
+			reult = URLEncoder.encode("今天天气不好", "utf-8");
 		}
-		// log.info("fasdfasfsafa");
-		// reult = getXmlString(doc);
+
 		reult = URLDecoder.decode(reult, "utf-8");
 		out.print(reult);
 
-		// out.print(reult);
 		out.flush();
 		out.close();
-		// out.write(reult);
-		// return reult;
+
 	}
 
 }
