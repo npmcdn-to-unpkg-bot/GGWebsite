@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -162,7 +164,13 @@ public class WeMsgFactoryImpl implements WeMsgFactory {
 
 		JSONObject jo = new JSONObject(result);
 		result = jo.getString("text");
-
+		try {
+			result = URLDecoder.decode(result, "utf-8");
+			info = URLDecoder.decode(info, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		MsgData record = new MsgData();
 		record.setId((int) new Date().getTime());
 		record.setComemsg(info);
@@ -199,7 +207,7 @@ public class WeMsgFactoryImpl implements WeMsgFactory {
 		case "text":
 			if (doc != null) {
 				String url = "http://www.tuling123.com/openapi/api";
-				String reTest = "error";
+				String reTest = "今天天气不太好";
 				// httpArg = URLEncoder.encode(httpArg);
 				try {
 					reTest = request(url, msg.getMsg().get("content"), msg.getFromUserName());
