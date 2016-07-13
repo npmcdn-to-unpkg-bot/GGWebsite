@@ -9,7 +9,7 @@ var App = React.createClass({
 
     render: function () {
         return (
-            <div>
+            <div id='layout' className='pure-g'>
                 <CommentHeader />
                 <Comments />
             </div>

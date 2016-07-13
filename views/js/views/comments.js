@@ -1,14 +1,15 @@
 var React = require('react');
 
 var CommentStore = require('../stores/comment-store');
-var CommentAction = require('../actions/comment-action-creators');
-var CommentBasemap = require('../views/comment-basemap');
-var CommentFeatureLayer = require('../views/comment-featureLayer');
-var CommentWidget = require('../views/comment-widget');
+var CommentActionCreators = require('../actions/comment-action-creators');
+
+
+var CommentText = require('../views/comment-text');
+var CommentImg = require('../views/comment-img');
 
 function getStateFromStore() {
     return {
-        state: CommentStore.getState()
+        state: CommentStore.getAll()
     }
 }
 
@@ -20,6 +21,11 @@ var Comments = React.createClass({
     },
 
     getInitialState: function () {
+        var data = [
+            {id: 123, type: "Text"},
+            {id: 123, type: "Img"}
+        ]
+        CommentActionCreators.reFlashData(data);
         return getStateFromStore();
     },
 
@@ -34,35 +40,31 @@ var Comments = React.createClass({
 
     render: function () {
         debugger;
-        var itemJsx;
-        switch (this.state.state){
-            case "BASELAYER":
-                itemJsx = <CommentBasemap/>;
-                break;
-            case "FEATURELAYER":
-                itemJsx = <CommentFeatureLayer/>;
-                break;
-            case "WIDGETS":
-                itemJsx = <CommentWidget/>;
-                break;
-            case "END":
-                itemJsx = <CommentWidget/>;
-                break;
+        var itemJsx, type = "", list = [];
+        for (var i in this.state.state) {
+            switch (this.state.state[i].type) {
+                case "Text":
+                    itemJsx = <CommentText/>;
+                    break;
+                case "Img":
+                    itemJsx = <CommentImg/>;
+                    break;
 
+            }
+            list.push(itemJsx);
         }
 
 
-
         return (
-            <div>
-                {itemJsx}
+            <div className='content pure-u-1 pure-u-md-3-4'>
+                {list}
             </div>
 
         )
     },
     deleteItem: function (e) {
         debugger;
-        CommentAction.deleteCommentItem(1);
+        //CommentAction.deleteCommentItem(1);
     },
 });
 

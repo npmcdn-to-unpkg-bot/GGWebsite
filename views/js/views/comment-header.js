@@ -15,31 +15,23 @@ var CommentHeader = React.createClass({
     },
     render: function () {
         return (
-            <nav className='navbar navbar-default navbar-fixed-top'>
-                <div className='container-fluid'>
-                    <div className='navbar-header'>
-                        <button type='button' className='navbar-toggle collapsed' data-toggle='collapse'
-                                data-target='#bs-example-navbar-collapse-2' aria-expanded="true">
-                            <span className='sr-only'>Toggle navigation</span>
-                            <span className='icon-bar'></span>
-                            <span className='icon-bar'></span>
-                            <span className='icon-bar'></span>
-                        </button>
-                        <a className='navbar-brand' href='#'>
-                            首页
-                        </a>
+            <div className='sidebar pure-u-1 pure-u-md-1-4'>
+                <div className='header'>
+                    <h1 className='brand-title'>A Sample Blog</h1>
+                    <h2 className='brand-tagline'>Creating a blog layout using Pure</h2>
 
-                    </div>
-                    <div className='collapse navbar-collapse' id='bs-example-navbar-collapse-1'>
-                        <ul className='nav navbar-nav'>
-                            <li><a href='#Basemap'>底图配置</a></li>
-                            <li><a href='#Featurelayer'>要素配置</a></li>
-                            <li><a href='#FeatureInfo'>弹出窗口配置</a></li>
-                            <li><a href='#Widget'>组件配置</a></li>
+                    <nav className='nav'>
+                        <ul className='nav-list'>
+                            <li className='nav-item'>
+                                <a className='pure-button' href='http://purecss.io'>Pure</a>
+                            </li>
+                            <li className='nav-item'>
+                                <a className='pure-button' href='http://yuilibrary.com'>YUI Library</a>
+                            </li>
                         </ul>
-                    </div>
+                    </nav>
                 </div>
-            </nav>
+            </div>
 
         );
     },
