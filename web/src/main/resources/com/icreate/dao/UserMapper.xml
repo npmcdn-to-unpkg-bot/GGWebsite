@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icreate.dao.UserMapper">
+	<resultMap id="BaseResultMap" type="com.icreate.entity.User">
+		<id column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="group_id" jdbcType="INTEGER" property="groupId" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+		<result column="user_pwd" jdbcType="VARCHAR" property="userPwd" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		user_id, group_id, user_name, user_pwd
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		where user_id = #{userId,jdbcType=INTEGER}
+	</select>
+	<select id="selectByUser" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		where user_name = #{userName,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from user
+		where user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" useGeneratedKeys="true" keyProperty="userId" parameterType="com.icreate.entity.User">
+		insert into user (group_id, user_name,
+		user_pwd)
+		values ( #{groupId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR},
+		#{userPwd,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.icreate.entity.User">
+		insert into user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="groupId != null">
+				group_id,
+			</if>
+			<if test="userName != null">
+				user_name,
+			</if>
+			<if test="userPwd != null">
+				user_pwd,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="groupId != null">
+				#{groupId,jdbcType=INTEGER},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userPwd != null">
+				#{userPwd,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.icreate.entity.User">
+		update user
+		<set>
+			<if test="groupId != null">
+				group_id = #{groupId,jdbcType=INTEGER},
+			</if>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userPwd != null">
+				user_pwd = #{userPwd,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.icreate.entity.User">
+		update user
+		set group_id = #{groupId,jdbcType=INTEGER},
+		user_name = #{userName,jdbcType=VARCHAR},
+		user_pwd = #{userPwd,jdbcType=VARCHAR}
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+</mapper>

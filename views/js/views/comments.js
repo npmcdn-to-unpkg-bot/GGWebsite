@@ -3,13 +3,18 @@ var React = require('react');
 var CommentStore = require('../stores/comment-store');
 var CommentActionCreators = require('../actions/comment-action-creators');
 
-
+var CommentAlert = require('../views/comment-alert');
 var CommentText = require('../views/comment-text');
 var CommentImg = require('../views/comment-img');
+var CommentLogin = require('../views/comment-login');
+var CommentRegister = require('../views/comment-register');
+var CommentInsert = require('../views/comment-insert');
+var CommentFooter = require('../views/comment-footer');
 
 function getStateFromStore() {
     return {
-        state: CommentStore.getAll()
+        state: CommentStore.getAll(),
+        currentPage:CommentStore.getCurrentPage()
     }
 }
 
@@ -21,10 +26,7 @@ var Comments = React.createClass({
     },
 
     getInitialState: function () {
-        var data = [
-            {id: 123, type: "Text"},
-            {id: 123, type: "Img"}
-        ]
+        var data = {start: 0, end: 5};
         CommentActionCreators.reFlashData(data);
         return getStateFromStore();
     },
@@ -41,13 +43,31 @@ var Comments = React.createClass({
     render: function () {
         debugger;
         var itemJsx, type = "", list = [];
+        var imgList = [
+            {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
+            {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
+        ];
         for (var i in this.state.state) {
             switch (this.state.state[i].type) {
                 case "Text":
-                    itemJsx = <CommentText/>;
+                    itemJsx = <CommentText title={this.state.state[i].title} author='Ben' text={this.state.state[i].content}/>;
                     break;
                 case "Img":
-                    itemJsx = <CommentImg/>;
+                    itemJsx = <CommentImg list={imgList} title ='How to do it!' author='Ben' />;
+                    break;
+                case "Login":
+                    itemJsx = <CommentLogin/>;
+                    break;
+                case "Register":
+                    itemJsx = <CommentRegister/>;
+                    break;
+                case "Alert":
+                    itemJsx = <CommentAlert/>;
+                case "Insert":
+                    itemJsx = <CommentInsert/>;
+                    break;
+                case "Footer":
+                    itemJsx = <CommentFooter/>;
                     break;
 
             }

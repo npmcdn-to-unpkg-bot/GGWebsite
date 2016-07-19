@@ -3,7 +3,8 @@
 "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<mappers>
-		<mapper resource="com/icreate/dao/UserDao.xml" />
+		<mapper resource="com/icreate/dao/UserMapper.xml" />
 		<mapper resource="com/icreate/dao/MsgDataMapper.xml" />
+		<mapper resource="com/icreate/dao/ArticleMapper.xml" />
 	</mappers>
 </configuration>

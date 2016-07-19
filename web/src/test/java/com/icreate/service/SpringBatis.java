@@ -30,7 +30,7 @@ public class SpringBatis {
 
 	@Test
 	public void countAll() {
-		System.out.println("数据库中的记录条数:" + userService.countAll());
+//		System.out.println("数据库中的记录条数:" + userService.countAll());
 	}
 
 	// @Test

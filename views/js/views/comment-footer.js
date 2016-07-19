@@ -8,28 +8,23 @@ function getStateFromStore() {
         userData: ""
     }
 }
-var CommentHeader = React.createClass({
+var CommentFooter = React.createClass({
     getInitialState: function () {
         debugger;
+        this.page =1;
         return getStateFromStore();
     },
     render: function () {
         return (
-            <div className='sidebar pure-u-1 pure-u-md-1-4'>
-                <div className='header'>
-                    <h1 className='brand-title'>A Sample Blog</h1>
-                    <h2 className='brand-tagline'>Creating a blog layout using Pure</h2>
-
+            <div className='pure-u-1'>
+                <div className='footer'>
                     <nav className='nav'>
                         <ul className='nav-list'>
                             <li className='nav-item'>
-                                <a className='pure-button' onClick={this.login} >Login</a>
+                                <a className='pure-button' onClick={this.upPage}>up</a>
                             </li>
                             <li className='nav-item'>
-                                <a className='pure-button'  onClick={this.register}>Register</a>
-                            </li>
-                            <li className='nav-item'>
-                                <a className='pure-button'  onClick={this.insertview}>Insert</a>
+                                <a className='pure-button' onClick={this.downPage}>down</a>
                             </li>
                         </ul>
                     </nav>
@@ -39,6 +34,7 @@ var CommentHeader = React.createClass({
         );
     },
     onChange: function () {
+        debugger;
         this.setState(getStateFromStore());
     },
     componentDidMount: function () {
@@ -47,17 +43,20 @@ var CommentHeader = React.createClass({
     componentWillUnmount: function () {
         CommentStore.removeChangeListener(this.onChange);
     },
-
-    login: function (e) {
-        debugger;
-        CommentActionCreators.login();
+    upPage: function () {
+        this.page = (this.page - 1) < 0 ? 0 : (this.page - 1);
+        data = {};
+        data.start = (this.page - 1) * 5;
+        data.end = (data.start + 5);
+        CommentActionCreators.reFlashData(data)
     },
-    register: function (e) {
-        CommentActionCreators.register();
-    },
-    insertview: function (e) {
-        CommentActionCreators.insertview();
+    downPage: function () {
+        this.page = this.page + 1;
+        data = {};
+        data.start = (this.page - 1) * 5;
+        data.end = (data.start + 5);
+        CommentActionCreators.reFlashData(data)
     }
 });
 
-module.exports = CommentHeader;
+module.exports = CommentFooter;

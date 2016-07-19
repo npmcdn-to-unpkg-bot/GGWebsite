@@ -1,73 +1,43 @@
 package com.icreate.entity;
 
-/**
- * 
- *
- * @version ： 1.0
- * 
- * @author ： 苏若年 <a href="mailto:DennisIT@163.com">发送邮件</a>
- * 
- * @since ： 1.0 创建时间: 2013-4-9 上午11:15:50
- * 
- * 		@function： TODO
- *
- */
 public class User {
+    private Integer userId;
 
-	private int id;
-	private String username;
-	private String password;
-	private String sex;
-	private String email;
-	private int age;
+    private Integer groupId;
 
-	public int getId() {
-		return id;
-	}
+    private String userName;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    private String userPwd;
 
-	public String getUsername() {
-		return username;
-	}
+    public Integer getUserId() {
+        return userId;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public Integer getGroupId() {
+        return groupId;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
 
-	public String getSex() {
-		return sex;
-	}
+    public String getUserName() {
+        return userName;
+    }
 
-	public void setSex(String sex) {
-		this.sex = sex;
-	}
+    public void setUserName(String userName) {
+        this.userName = userName == null ? null : userName.trim();
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getUserPwd() {
+        return userPwd;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
-
-	// getter() and setter ()
+    public void setUserPwd(String userPwd) {
+        this.userPwd = userPwd == null ? null : userPwd.trim();
+    }
 }

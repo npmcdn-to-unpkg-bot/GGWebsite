@@ -57,6 +57,13 @@ public class HelloController {
 
 	}
 
+	@RequestMapping("/cc")
+	public String cc() {
+
+		return "index";
+
+	}
+
 	@RequestMapping("/gb")
 	public @ResponseBody void tetpage(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		response.setCharacterEncoding("UTF-8");

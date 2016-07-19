@@ -9,11 +9,10 @@ var CommentAlert = React.createClass({
     },
     render: function () {
         return (
-            <div className="alert alert-success fade in close  col-xs-12" onClick={this.click}  id='alert-success' role="alert">suecceed</div>
+            <div id='alert'>
+                <a className='alert' href='#alert'>This is a slide down alert!</a>
+            </div>
         );
-    },
-    click:function(e){
-        CommentActionCreators.alertChange("close");
     }
 });
 

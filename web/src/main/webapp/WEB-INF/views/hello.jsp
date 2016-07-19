@@ -10,7 +10,7 @@
 	<div class="container">
 		<h2 class="note">Hi,</h2>
 		<img alt="hi, spring"
-			src="<c:url value="/resources/img/springmvc.png" />">
+			src="<c:url value="/resources/img/mvc-res.png" />">
 	</div>
 </body>
 </html>

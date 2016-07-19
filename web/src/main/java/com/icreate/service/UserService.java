@@ -6,15 +6,17 @@ import com.icreate.entity.User;
 
 public interface UserService {
 
-	public int insert(User user);
+	public int deleteByPrimaryKey(Integer userId);
 
-	public int update(User user);
+	public int insert(User record);
 
-	public int delete(String userName);
+	public int insertSelective(User record);
 
-	public List<User> selectAll();
+	public User selectByPrimaryKey(Integer userId);
 
-	public int countAll();
+	public int updateByPrimaryKeySelective(User record);
 
-	public User findByUserName(String userName);
+	public int updateByPrimaryKey(User record);
+
+	public List<User> selectByUser(String userName);
 }

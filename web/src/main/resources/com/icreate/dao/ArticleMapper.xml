@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icreate.dao.ArticleMapper">
+  <resultMap id="BaseResultMap" type="com.icreate.entity.Article">
+    <id column="article_id" jdbcType="SMALLINT" property="articleId" />
+    <result column="article_name" jdbcType="VARCHAR" property="articleName" />
+    <result column="article_time" jdbcType="INTEGER" property="articleTime" />
+    <result column="article_ip" jdbcType="VARCHAR" property="articleIp" />
+    <result column="article_click" jdbcType="INTEGER" property="articleClick" />
+    <result column="sort_article_id" jdbcType="INTEGER" property="sortArticleId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="article_up" jdbcType="TINYINT" property="articleUp" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.icreate.entity.ArticleWithBLOBs">
+    <result column="article_content" jdbcType="LONGVARCHAR" property="articleContent" />
+    <result column="article_summary" jdbcType="LONGVARCHAR" property="articleSummary" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    article_id, article_name, article_time, article_ip, article_click, sort_article_id, 
+    user_id, article_up
+  </sql>
+  <sql id="Blob_Column_List">
+    article_content, article_summary
+  </sql>
+
+  <select id="selectByPage" resultMap="ResultMapWithBLOBs">
+  	select *
+    from article
+    where article_id limit #{start,jdbcType=SMALLINT},#{end,jdbcType=SMALLINT}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    where article_id = #{articleId,jdbcType=SMALLINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+    delete from article
+    where article_id = #{articleId,jdbcType=SMALLINT}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="articleId" parameterType="com.icreate.entity.ArticleWithBLOBs">
+    insert into article ( article_name, article_time, 
+      article_ip, article_click, sort_article_id, 
+      user_id, article_up, article_content, 
+      article_summary)
+    values ( #{articleName,jdbcType=VARCHAR}, #{articleTime,jdbcType=INTEGER}, 
+      #{articleIp,jdbcType=VARCHAR}, #{articleClick,jdbcType=INTEGER}, #{sortArticleId,jdbcType=INTEGER}, 
+      #{userId,jdbcType=INTEGER}, #{articleUp,jdbcType=TINYINT}, #{articleContent,jdbcType=LONGVARCHAR}, 
+      #{articleSummary,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icreate.entity.ArticleWithBLOBs">
+    insert into article
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="articleId != null">
+        article_id,
+      </if>
+      <if test="articleName != null">
+        article_name,
+      </if>
+      <if test="articleTime != null">
+        article_time,
+      </if>
+      <if test="articleIp != null">
+        article_ip,
+      </if>
+      <if test="articleClick != null">
+        article_click,
+      </if>
+      <if test="sortArticleId != null">
+        sort_article_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="articleUp != null">
+        article_up,
+      </if>
+      <if test="articleContent != null">
+        article_content,
+      </if>
+      <if test="articleSummary != null">
+        article_summary,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="articleId != null">
+        #{articleId,jdbcType=SMALLINT},
+      </if>
+      <if test="articleName != null">
+        #{articleName,jdbcType=VARCHAR},
+      </if>
+      <if test="articleTime != null">
+        #{articleTime,jdbcType=INTEGER},
+      </if>
+      <if test="articleIp != null">
+        #{articleIp,jdbcType=VARCHAR},
+      </if>
+      <if test="articleClick != null">
+        #{articleClick,jdbcType=INTEGER},
+      </if>
+      <if test="sortArticleId != null">
+        #{sortArticleId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="articleUp != null">
+        #{articleUp,jdbcType=TINYINT},
+      </if>
+      <if test="articleContent != null">
+        #{articleContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="articleSummary != null">
+        #{articleSummary,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icreate.entity.ArticleWithBLOBs">
+    update article
+    <set>
+      <if test="articleName != null">
+        article_name = #{articleName,jdbcType=VARCHAR},
+      </if>
+      <if test="articleTime != null">
+        article_time = #{articleTime,jdbcType=INTEGER},
+      </if>
+      <if test="articleIp != null">
+        article_ip = #{articleIp,jdbcType=VARCHAR},
+      </if>
+      <if test="articleClick != null">
+        article_click = #{articleClick,jdbcType=INTEGER},
+      </if>
+      <if test="sortArticleId != null">
+        sort_article_id = #{sortArticleId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="articleUp != null">
+        article_up = #{articleUp,jdbcType=TINYINT},
+      </if>
+      <if test="articleContent != null">
+        article_content = #{articleContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="articleSummary != null">
+        article_summary = #{articleSummary,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where article_id = #{articleId,jdbcType=SMALLINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.icreate.entity.ArticleWithBLOBs">
+    update article
+    set article_name = #{articleName,jdbcType=VARCHAR},
+      article_time = #{articleTime,jdbcType=INTEGER},
+      article_ip = #{articleIp,jdbcType=VARCHAR},
+      article_click = #{articleClick,jdbcType=INTEGER},
+      sort_article_id = #{sortArticleId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      article_up = #{articleUp,jdbcType=TINYINT},
+      article_content = #{articleContent,jdbcType=LONGVARCHAR},
+      article_summary = #{articleSummary,jdbcType=LONGVARCHAR}
+    where article_id = #{articleId,jdbcType=SMALLINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icreate.entity.Article">
+    update article
+    set article_name = #{articleName,jdbcType=VARCHAR},
+      article_time = #{articleTime,jdbcType=INTEGER},
+      article_ip = #{articleIp,jdbcType=VARCHAR},
+      article_click = #{articleClick,jdbcType=INTEGER},
+      sort_article_id = #{sortArticleId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      article_up = #{articleUp,jdbcType=TINYINT}
+    where article_id = #{articleId,jdbcType=SMALLINT}
+  </update>
+</mapper>

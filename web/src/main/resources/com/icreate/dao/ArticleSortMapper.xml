@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icreate.dao.ArticleSortMapper">
+  <resultMap id="BaseResultMap" type="com.icreate.entity.ArticleSort">
+    <id column="sort_article_id" jdbcType="INTEGER" property="sortArticleId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="sort_article_name" jdbcType="VARCHAR" property="sortArticleName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    sort_article_id, user_id, sort_article_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from article_sort
+    where sort_article_id = #{sortArticleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from article_sort
+    where sort_article_id = #{sortArticleId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icreate.entity.ArticleSort">
+    insert into article_sort (sort_article_id, user_id, sort_article_name
+      )
+    values (#{sortArticleId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{sortArticleName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.icreate.entity.ArticleSort">
+    insert into article_sort
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sortArticleId != null">
+        sort_article_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="sortArticleName != null">
+        sort_article_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sortArticleId != null">
+        #{sortArticleId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="sortArticleName != null">
+        #{sortArticleName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icreate.entity.ArticleSort">
+    update article_sort
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="sortArticleName != null">
+        sort_article_name = #{sortArticleName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where sort_article_id = #{sortArticleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icreate.entity.ArticleSort">
+    update article_sort
+    set user_id = #{userId,jdbcType=INTEGER},
+      sort_article_name = #{sortArticleName,jdbcType=VARCHAR}
+    where sort_article_id = #{sortArticleId,jdbcType=INTEGER}
+  </update>
+</mapper>

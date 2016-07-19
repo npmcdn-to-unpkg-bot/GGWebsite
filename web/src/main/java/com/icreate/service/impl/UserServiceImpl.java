@@ -2,44 +2,48 @@ package com.icreate.service.impl;
 
 import java.util.List;
 
-import com.icreate.dao.UserDao;
+import com.icreate.dao.UserMapper;
 import com.icreate.entity.User;
 import com.icreate.service.UserService;
 
 public class UserServiceImpl implements UserService {
 
-	private UserDao userDao;
+	private UserMapper userMapper;
 
-	public UserDao getUserDao() {
-		return userDao;
+	public UserMapper getUserMapper() {
+		return userMapper;
 	}
 
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
+	public void setUserMapper(UserMapper userMapper) {
+		this.userMapper = userMapper;
 	}
 
-	public int countAll() {
-		return this.userDao.countAll();
+	public int deleteByPrimaryKey(Integer userId) {
+		return this.userMapper.deleteByPrimaryKey(userId);
 	}
 
-	public int delete(String userName) {
-		return this.userDao.delete(userName);
+	public int insert(User record) {
+		return this.userMapper.insert(record);
 	}
 
-	public User findByUserName(String userName) {
-		return this.userDao.findByUserName(userName);
+	public int insertSelective(User record) {
+		return this.userMapper.insertSelective(record);
 	}
 
-	public int insert(User user) {
-		return this.userDao.insert(user);
+	public User selectByPrimaryKey(Integer userId) {
+		return this.userMapper.selectByPrimaryKey(userId);
 	}
 
-	public List<User> selectAll() {
-		return this.userDao.selectAll();
+	public int updateByPrimaryKeySelective(User record) {
+		return this.userMapper.updateByPrimaryKeySelective(record);
 	}
 
-	public int update(User user) {
-		return this.userDao.update(user);
+	public int updateByPrimaryKey(User record) {
+		return this.userMapper.updateByPrimaryKey(record);
+	}
+
+	public List<User> selectByUser(String userName) {
+		return this.userMapper.selectByUser(userName);
 	}
 
 }
