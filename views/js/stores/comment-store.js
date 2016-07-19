@@ -57,7 +57,7 @@ AppDispatcher.register(function (action) {
     switch (action.actionType) {
         case "REFLASH":
             //提交注册信息
-            var url = "http://localhost:8091/spingmvc/Page"
+            var url = "/spingmvc/Page"
             var data = action.comment;
 
             $.ajax({
@@ -94,7 +94,7 @@ AppDispatcher.register(function (action) {
             break;
         case "SUBMIT":
             //提交注册信息
-            var url = "http://localhost:8091/spingmvc/Register"
+            var url = "/spingmvc/Register"
             var data = action.comment;
             $.ajax({
                 type: 'POST',
@@ -114,7 +114,7 @@ AppDispatcher.register(function (action) {
             break;
         case "LOGINUSER":
             debugger;
-            var url = "http://localhost:8091/spingmvc/Login"
+            var url = "/spingmvc/Login"
             var data = action.comment;
             $.ajax({
                 type: 'POST',
@@ -130,7 +130,7 @@ AppDispatcher.register(function (action) {
             break;
         case "INSERTARTICLE":
             debugger;
-            var url = "http://localhost:8091/spingmvc/InsertBlog"
+            var url = "/spingmvc/InsertBlog"
             var data = action.comment;
             $.ajax({
                 type: 'POST',
