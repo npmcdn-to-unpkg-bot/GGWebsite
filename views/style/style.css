@@ -3,11 +3,18 @@
     src: url('resource/qqh.ttf'); /*这里是字体文件路径*/
 }
 
+html, body, #app {
+    width: 100%;
+    height: 100%;
+}
+
 body {
-    /*background: #444 url("./resource/debut_dark.png") repeat;*/
     color: #40a070;
-    /*padding-top: 70px;*/
     font-family: 'tt';
+}
+
+#app {
+    overflow-x: auto;
 }
 
 /*------------------------样式-------------------------*/
@@ -42,11 +49,6 @@ h3 {
 }
 
 .header {
-    text-align: center;
-    top: auto;
-    margin: 3em auto;
-}
-.footer {
     text-align: center;
     top: auto;
     margin: 3em auto;
@@ -208,20 +210,21 @@ h3 {
         bottom: 0;
     }
 }
+
 /*---------------------------------*/
-.pure-button{
+.pure-button {
     margin-left: 2px;
     margin-right: 2px;
 }
-
 
 /* Alert */
 
 #alert {
     position: relative;
 }
+
 #alert:hover:after {
-    background: hsla(0,0%,0%,.8);
+    background: hsla(0, 0%, 0%, .8);
     border-radius: 3px;
     color: #f6f6f6;
     content: 'Click to dismiss';
@@ -234,8 +237,9 @@ h3 {
     top: 50px;
     width: 120px;
 }
+
 #alert:hover:before {
-    border-bottom: 10px solid hsla(0,0%,0%,.8);
+    border-bottom: 10px solid hsla(0, 0%, 0%, .8);
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     content: '';
@@ -246,38 +250,40 @@ h3 {
     top: 40px;
     width: 0;
 }
+
 #alert:target {
     display: none;
 }
+
 .alert {
     background-color: #c4453c;
     background-image: -webkit-linear-gradient(135deg, transparent,
-    transparent 25%, hsla(0,0%,0%,.05) 25%,
-    hsla(0,0%,0%,.05) 50%, transparent 50%,
-    transparent 75%, hsla(0,0%,0%,.05) 75%,
-    hsla(0,0%,0%,.05));
+    transparent 25%, hsla(0, 0%, 0%, .05) 25%,
+    hsla(0, 0%, 0%, .05) 50%, transparent 50%,
+    transparent 75%, hsla(0, 0%, 0%, .05) 75%,
+    hsla(0, 0%, 0%, .05));
     background-image: -moz-linear-gradient(135deg, transparent,
-    transparent 25%, hsla(0,0%,0%,.1) 25%,
-    hsla(0,0%,0%,.1) 50%, transparent 50%,
-    transparent 75%, hsla(0,0%,0%,.1) 75%,
-    hsla(0,0%,0%,.1));
+    transparent 25%, hsla(0, 0%, 0%, .1) 25%,
+    hsla(0, 0%, 0%, .1) 50%, transparent 50%,
+    transparent 75%, hsla(0, 0%, 0%, .1) 75%,
+    hsla(0, 0%, 0%, .1));
     background-image: -ms-linear-gradient(135deg, transparent,
-    transparent 25%, hsla(0,0%,0%,.1) 25%,
-    hsla(0,0%,0%,.1) 50%, transparent 50%,
-    transparent 75%, hsla(0,0%,0%,.1) 75%,
-    hsla(0,0%,0%,.1));
+    transparent 25%, hsla(0, 0%, 0%, .1) 25%,
+    hsla(0, 0%, 0%, .1) 50%, transparent 50%,
+    transparent 75%, hsla(0, 0%, 0%, .1) 75%,
+    hsla(0, 0%, 0%, .1));
     background-image: -o-linear-gradient(135deg, transparent,
-    transparent 25%, hsla(0,0%,0%,.1) 25%,
-    hsla(0,0%,0%,.1) 50%, transparent 50%,
-    transparent 75%, hsla(0,0%,0%,.1) 75%,
-    hsla(0,0%,0%,.1));
+    transparent 25%, hsla(0, 0%, 0%, .1) 25%,
+    hsla(0, 0%, 0%, .1) 50%, transparent 50%,
+    transparent 75%, hsla(0, 0%, 0%, .1) 75%,
+    hsla(0, 0%, 0%, .1));
     background-image: linear-gradient(135deg, transparent,
-    transparent 25%, hsla(0,0%,0%,.1) 25%,
-    hsla(0,0%,0%,.1) 50%, transparent 50%,
-    transparent 75%, hsla(0,0%,0%,.1) 75%,
-    hsla(0,0%,0%,.1));
+    transparent 25%, hsla(0, 0%, 0%, .1) 25%,
+    hsla(0, 0%, 0%, .1) 50%, transparent 50%,
+    transparent 75%, hsla(0, 0%, 0%, .1) 75%,
+    hsla(0, 0%, 0%, .1));
     background-size: 20px 20px;
-    box-shadow: 0 5px 0 hsla(0,0%,0%,.1);
+    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);
     color: #f6f6f6;
     display: block;
     font: bold 16px/40px sans-serif;
@@ -297,35 +303,71 @@ h3 {
 /* Animation */
 
 @-webkit-keyframes alert {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { top: 0; }
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        top: 0;
+    }
 }
+
 @-moz-keyframes alert {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { top: 0; }
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        top: 0;
+    }
 }
+
 @-ms-keyframes alert {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { top: 0; }
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        top: 0;
+    }
 }
+
 @-o-keyframes alert {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { top: 0; }
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        top: 0;
+    }
 }
+
 @keyframes alert {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { top: 0; }
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        top: 0;
+    }
 }
+
 /*针对项目配置*/
-#content{
+#content {
     width: 100%;
 }
-#content-title{
+
+#content-title {
     width: 100%;
 
 }

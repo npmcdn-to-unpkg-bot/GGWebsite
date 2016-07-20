@@ -17,19 +17,19 @@ var CommentHeader = React.createClass({
         return (
             <div className='sidebar pure-u-1 pure-u-md-1-4'>
                 <div className='header'>
-                    <h1 className='brand-title'>A Sample Blog</h1>
+                    <h1 className='brand-title' onClick={this.reload}>A Sample Blog</h1>
                     <h2 className='brand-tagline'>Creating a blog layout using Pure</h2>
 
                     <nav className='nav'>
                         <ul className='nav-list'>
                             <li className='nav-item'>
-                                <a className='pure-button' onClick={this.login} >Login</a>
+                                <a className='pure-button' onClick={this.login}>Login</a>
                             </li>
                             <li className='nav-item'>
-                                <a className='pure-button'  onClick={this.register}>Register</a>
+                                <a className='pure-button' onClick={this.register}>Register</a>
                             </li>
                             <li className='nav-item'>
-                                <a className='pure-button'  onClick={this.insertview}>Insert</a>
+                                <a className='pure-button' onClick={this.insertview}>Insert</a>
                             </li>
                         </ul>
                     </nav>
@@ -57,6 +57,13 @@ var CommentHeader = React.createClass({
     },
     insertview: function (e) {
         CommentActionCreators.insertview();
+    }, reload: function () {
+        var obj = {
+            start: 0,
+            end: 5
+        }
+        CommentActionCreators.reFlashData(obj);
+
     }
 });
 

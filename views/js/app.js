@@ -9,6 +9,7 @@ require('./../style/style.css')
 var App = React.createClass({
 
     render: function () {
+        //$("body").css("width", $(window).width());
         return (
             <div id='layout' className='pure-g'>
                 <CommentHeader />

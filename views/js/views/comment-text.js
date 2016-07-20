@@ -10,7 +10,7 @@ var CommentText = React.createClass({
                 <section className='post'>
                     <header className='post-header'>
                         <img className='post-avatar' alt='Tilo Mitra&#x27;s avatar' height='48' width='48'
-                             src='img/common/tilo-avatar.png'/>
+                             src='/spingmvc/resource/img/icon.jpg'/>
                         <h2 className='post-title'>{this.props.title}</h2>
                         <p className='post-meta'>
                             By <a onClick={this.deleteItem} className='post-author'>{this.props.author}</a> under <a

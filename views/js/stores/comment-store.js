@@ -6,7 +6,8 @@ var assign = require('object-assign');
 
 var comments = [];
 var user = {};
-var cuttentPage = 1;
+var currentPage = 1;
+var pageState = "FIRSTPAGE";
 
 
 var CommentStore = assign({}, EventEmitter.prototype, {
@@ -27,31 +28,17 @@ var CommentStore = assign({}, EventEmitter.prototype, {
     getAll: function () {
         return comments;
     },
-    getCurrentPage(){
-        return cuttentPage;
+    getPageState(){
+        return pageState;
+    },
+    getCuttentPage(){
+        return currentPage;
+    },
+    setCurrentPage(page){
+        currentPage = page;
     }
 });
 
-var reloadContent = function(callback){
-    debugger;
-    var url = "http://localhost:8091/spingmvc/Page"
-    var data = action.comment;
-    data.start = (cuttentPage - 1) * 5;
-    data.end = (data.start + 5);
-
-    $.ajax({
-        type: 'GET',
-        url: url,
-        data: data,
-        error: function () {
-            alert(arguments[1]);
-        },
-        success: function (e) {
-            callback(e);
-        },
-        dataType: "json"
-    });
-}
 
 AppDispatcher.register(function (action) {
     switch (action.actionType) {
@@ -68,25 +55,50 @@ AppDispatcher.register(function (action) {
                     alert(arguments[1]);
                 },
                 success: function (e) {
-                    //e.fotter = {type: "Footer"};
-                    comments = e;
+                    var result = []
+                    for (var i in e) {
+                        result.push(e[i]);
+                    }
+                    if (data.state == "down") {
+                        if (result.length < 6) {
+                            pageState = "LASTPAGE";
+                        } else {
+                            result.pop();
+                            pageState = "MIDDLEPAGE";
+                        }
+
+                    } else {
+                        if (data.start == 0) {
+                            pageState = "FIRSTPAGE";
+                        } else {
+                            pageState = "MIDDLEPAGE";
+                        }
+                    }
+
+                    comments = result;
                     CommentStore.emitChange();
                 },
                 dataType: "json"
             });
             break;
         case "LOGIN":
+            pageState = "NONE";
+            currentPage = 1;
             var login = {id: 1, type: "Login"}
             comments = [login];
             CommentStore.emitChange();
             break;
         case "REGISTER":
+            pageState = "NONE";
+            currentPage = 1;
             //跳到注册面板
             var register = {id: 1, type: "Register"}
             comments = [register];
             CommentStore.emitChange();
             break;
         case "INSERTVIEW":
+            pageState = "NONE";
+            currentPage = 1;
             //跳到注册面板
             var register = {id: 1, type: "Insert"}
             comments = [register];
@@ -101,11 +113,13 @@ AppDispatcher.register(function (action) {
                 url: url,
                 data: data,
                 error: function () {
-                    alert(arguments[1]);
+                    var tem = {id: 1, type: "Alert", text: "出错啦"};
+                    comments = [tem];
+                    CommentStore.emitChange();
                 },
                 success: function (e) {
                     user.id = e;
-                    var tem = {id: 1, type: "Alert"};
+                    var tem = {id: 1, type: "Alert", text: "成功"};
                     comments = [tem];
                     CommentStore.emitChange();
                 }
@@ -137,8 +151,8 @@ AppDispatcher.register(function (action) {
                 url: url,
                 data: data,
                 success: function (e) {
-                    debugger;
-                    comments = [register];
+                    var tem = {id: 1, type: "Alert", text: "成功"};
+                    comments = [tem];
                     CommentStore.emitChange();
                 }
             });

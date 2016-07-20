@@ -3,16 +3,19 @@ var React = require('react');
 var CommentActionCreators = require('../actions/comment-action-creators');
 
 var CommentAlert = React.createClass({
-    componentDidMount: function () {
-        debugger;
-        setTimeout(this.click,1000);
-    },
+
     render: function () {
         return (
             <div id='alert'>
-                <a className='alert' href='#alert'>This is a slide down alert!</a>
+                <a className='alert' onClick={this.reloadData} href='#alert'>{this.props.text}</a>
             </div>
         );
+    },
+    reloadData: function () {
+        data = {};
+        data.start = 0;
+        data.end = 5;
+        CommentActionCreators.reFlashData(data);
     }
 });
 

@@ -13,8 +13,7 @@ var CommentFooter = require('../views/comment-footer');
 
 function getStateFromStore() {
     return {
-        state: CommentStore.getAll(),
-        currentPage:CommentStore.getCurrentPage()
+        state: CommentStore.getAll()
     }
 }
 
@@ -50,10 +49,11 @@ var Comments = React.createClass({
         for (var i in this.state.state) {
             switch (this.state.state[i].type) {
                 case "Text":
-                    itemJsx = <CommentText title={this.state.state[i].title} author='Ben' text={this.state.state[i].content}/>;
+                    itemJsx = <CommentText title={this.state.state[i].title} author='Ben'
+                                           text={this.state.state[i].content}/>;
                     break;
                 case "Img":
-                    itemJsx = <CommentImg list={imgList} title ='How to do it!' author='Ben' />;
+                    itemJsx = <CommentImg list={imgList} title='How to do it!' author='Ben'/>;
                     break;
                 case "Login":
                     itemJsx = <CommentLogin/>;
@@ -62,7 +62,8 @@ var Comments = React.createClass({
                     itemJsx = <CommentRegister/>;
                     break;
                 case "Alert":
-                    itemJsx = <CommentAlert/>;
+                    itemJsx = <CommentAlert text={this.state.state[i].text}/>;
+                    break;
                 case "Insert":
                     itemJsx = <CommentInsert/>;
                     break;

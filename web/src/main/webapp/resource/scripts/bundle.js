@@ -47,14 +47,15 @@
 	var React = __webpack_require__(1);
 
 	var Comments = __webpack_require__(148);
-	var CommentHeader = __webpack_require__(164);
-	var CommentFooter = __webpack_require__(163);
-	__webpack_require__(165)
+	var CommentHeader = __webpack_require__(165);
+	var CommentFooter = __webpack_require__(164);
+	__webpack_require__(166)
 
 
 	var App = React.createClass({displayName: "App",
 
 	    render: function () {
+	        //$("body").css("width", $(window).width());
 	        return (
 	            React.createElement("div", {id: "layout", className: "pure-g"}, 
 	                React.createElement(CommentHeader, null), 
@@ -18961,15 +18962,14 @@
 	var CommentAlert = __webpack_require__(157);
 	var CommentText = __webpack_require__(158);
 	var CommentImg = __webpack_require__(159);
-	var CommentLogin = __webpack_require__(160);
-	var CommentRegister = __webpack_require__(161);
-	var CommentInsert = __webpack_require__(162);
-	var CommentFooter = __webpack_require__(163);
+	var CommentLogin = __webpack_require__(161);
+	var CommentRegister = __webpack_require__(162);
+	var CommentInsert = __webpack_require__(163);
+	var CommentFooter = __webpack_require__(164);
 
 	function getStateFromStore() {
 	    return {
-	        state: CommentStore.getAll(),
-	        currentPage:CommentStore.getCurrentPage()
+	        state: CommentStore.getAll()
 	    }
 	}
 
@@ -19005,7 +19005,8 @@
 	        for (var i in this.state.state) {
 	            switch (this.state.state[i].type) {
 	                case "Text":
-	                    itemJsx = React.createElement(CommentText, {title: this.state.state[i].title, author: "Ben", text: this.state.state[i].content});
+	                    itemJsx = React.createElement(CommentText, {title: this.state.state[i].title, author: "Ben", 
+	                                           text: this.state.state[i].content});
 	                    break;
 	                case "Img":
 	                    itemJsx = React.createElement(CommentImg, {list: imgList, title: "How to do it!", author: "Ben"});
@@ -19017,7 +19018,8 @@
 	                    itemJsx = React.createElement(CommentRegister, null);
 	                    break;
 	                case "Alert":
-	                    itemJsx = React.createElement(CommentAlert, null);
+	                    itemJsx = React.createElement(CommentAlert, {text: this.state.state[i].text});
+	                    break;
 	                case "Insert":
 	                    itemJsx = React.createElement(CommentInsert, null);
 	                    break;
@@ -19057,7 +19059,8 @@
 
 	var comments = [];
 	var user = {};
-	var cuttentPage = 1;
+	var currentPage = 1;
+	var pageState = "FIRSTPAGE";
 
 
 	var CommentStore = assign({}, EventEmitter.prototype, {
@@ -19078,45 +19081,23 @@
 	    getAll: function () {
 	        return comments;
 	    },
-	    getCurrentPage(){
-	        return cuttentPage;
+	    getPageState(){
+	        return pageState;
+	    },
+	    getCuttentPage(){
+	        return currentPage;
+	    },
+	    setCurrentPage(page){
+	        currentPage = page;
 	    }
 	});
 
-	var reloadContent = function(callback){
-	    debugger;
-	    var url = "http://localhost:8091/spingmvc/Page"
-	    var data = action.comment;
-	    data.start = (cuttentPage - 1) * 5;
-	    data.end = (data.start + 5);
-
-	    $.ajax({
-	        type: 'GET',
-	        url: url,
-	        data: data,
-	        error: function () {
-	            alert(arguments[1]);
-	        },
-	        success: function (e) {
-	            callback(e);
-	        },
-	        dataType: "json"
-	    });
-	}
 
 	AppDispatcher.register(function (action) {
 	    switch (action.actionType) {
-	        case "UPPAGE":
-	            cuttentPage = cuttentPage + 1
-	            CommentStore.emitChange();
-	            break;
-	        case "DOWNPAGE":
-	            cuttentPage = (cuttentPage - 1) < 0 ? 0 : (cuttentPage - 1);
-	            CommentStore.emitChange();
-	            break;
 	        case "REFLASH":
 	            //提交注册信息
-	            var url = "http://localhost:8091/spingmvc/Page"
+	            var url = "/spingmvc/Page"
 	            var data = action.comment;
 
 	            $.ajax({
@@ -19127,25 +19108,50 @@
 	                    alert(arguments[1]);
 	                },
 	                success: function (e) {
-	                    //e.fotter = {type: "Footer"};
-	                    comments = e;
+	                    var result = []
+	                    for (var i in e) {
+	                        result.push(e[i]);
+	                    }
+	                    if (data.state == "down") {
+	                        if (result.length < 6) {
+	                            pageState = "LASTPAGE";
+	                        } else {
+	                            result.pop();
+	                            pageState = "MIDDLEPAGE";
+	                        }
+
+	                    } else {
+	                        if (data.start == 0) {
+	                            pageState = "FIRSTPAGE";
+	                        } else {
+	                            pageState = "MIDDLEPAGE";
+	                        }
+	                    }
+
+	                    comments = result;
 	                    CommentStore.emitChange();
 	                },
 	                dataType: "json"
 	            });
 	            break;
 	        case "LOGIN":
+	            pageState = "NONE";
+	            currentPage = 1;
 	            var login = {id: 1, type: "Login"}
 	            comments = [login];
 	            CommentStore.emitChange();
 	            break;
 	        case "REGISTER":
+	            pageState = "NONE";
+	            currentPage = 1;
 	            //跳到注册面板
 	            var register = {id: 1, type: "Register"}
 	            comments = [register];
 	            CommentStore.emitChange();
 	            break;
 	        case "INSERTVIEW":
+	            pageState = "NONE";
+	            currentPage = 1;
 	            //跳到注册面板
 	            var register = {id: 1, type: "Insert"}
 	            comments = [register];
@@ -19153,18 +19159,20 @@
 	            break;
 	        case "SUBMIT":
 	            //提交注册信息
-	            var url = "http://localhost:8091/spingmvc/Register"
+	            var url = "/spingmvc/Register"
 	            var data = action.comment;
 	            $.ajax({
 	                type: 'POST',
 	                url: url,
 	                data: data,
 	                error: function () {
-	                    alert(arguments[1]);
+	                    var tem = {id: 1, type: "Alert", text: "出错啦"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
 	                },
 	                success: function (e) {
 	                    user.id = e;
-	                    var tem = {id: 1, type: "Alert"};
+	                    var tem = {id: 1, type: "Alert", text: "成功"};
 	                    comments = [tem];
 	                    CommentStore.emitChange();
 	                }
@@ -19173,7 +19181,7 @@
 	            break;
 	        case "LOGINUSER":
 	            debugger;
-	            var url = "http://localhost:8091/spingmvc/Login"
+	            var url = "/spingmvc/Login"
 	            var data = action.comment;
 	            $.ajax({
 	                type: 'POST',
@@ -19189,15 +19197,15 @@
 	            break;
 	        case "INSERTARTICLE":
 	            debugger;
-	            var url = "http://localhost:8091/spingmvc/InsertBlog"
+	            var url = "/spingmvc/InsertBlog"
 	            var data = action.comment;
 	            $.ajax({
 	                type: 'POST',
 	                url: url,
 	                data: data,
 	                success: function (e) {
-	                    debugger;
-	                    comments = [register];
+	                    var tem = {id: 1, type: "Alert", text: "成功"};
+	                    comments = [tem];
 	                    CommentStore.emitChange();
 	                }
 	            });
@@ -19944,18 +19952,6 @@
 	            comment: comment
 	        }
 	        AppDispatcher.dispatch(action);
-	    },
-	    upPage:function(){
-	        var action = {
-	            actionType: "UPPAGE"
-	        }
-	        AppDispatcher.dispatch(action);
-	    },
-	    downPage:function(){
-	        var action = {
-	            actionType: "DOWNPAGE"
-	        }
-	        AppDispatcher.dispatch(action);
 	    }
 
 	}
@@ -19970,16 +19966,19 @@
 	var CommentActionCreators = __webpack_require__(156);
 
 	var CommentAlert = React.createClass({displayName: "CommentAlert",
-	    componentDidMount: function () {
-	        debugger;
-	        setTimeout(this.click,1000);
-	    },
+
 	    render: function () {
 	        return (
 	            React.createElement("div", {id: "alert"}, 
-	                React.createElement("a", {className: "alert", href: "#alert"}, "This is a slide down alert!")
+	                React.createElement("a", {className: "alert", onClick: this.reloadData, href: "#alert"}, this.props.text)
 	            )
 	        );
+	    },
+	    reloadData: function () {
+	        data = {};
+	        data.start = 0;
+	        data.end = 5;
+	        CommentActionCreators.reFlashData(data);
 	    }
 	});
 
@@ -20001,7 +20000,7 @@
 	                React.createElement("section", {className: "post"}, 
 	                    React.createElement("header", {className: "post-header"}, 
 	                        React.createElement("img", {className: "post-avatar", alt: "Tilo Mitra's avatar", height: "48", width: "48", 
-	                             src: "img/common/tilo-avatar.png"}), 
+	                             src: "/spingmvc/resource/img/icon.jpg"}), 
 	                        React.createElement("h2", {className: "post-title"}, this.props.title), 
 	                        React.createElement("p", {className: "post-meta"}, 
 	                            "By ", React.createElement("a", {onClick: this.deleteItem, className: "post-author"}, this.props.author), " under ", React.createElement("a", {
@@ -20030,7 +20029,7 @@
 	var React = __webpack_require__(1);
 
 	var CommentActionCreators = __webpack_require__(156);
-	var BlogImg = __webpack_require__(171);
+	var BlogImg = __webpack_require__(160);
 	var CommentImg = React.createClass({displayName: "CommentImg",
 	    render: function () {
 	        var list = [];
@@ -20072,6 +20071,35 @@
 
 /***/ },
 /* 160 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+
+	var BlogImg = React.createClass({displayName: "BlogImg",
+
+	    render: function () {
+	        debugger;
+	        return (
+	            React.createElement("div", {className: "pure-u-1 pure-u-md-1-2"}, 
+	                React.createElement("a", {href: "http://www.flickr.com/photos/uberlife/8915936174/"}, 
+	                    React.createElement("img", {alt: "Photo of someone working poolside at a resort", 
+	                         className: "pure-img-responsive", 
+	                         src: this.props.url})
+	                ), 
+
+	                React.createElement("div", {className: "post-image-meta"}, 
+	                    React.createElement("h3", null, this.props.title)
+	                )
+	            )
+	        );
+	    }
+	});
+
+	module.exports = BlogImg;
+
+/***/ },
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -20128,7 +20156,7 @@
 	module.exports = CommentLogin;
 
 /***/ },
-/* 161 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -20197,7 +20225,7 @@
 	module.exports = CommentRegister;
 
 /***/ },
-/* 162 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -20241,7 +20269,7 @@
 	module.exports = CommentInsert;
 
 /***/ },
-/* 163 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -20251,28 +20279,56 @@
 
 	function getStateFromStore() {
 	    return {
-	        userData: ""
+	        pageState: CommentStore.getPageState(),
+	        currentPage: CommentStore.getCuttentPage()
 	    }
 	}
 	var CommentFooter = React.createClass({displayName: "CommentFooter",
 	    getInitialState: function () {
 	        debugger;
-	        this.page =1;
 	        return getStateFromStore();
 	    },
 	    render: function () {
+	        var mod;
+	        debugger;
+	        switch (this.state.pageState) {
+	            case "FIRSTPAGE":
+	                mod = (
+	                    React.createElement("ul", {className: "nav-list"}, 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {className: "pure-button down-page", onClick: this.downPage}, "down")
+	                        )
+	                    ));
+	                break;
+	            case "MIDDLEPAGE":
+	                mod = (
+	                    React.createElement("ul", {className: "nav-list"}, 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {className: "pure-button up-page", onClick: this.upPage}, "up")
+	                        ), 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {className: "pure-button down-page", onClick: this.downPage}, "down")
+	                        )
+	                    ));
+	                break;
+	            case "LASTPAGE":
+	                mod = (
+	                    React.createElement("ul", {className: "nav-list"}, 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {className: "pure-button up-page", onClick: this.upPage}, "up")
+	                        )
+	                    ));
+	                break;
+	            case "NONE":
+	                mod = null;
+	                break;
+	        }
+
 	        return (
 	            React.createElement("div", {className: "pure-u-1"}, 
 	                React.createElement("div", {className: "footer"}, 
 	                    React.createElement("nav", {className: "nav"}, 
-	                        React.createElement("ul", {className: "nav-list"}, 
-	                            React.createElement("li", {className: "nav-item"}, 
-	                                React.createElement("a", {className: "pure-button", onClick: this.upPage}, "up")
-	                            ), 
-	                            React.createElement("li", {className: "nav-item"}, 
-	                                React.createElement("a", {className: "pure-button", onClick: this.downPage}, "down")
-	                            )
-	                        )
+	                        mod
 	                    )
 	                )
 	            )
@@ -20289,18 +20345,25 @@
 	    componentWillUnmount: function () {
 	        CommentStore.removeChangeListener(this.onChange);
 	    },
+
 	    upPage: function () {
+	        this.page = this.state.currentPage;
 	        this.page = (this.page - 1) < 0 ? 0 : (this.page - 1);
 	        data = {};
 	        data.start = (this.page - 1) * 5;
-	        data.end = (data.start + 5);
+	        data.end = 5;
+	        data.state = "up";
+	        CommentStore.setCurrentPage(this.page);
 	        CommentActionCreators.reFlashData(data)
 	    },
-	    downPage: function (e) {
+	    downPage: function () {
+	        this.page = this.state.currentPage;
 	        this.page = this.page + 1;
 	        data = {};
 	        data.start = (this.page - 1) * 5;
-	        data.end = (data.start + 5);
+	        data.end = 6;
+	        data.state = "down";
+	        CommentStore.setCurrentPage(this.page);
 	        CommentActionCreators.reFlashData(data)
 	    }
 	});
@@ -20308,7 +20371,7 @@
 	module.exports = CommentFooter;
 
 /***/ },
-/* 164 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -20330,7 +20393,7 @@
 	        return (
 	            React.createElement("div", {className: "sidebar pure-u-1 pure-u-md-1-4"}, 
 	                React.createElement("div", {className: "header"}, 
-	                    React.createElement("h1", {className: "brand-title"}, "A Sample Blog"), 
+	                    React.createElement("h1", {className: "brand-title", onClick: this.reload}, "A Sample Blog"), 
 	                    React.createElement("h2", {className: "brand-tagline"}, "Creating a blog layout using Pure"), 
 
 	                    React.createElement("nav", {className: "nav"}, 
@@ -20370,22 +20433,29 @@
 	    },
 	    insertview: function (e) {
 	        CommentActionCreators.insertview();
+	    }, reload: function () {
+	        var obj = {
+	            start: 0,
+	            end: 5
+	        }
+	        CommentActionCreators.reFlashData(obj);
+
 	    }
 	});
 
 	module.exports = CommentHeader;
 
 /***/ },
-/* 165 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(166);
+	var content = __webpack_require__(167);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(169)(content, {});
+	var update = __webpack_require__(170)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -20402,21 +20472,21 @@
 	}
 
 /***/ },
-/* 166 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(167)();
+	exports = module.exports = __webpack_require__(168)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "@font-face {\n    font-family: tt; /*这里是说明调用来的字体名字*/\n    src: url(" + __webpack_require__(168) + "); /*这里是字体文件路径*/\n}\n\nbody {\n    /*background: #444 url(\"./resource/debut_dark.png\") repeat;*/\n    color: #40a070;\n    /*padding-top: 70px;*/\n    font-family: 'tt';\n}\n\n/*------------------------样式-------------------------*/\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n.footer {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background: rgb(61, 79, 93);\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n}\n\n.brand-title {\n    text-transform: uppercase;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(176, 202, 219);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(176, 202, 219);\n    color: #fff;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #aaa;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    font-size: 2em;\n    color: #222;\n    margin-bottom: 0.2em;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: Georgia, \"Cambria\", serif;\n    color: #444;\n    line-height: 1.8em;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #fff;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #ccc;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n/*---------------------------------*/\n.pure-button{\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n#alert:hover:after {\n    background: hsla(0,0%,0%,.8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0,0%,0%,.8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n#alert:target {\n    display: none;\n}\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0,0%,0%,.05) 25%,\n    hsla(0,0%,0%,.05) 50%, transparent 50%,\n    transparent 75%, hsla(0,0%,0%,.05) 75%,\n    hsla(0,0%,0%,.05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0,0%,0%,.1) 25%,\n    hsla(0,0%,0%,.1) 50%, transparent 50%,\n    transparent 75%, hsla(0,0%,0%,.1) 75%,\n    hsla(0,0%,0%,.1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0,0%,0%,.1) 25%,\n    hsla(0,0%,0%,.1) 50%, transparent 50%,\n    transparent 75%, hsla(0,0%,0%,.1) 75%,\n    hsla(0,0%,0%,.1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0,0%,0%,.1) 25%,\n    hsla(0,0%,0%,.1) 50%, transparent 50%,\n    transparent 75%, hsla(0,0%,0%,.1) 75%,\n    hsla(0,0%,0%,.1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0,0%,0%,.1) 25%,\n    hsla(0,0%,0%,.1) 50%, transparent 50%,\n    transparent 75%, hsla(0,0%,0%,.1) 75%,\n    hsla(0,0%,0%,.1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0,0%,0%,.1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% { opacity: 0; }\n    50% { opacity: 1; }\n    100% { top: 0; }\n}\n@-moz-keyframes alert {\n    0% { opacity: 0; }\n    50% { opacity: 1; }\n    100% { top: 0; }\n}\n@-ms-keyframes alert {\n    0% { opacity: 0; }\n    50% { opacity: 1; }\n    100% { top: 0; }\n}\n@-o-keyframes alert {\n    0% { opacity: 0; }\n    50% { opacity: 1; }\n    100% { top: 0; }\n}\n@keyframes alert {\n    0% { opacity: 0; }\n    50% { opacity: 1; }\n    100% { top: 0; }\n}\n/*针对项目配置*/\n#content{\n    width: 100%;\n}\n#content-title{\n    width: 100%;\n\n}\n", ""]);
+	exports.push([module.id, "@font-face {\n    font-family: tt; /*这里是说明调用来的字体名字*/\n    src: url(" + __webpack_require__(169) + "); /*这里是字体文件路径*/\n}\n\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #40a070;\n    font-family: 'tt';\n}\n\n#app {\n    overflow-x: auto;\n}\n\n/*------------------------样式-------------------------*/\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background: rgb(61, 79, 93);\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n}\n\n.brand-title {\n    text-transform: uppercase;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(176, 202, 219);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(176, 202, 219);\n    color: #fff;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #aaa;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    font-size: 2em;\n    color: #222;\n    margin-bottom: 0.2em;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: Georgia, \"Cambria\", serif;\n    color: #444;\n    line-height: 1.8em;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #fff;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #ccc;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n}\n\n#content-title {\n    width: 100%;\n\n}\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 167 */
+/* 168 */
 /***/ function(module, exports) {
 
 	/*
@@ -20472,13 +20542,13 @@
 
 
 /***/ },
-/* 168 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "0d0d0fa5290035f056a62aa165da02ab.ttf";
 
 /***/ },
-/* 169 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -20728,36 +20798,6 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
-
-/***/ },
-/* 170 */,
-/* 171 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-
-	var BlogImg = React.createClass({displayName: "BlogImg",
-
-	    render: function () {
-	        debugger;
-	        return (
-	            React.createElement("div", {className: "pure-u-1 pure-u-md-1-2"}, 
-	                React.createElement("a", {href: "http://www.flickr.com/photos/uberlife/8915936174/"}, 
-	                    React.createElement("img", {alt: "Photo of someone working poolside at a resort", 
-	                         className: "pure-img-responsive", 
-	                         src: this.props.url})
-	                ), 
-
-	                React.createElement("div", {className: "post-image-meta"}, 
-	                    React.createElement("h3", null, this.props.title)
-	                )
-	            )
-	        );
-	    }
-	});
-
-	module.exports = BlogImg;
 
 /***/ }
 /******/ ]);
