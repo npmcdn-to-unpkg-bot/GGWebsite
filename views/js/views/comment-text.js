@@ -11,14 +11,14 @@ var CommentText = React.createClass({
                     <header className='post-header'>
                         <img className='post-avatar' alt='Tilo Mitra&#x27;s avatar' height='48' width='48'
                              src='/spingmvc/resource/img/icon.jpg'/>
-                        <h2 className='post-title'>{this.props.title}</h2>
+                        <h2 onClick={this.enter} className='post-title'>{this.props.title}</h2>
                         <p className='post-meta'>
-                            By <a onClick={this.deleteItem} className='post-author'>{this.props.author}</a> under <a
+                            By <a className='post-author'>{this.props.author}</a> under <a
                             className='post-category post-category-design' href='#'>CSS</a> <a
                             className='post-category post-category-pure' href='#'>Pure</a>
                         </p>
                     </header>
-                    <div className='post-description'>
+                    <div id={this.props.id} className='post-description'>
                         <p>
                             {this.props.text}
                         </p>
@@ -27,6 +27,12 @@ var CommentText = React.createClass({
             </div>
 
         );
+    },
+    enter: function () {
+        var data = {
+            ArticleId: this.props.id
+        }
+        CommentActionCreators.getArticle(data);
     }
 });
 

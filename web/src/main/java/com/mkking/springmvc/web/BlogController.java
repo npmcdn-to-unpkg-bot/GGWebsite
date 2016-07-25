@@ -59,6 +59,7 @@ public class BlogController {
 		JSONObject jsonObj = new JSONObject("{}");
 		for (ArticleWithBLOBs i : li) {
 			Map<String, String> item = new HashMap<String, String>();
+			item.put("id", i.getArticleId().toString());
 			item.put("content", i.getArticleContent());
 			item.put("summary", i.getArticleSummary());
 			item.put("title", i.getArticleName());

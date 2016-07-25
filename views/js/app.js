@@ -7,6 +7,9 @@ var Comments = require('./views/comments');
 var CommentsTextView = require('./views/comment-text-view');
 var CommentHeader = require('./views/comment-header');
 var CommentFooter = require('./views/comment-footer');
+
+var comment = null;
+var commentFooter = null;
 require('./../style/style.css')
 
 function getQueryString(name) {
@@ -18,7 +21,11 @@ function getQueryString(name) {
     return null;
 }
 function getStateFromStore() {
-    return CommentStore.getAll() || {};
+    return {
+        article: CommentStore.getAll() || {},
+        viewState: CommentStore.getViewState()
+    }
+
 
 }
 
@@ -29,6 +36,9 @@ var App = React.createClass({
                 ArticleId: getQueryString("ArticleId")
             }
             CommentActionCreators.getArticle(data);
+        } else {
+            var data = {start: 0, end: 5};
+            CommentActionCreators.reFlashData(data);
         }
         debugger;
         return getStateFromStore() || {};
@@ -47,15 +57,18 @@ var App = React.createClass({
     render: function () {
         debugger;
         var title = "Yes this is my Blog!";
-        var comment = (<Comments />);
-        var commentFooter = (<CommentFooter />);
-        if (this.state.article) {
-            comment = (<CommentsTextView content={this.state.article.content}></CommentsTextView>);
-            title = this.state.article.title;
-            commentFooter = null;
-        }
 
-        debugger;
+        switch (this.state.viewState) {
+            case "LISTVIEW":
+                comment = (<Comments />);
+                commentFooter = (<CommentFooter />);
+                break;
+            case "ARTICLEVIEW":
+                comment = (<CommentsTextView content={this.state.article.content}></CommentsTextView>);
+                title = this.state.article.title;
+                commentFooter = null;
+                break;
+        }
         return (
             <div id='layout' className='pure-g'>
                 <CommentHeader title={title}/>

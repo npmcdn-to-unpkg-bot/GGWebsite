@@ -53,6 +53,9 @@
 	var CommentsTextView = __webpack_require__(165);
 	var CommentHeader = __webpack_require__(166);
 	var CommentFooter = __webpack_require__(164);
+
+	var comment = null;
+	var commentFooter = null;
 	__webpack_require__(167)
 
 	function getQueryString(name) {
@@ -64,7 +67,11 @@
 	    return null;
 	}
 	function getStateFromStore() {
-	    return CommentStore.getAll() || {};
+	    return {
+	        article: CommentStore.getAll() || {},
+	        viewState: CommentStore.getViewState()
+	    }
+
 
 	}
 
@@ -75,6 +82,9 @@
 	                ArticleId: getQueryString("ArticleId")
 	            }
 	            CommentActionCreators.getArticle(data);
+	        } else {
+	            var data = {start: 0, end: 5};
+	            CommentActionCreators.reFlashData(data);
 	        }
 	        debugger;
 	        return getStateFromStore() || {};
@@ -93,15 +103,18 @@
 	    render: function () {
 	        debugger;
 	        var title = "Yes this is my Blog!";
-	        var comment = (React.createElement(Comments, null));
-	        var commentFooter = (React.createElement(CommentFooter, null));
-	        if (this.state.article) {
-	            comment = (React.createElement(CommentsTextView, {content: this.state.article.content}));
-	            title = this.state.article.title;
-	            commentFooter = null;
-	        }
 
-	        debugger;
+	        switch (this.state.viewState) {
+	            case "LISTVIEW":
+	                comment = (React.createElement(Comments, null));
+	                commentFooter = (React.createElement(CommentFooter, null));
+	                break;
+	            case "ARTICLEVIEW":
+	                comment = (React.createElement(CommentsTextView, {content: this.state.article.content}));
+	                title = this.state.article.title;
+	                commentFooter = null;
+	                break;
+	        }
 	        return (
 	            React.createElement("div", {id: "layout", className: "pure-g"}, 
 	                React.createElement(CommentHeader, {title: title}), 
@@ -19400,10 +19413,11 @@
 	var assign = __webpack_require__(155);
 
 
-	var comments ={};
+	var comments = {};
 	var user = {};
 	var currentPage = 1;
 	var pageState = "FIRSTPAGE";
+	var viewState = "LISTVIEW";
 
 
 	var CommentStore = assign({}, EventEmitter.prototype, {
@@ -19432,6 +19446,8 @@
 	    },
 	    setCurrentPage(page){
 	        currentPage = page;
+	    }, getViewState(){
+	        return viewState;
 	    }
 	});
 
@@ -19451,6 +19467,7 @@
 	                    alert(arguments[1]);
 	                },
 	                success: function (e) {
+	                    viewState = "LISTVIEW";
 	                    var result = []
 	                    for (var i in e) {
 	                        result.push(e[i]);
@@ -19563,8 +19580,9 @@
 	                url: url,
 	                data: data,
 	                success: function (e) {
+	                    viewState = "ARTICLEVIEW";
 	                    var tem = {id: 1, type: "Alert", text: "成功"};
-	                    comments = e;
+	                    comments = e.article;
 	                    CommentStore.emitChange();
 	                },
 	                dataType: "json"
@@ -19962,8 +19980,8 @@
 
 	    getInitialState: function () {
 	        //alert($.getUrlParam("name"));
-	        var data = {start: 0, end: 5};
-	        CommentActionCreators.reFlashData(data);
+	        //var data = {start: 0, end: 5};
+	        //CommentActionCreators.reFlashData(data);
 	        return getStateFromStore();
 	    },
 
@@ -19986,7 +20004,7 @@
 	        for (var i in this.state.state) {
 	            switch (this.state.state[i].type) {
 	                case "Text":
-	                    itemJsx = React.createElement(CommentText, {title: this.state.state[i].title, author: "Ben", 
+	                    itemJsx = React.createElement(CommentText, {id: this.state.state[i].id, title: this.state.state[i].title, author: "Ben", 
 	                                           text: this.state.state[i].summary});
 	                    break;
 	                case "Img":
@@ -20072,14 +20090,14 @@
 	                    React.createElement("header", {className: "post-header"}, 
 	                        React.createElement("img", {className: "post-avatar", alt: "Tilo Mitra's avatar", height: "48", width: "48", 
 	                             src: "/spingmvc/resource/img/icon.jpg"}), 
-	                        React.createElement("h2", {className: "post-title"}, this.props.title), 
+	                        React.createElement("h2", {onClick: this.enter, className: "post-title"}, this.props.title), 
 	                        React.createElement("p", {className: "post-meta"}, 
-	                            "By ", React.createElement("a", {onClick: this.deleteItem, className: "post-author"}, this.props.author), " under ", React.createElement("a", {
+	                            "By ", React.createElement("a", {className: "post-author"}, this.props.author), " under ", React.createElement("a", {
 	                            className: "post-category post-category-design", href: "#"}, "CSS"), " ", React.createElement("a", {
 	                            className: "post-category post-category-pure", href: "#"}, "Pure")
 	                        )
 	                    ), 
-	                    React.createElement("div", {className: "post-description"}, 
+	                    React.createElement("div", {id: this.props.id, className: "post-description"}, 
 	                        React.createElement("p", null, 
 	                            this.props.text
 	                        )
@@ -20088,6 +20106,12 @@
 	            )
 
 	        );
+	    },
+	    enter: function () {
+	        var data = {
+	            ArticleId: this.props.id
+	        }
+	        CommentActionCreators.getArticle(data);
 	    }
 	});
 
@@ -20504,7 +20528,7 @@
 
 	        value = this.props.content;
 
-	        var html = markdown.toHTML(value)
+	        var html = markdown.toHTML(value, 'Maruku')
 	        //html = parseDom(html);
 
 
@@ -20536,6 +20560,7 @@
 
 	function getStateFromStore() {
 	    return {
+	        viewState: CommentStore.getViewState(),
 	        userData: ""
 	    }
 	}
@@ -20558,6 +20583,21 @@
 	        return getStateFromStore();
 	    },
 	    render: function () {
+	        var button = null;
+	        switch (this.state.viewState) {
+	            case "LISTVIEW":
+	                button = (
+	                    React.createElement("li", {className: "nav-item"}, 
+	                        React.createElement("a", {className: "pure-button", onClick: this.insertview}, "Insert")
+	                    ));
+	                break;
+	            case "ARTICLEVIEW":
+	                button = (
+	                    React.createElement("li", {className: "nav-item"}, 
+	                        React.createElement("a", {className: "pure-button", onClick: this.reFlashData}, "Return")
+	                    ));
+	                break;
+	        }
 	        return (
 	            React.createElement("div", {className: "sidebar pure-u-1 pure-u-md-1-4"}, 
 	                React.createElement("div", {className: "header"}, 
@@ -20566,9 +20606,7 @@
 
 	                    React.createElement("nav", {className: "nav"}, 
 	                        React.createElement("ul", {className: "nav-list"}, 
-	                            React.createElement("li", {className: "nav-item"}, 
-	                                React.createElement("a", {className: "pure-button", onClick: this.insertview}, "Insert")
-	                            )
+	                            button
 	                        )
 	                    )
 	                )
@@ -20586,6 +20624,10 @@
 	        CommentStore.removeChangeListener(this.onChange);
 	    },
 
+	    reFlashData: function () {
+	        var data = {start: 0, end: 5};
+	        CommentActionCreators.reFlashData(data);
+	    },
 	    login: function (e) {
 	        debugger;
 	        CommentActionCreators.login();
@@ -20642,7 +20684,7 @@
 
 
 	// module
-	exports.push([module.id, "\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #000000;\n}\n\nimg[alt=\"mark\"] {\n    width: 100%;\n}\n\np {\n    word-break: break-all;\n}\n\n#app {\n    overflow-x: auto;\n    overflow-y: auto;\n    -webkit-overflow-scrolling: touch;\n}\n\n/*------------------------样式-------------------------*/\n\n* {\n    font-family: \"Helvetica Neue\", Helvetica, STHeiTi, sans-serif;\n}\n\n/*指定PC端加载字体*/\n@media (min-width: 48em) {\n    @font-face {\n        font-family: \"tt\"; /*这里是说明调用来的字体名字*/\n        src: url(" + __webpack_require__(170) + "); /*这里是字体文件路径*/\n    }\n    * {\n        font-family: \"tt\";\n    }\n}\n\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background: rgb(61, 79, 93);\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n}\n\n.brand-title {\n    text-transform: uppercase;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(176, 202, 219);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(176, 202, 219);\n    color: #fff;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #aaa;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    cursor: pointer;\n    font-size: 2em;\n    color: #222;\n    margin-bottom: 0.2em;\n}\n\n.post-title:hover {\n    color: #4d85d1;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: \"tt\";\n    color: #444;\n    line-height: 1.8em;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #fff;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #ccc;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n    height: 300px;\n}\n\n#content-title {\n    width: 100%;\n\n}\n", ""]);
+	exports.push([module.id, "\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #000000;\n}\n\nimg[alt=\"mark\"] {\n    width: 100%;\n}\n\np, a {\n    word-break: break-all;\n}\n\n#app {\n    overflow-x: auto;\n    overflow-y: auto;\n    -webkit-overflow-scrolling: touch;\n}\n\n/*------------------------样式-------------------------*/\n\n* {\n    font-family: \"Helvetica Neue\", Helvetica, STHeiTi, sans-serif;\n}\n\n/*指定PC端加载字体*/\n@media (min-width: 48em) {\n    @font-face {\n        font-family: \"tt\"; /*这里是说明调用来的字体名字*/\n        src: url(" + __webpack_require__(170) + "); /*这里是字体文件路径*/\n    }\n    * {\n        font-family: \"tt\";\n    }\n}\n\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background: rgb(61, 79, 93);\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n}\n\n.brand-title {\n    text-transform: uppercase;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(176, 202, 219);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(176, 202, 219);\n    color: #fff;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #aaa;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    cursor: pointer;\n    font-size: 2em;\n    color: #222;\n    margin-bottom: 0.2em;\n}\n\n.post-title:hover {\n    color: #4d85d1;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: \"tt\";\n    color: #444;\n    line-height: 1.8em;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #fff;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #ccc;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n    height: 300px;\n}\n\n#content-title {\n    width: 100%;\n\n}\n", ""]);
 
 	// exports
 

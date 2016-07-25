@@ -12,7 +12,7 @@ img[alt="mark"] {
     width: 100%;
 }
 
-p {
+p, a {
     word-break: break-all;
 }
 

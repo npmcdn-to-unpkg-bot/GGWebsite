@@ -57,7 +57,7 @@ var Comments = React.createClass({
 
         value = this.props.content;
 
-        var html = markdown.toHTML(value)
+        var html = markdown.toHTML(value, 'Maruku')
         //html = parseDom(html);
 
 

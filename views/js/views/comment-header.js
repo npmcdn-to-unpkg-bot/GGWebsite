@@ -5,6 +5,7 @@ var CommentStore = require('../stores/comment-store');
 
 function getStateFromStore() {
     return {
+        viewState: CommentStore.getViewState(),
         userData: ""
     }
 }
@@ -27,6 +28,21 @@ var CommentHeader = React.createClass({
         return getStateFromStore();
     },
     render: function () {
+        var button = null;
+        switch (this.state.viewState) {
+            case "LISTVIEW":
+                button = (
+                    <li className='nav-item'>
+                        <a className='pure-button' onClick={this.insertview}>Insert</a>
+                    </li>);
+                break;
+            case "ARTICLEVIEW":
+                button = (
+                    <li className='nav-item'>
+                        <a className='pure-button' onClick={this.reFlashData}>Return</a>
+                    </li>);
+                break;
+        }
         return (
             <div className='sidebar pure-u-1 pure-u-md-1-4'>
                 <div className='header'>
@@ -35,9 +51,7 @@ var CommentHeader = React.createClass({
 
                     <nav className='nav'>
                         <ul className='nav-list'>
-                            <li className='nav-item'>
-                                <a className='pure-button' onClick={this.insertview}>Insert</a>
-                            </li>
+                            {button}
                         </ul>
                     </nav>
                 </div>
@@ -55,6 +69,10 @@ var CommentHeader = React.createClass({
         CommentStore.removeChangeListener(this.onChange);
     },
 
+    reFlashData: function () {
+        var data = {start: 0, end: 5};
+        CommentActionCreators.reFlashData(data);
+    },
     login: function (e) {
         debugger;
         CommentActionCreators.login();

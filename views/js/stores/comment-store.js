@@ -4,10 +4,11 @@ var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 
 
-var comments ={};
+var comments = {};
 var user = {};
 var currentPage = 1;
 var pageState = "FIRSTPAGE";
+var viewState = "LISTVIEW";
 
 
 var CommentStore = assign({}, EventEmitter.prototype, {
@@ -36,6 +37,8 @@ var CommentStore = assign({}, EventEmitter.prototype, {
     },
     setCurrentPage(page){
         currentPage = page;
+    }, getViewState(){
+        return viewState;
     }
 });
 
@@ -55,6 +58,7 @@ AppDispatcher.register(function (action) {
                     alert(arguments[1]);
                 },
                 success: function (e) {
+                    viewState = "LISTVIEW";
                     var result = []
                     for (var i in e) {
                         result.push(e[i]);
@@ -167,8 +171,9 @@ AppDispatcher.register(function (action) {
                 url: url,
                 data: data,
                 success: function (e) {
+                    viewState = "ARTICLEVIEW";
                     var tem = {id: 1, type: "Alert", text: "成功"};
-                    comments = e;
+                    comments = e.article;
                     CommentStore.emitChange();
                 },
                 dataType: "json"
