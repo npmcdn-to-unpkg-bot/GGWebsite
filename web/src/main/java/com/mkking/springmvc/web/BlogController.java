@@ -47,29 +47,29 @@ public class BlogController {
 	@ResponseBody
 	public void WeChart(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String reult = "测试";
-		
+
 		response.setContentType("charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
-		
+
 		Short start = Short.valueOf(request.getParameter("start")), end = Short.valueOf(request.getParameter("end"));
 		List<ArticleWithBLOBs> li = articleService.selectByPage(start, end);
-		
+
 		JSONObject jsonObj = new JSONObject("{}");
-		for(ArticleWithBLOBs i : li){
-			Map <String, String> item = new HashMap<String, String>();
+		for (ArticleWithBLOBs i : li) {
+			Map<String, String> item = new HashMap<String, String>();
 			item.put("content", i.getArticleContent());
+			item.put("summary", i.getArticleSummary());
 			item.put("title", i.getArticleName());
 			item.put("type", "Text");
 			jsonObj.put(i.getArticleId().toString(), item);
 		}
 		reult = jsonObj.toString();
-		
-		PrintWriter out = response.getWriter();
-		
 
-//		reult = URLDecoder.decode(reult, "utf-8");
+		PrintWriter out = response.getWriter();
+
+		// reult = URLDecoder.decode(reult, "utf-8");
 		out.print(reult);
 
 		out.flush();
@@ -145,6 +145,41 @@ public class BlogController {
 		reult = String.valueOf(article.getArticleId());
 
 		out.print(reult);
+
+	}
+
+	@RequestMapping(value = "/GetBlogById", method = RequestMethod.POST)
+	@ResponseBody
+	public void GetBlog(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		response.setContentType("charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		request.setCharacterEncoding("UTF-8");
+		response.setHeader("Content-type", "text/html;charset=UTF-8");
+		String reult = "";
+		Map<String, String[]> params = request.getParameterMap();
+		String id = params.get("ArticleId")[0].toString();
+
+		Short idS = Short.valueOf(id);
+
+		ArticleWithBLOBs article = articleService.selectByPrimaryKey(idS);
+
+		JSONObject jsonObj = new JSONObject("{}");
+		Map<String, String> item = new HashMap<String, String>();
+		item.put("content", article.getArticleContent());
+		item.put("title", article.getArticleName());
+		item.put("type", "Text");
+		jsonObj.put("article", item);
+
+		reult = jsonObj.toString();
+
+		PrintWriter out = response.getWriter();
+
+		// reult = URLDecoder.decode(reult, "utf-8");
+		out.print(reult);
+
+		out.flush();
+		out.close();
 
 	}
 

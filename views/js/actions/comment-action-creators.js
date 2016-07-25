@@ -38,7 +38,7 @@ module.exports = {
 
         AppDispatcher.dispatch(action);
     },
-    loginUser:function(comment){
+    loginUser: function (comment) {
         var action = {
             actionType: "LOGINUSER",
             comment: comment
@@ -46,7 +46,7 @@ module.exports = {
 
         AppDispatcher.dispatch(action);
     },
-    insertview:function(comment){
+    insertview: function (comment) {
         var action = {
             actionType: "INSERTVIEW",
             comment: comment
@@ -54,9 +54,16 @@ module.exports = {
 
         AppDispatcher.dispatch(action);
     },
-    insertArticle:function(comment){
+    insertArticle: function (comment) {
         var action = {
             actionType: "INSERTARTICLE",
+            comment: comment
+        }
+        AppDispatcher.dispatch(action);
+    },
+    getArticle: function (comment) {
+        var action = {
+            actionType: "GETARTICLE",
             comment: comment
         }
         AppDispatcher.dispatch(action);

@@ -8,6 +8,19 @@ function getStateFromStore() {
         userData: ""
     }
 }
+//<nav className='nav'>
+//    <ul className='nav-list'>
+//        <li className='nav-item'>
+//            <a className='pure-button' onClick={this.login}>Login</a>
+//        </li>
+//        <li className='nav-item'>
+//            <a className='pure-button' onClick={this.register}>Register</a>
+//        </li>
+//        <li className='nav-item'>
+//            <a className='pure-button' onClick={this.insertview}>Insert</a>
+//        </li>
+//    </ul>
+//</nav>
 var CommentHeader = React.createClass({
     getInitialState: function () {
         debugger;
@@ -17,17 +30,11 @@ var CommentHeader = React.createClass({
         return (
             <div className='sidebar pure-u-1 pure-u-md-1-4'>
                 <div className='header'>
-                    <h1 className='brand-title' onClick={this.reload}>A Sample Blog</h1>
-                    <h2 className='brand-tagline'>Creating a blog layout using Pure</h2>
+                    <h1 className='brand-title' onClick={this.reload}>{this.props.title}</h1>
+                    <h2 className='brand-tagline'>Creating a blog create a feature</h2>
 
                     <nav className='nav'>
                         <ul className='nav-list'>
-                            <li className='nav-item'>
-                                <a className='pure-button' onClick={this.login}>Login</a>
-                            </li>
-                            <li className='nav-item'>
-                                <a className='pure-button' onClick={this.register}>Register</a>
-                            </li>
                             <li className='nav-item'>
                                 <a className='pure-button' onClick={this.insertview}>Insert</a>
                             </li>

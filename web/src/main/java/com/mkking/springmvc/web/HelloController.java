@@ -50,12 +50,12 @@ public class HelloController {
 		this.wmf = wmf;
 	}
 
-	@RequestMapping("/")
-	public String homepage() {
-
-		return "hello";
-
-	}
+//	@RequestMapping("/")
+//	public String homepage() {
+//
+//		return "hello";
+//
+//	}
 
 	@RequestMapping("/cc")
 	public String cc() {

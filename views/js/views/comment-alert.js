@@ -7,7 +7,7 @@ var CommentAlert = React.createClass({
     render: function () {
         return (
             <div id='alert'>
-                <a className='alert' onClick={this.reloadData} href='#alert'>{this.props.text}</a>
+                <a className='alert' onClick={this.reloadData}>{this.props.text}</a>
             </div>
         );
     },

@@ -4,7 +4,7 @@ var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 
 
-var comments = [];
+var comments ={};
 var user = {};
 var currentPage = 1;
 var pageState = "FIRSTPAGE";
@@ -155,6 +155,23 @@ AppDispatcher.register(function (action) {
                     comments = [tem];
                     CommentStore.emitChange();
                 }
+            });
+
+            break;
+        case "GETARTICLE":
+            debugger;
+            var url = "/spingmvc/GetBlogById"
+            var data = action.comment;
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function (e) {
+                    var tem = {id: 1, type: "Alert", text: "成功"};
+                    comments = e;
+                    CommentStore.emitChange();
+                },
+                dataType: "json"
             });
 
             break;

@@ -34,7 +34,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "resource/";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -46,21 +46,67 @@
 
 	var React = __webpack_require__(1);
 
-	var Comments = __webpack_require__(148);
-	var CommentHeader = __webpack_require__(165);
-	var CommentFooter = __webpack_require__(164);
-	__webpack_require__(166)
+	var CommentActionCreators = __webpack_require__(148);
+	var CommentStore = __webpack_require__(153);
 
+	var Comments = __webpack_require__(156);
+	var CommentsTextView = __webpack_require__(165);
+	var CommentHeader = __webpack_require__(166);
+	var CommentFooter = __webpack_require__(164);
+	__webpack_require__(167)
+
+	function getQueryString(name) {
+	    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+	    var r = window.location.search.substr(1).match(reg);
+	    if (r != null) {
+	        return unescape(r[2]);
+	    }
+	    return null;
+	}
+	function getStateFromStore() {
+	    return CommentStore.getAll() || {};
+
+	}
 
 	var App = React.createClass({displayName: "App",
+	    getInitialState: function () {
+	        if (getQueryString("ArticleId")) {
+	            var data = {
+	                ArticleId: getQueryString("ArticleId")
+	            }
+	            CommentActionCreators.getArticle(data);
+	        }
+	        debugger;
+	        return getStateFromStore() || {};
+	    },
+	    componentDidMount: function () {
+	        CommentStore.addChangeListener(this.onChange);
+	    },
 
+	    componentWillUnmount: function () {
+	        CommentStore.removeChangeListener(this.onChange);
+	    },
+	    onChange: function () {
+	        debugger;
+	        this.setState(getStateFromStore());
+	    },
 	    render: function () {
-	        //$("body").css("width", $(window).width());
+	        debugger;
+	        var title = "Yes this is my Blog!";
+	        var comment = (React.createElement(Comments, null));
+	        var commentFooter = (React.createElement(CommentFooter, null));
+	        if (this.state.article) {
+	            comment = (React.createElement(CommentsTextView, {content: this.state.article.content}));
+	            title = this.state.article.title;
+	            commentFooter = null;
+	        }
+
+	        debugger;
 	        return (
 	            React.createElement("div", {id: "layout", className: "pure-g"}, 
-	                React.createElement(CommentHeader, null), 
-	                React.createElement(Comments, null), 
-	                React.createElement(CommentFooter, null)
+	                React.createElement(CommentHeader, {title: title}), 
+	                comment, 
+	                commentFooter
 	            )
 	        );
 	    }
@@ -18954,281 +19000,90 @@
 /* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
+	var AppDispatcher = __webpack_require__(149);
 
-	var CommentStore = __webpack_require__(149);
-	var CommentActionCreators = __webpack_require__(156);
+	module.exports = {
 
-	var CommentAlert = __webpack_require__(157);
-	var CommentText = __webpack_require__(158);
-	var CommentImg = __webpack_require__(159);
-	var CommentLogin = __webpack_require__(161);
-	var CommentRegister = __webpack_require__(162);
-	var CommentInsert = __webpack_require__(163);
-	var CommentFooter = __webpack_require__(164);
-
-	function getStateFromStore() {
-	    return {
-	        state: CommentStore.getAll()
-	    }
-	}
-
-	var Comments = React.createClass({displayName: "Comments",
-
-	    onChange: function () {
+	    reFlashData: function (comment) {
 	        debugger;
-	        this.setState(getStateFromStore());
-	    },
-
-	    getInitialState: function () {
-	        var data = {start: 0, end: 5};
-	        CommentActionCreators.reFlashData(data);
-	        return getStateFromStore();
-	    },
-
-	    componentDidMount: function () {
-	        CommentStore.addChangeListener(this.onChange);
-	    },
-
-	    componentWillUnmount: function () {
-	        CommentStore.removeChangeListener(this.onChange);
-	    },
-
-
-	    render: function () {
-	        debugger;
-	        var itemJsx, type = "", list = [];
-	        var imgList = [
-	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
-	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
-	        ];
-	        for (var i in this.state.state) {
-	            switch (this.state.state[i].type) {
-	                case "Text":
-	                    itemJsx = React.createElement(CommentText, {title: this.state.state[i].title, author: "Ben", 
-	                                           text: this.state.state[i].content});
-	                    break;
-	                case "Img":
-	                    itemJsx = React.createElement(CommentImg, {list: imgList, title: "How to do it!", author: "Ben"});
-	                    break;
-	                case "Login":
-	                    itemJsx = React.createElement(CommentLogin, null);
-	                    break;
-	                case "Register":
-	                    itemJsx = React.createElement(CommentRegister, null);
-	                    break;
-	                case "Alert":
-	                    itemJsx = React.createElement(CommentAlert, {text: this.state.state[i].text});
-	                    break;
-	                case "Insert":
-	                    itemJsx = React.createElement(CommentInsert, null);
-	                    break;
-	                case "Footer":
-	                    itemJsx = React.createElement(CommentFooter, null);
-	                    break;
-
-	            }
-	            list.push(itemJsx);
+	        var action = {
+	            actionType: "REFLASH",
+	            comment: comment
 	        }
 
-
-	        return (
-	            React.createElement("div", {className: "content pure-u-1 pure-u-md-3-4"}, 
-	                list
-	            )
-
-	        )
+	        AppDispatcher.dispatch(action);
 	    },
-	    deleteItem: function (e) {
+	    login: function (comment) {
 	        debugger;
-	        //CommentAction.deleteCommentItem(1);
-	    },
-	});
+	        var action = {
+	            actionType: "LOGIN",
+	            comment: comment
+	        }
 
-	module.exports = Comments;
+	        AppDispatcher.dispatch(action);
+	    },
+	    register: function (comment) {
+	        debugger;
+	        var action = {
+	            actionType: "REGISTER",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    submitUser: function (comment) {
+	        debugger;
+	        var action = {
+	            actionType: "SUBMIT",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    loginUser: function (comment) {
+	        var action = {
+	            actionType: "LOGINUSER",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    insertview: function (comment) {
+	        var action = {
+	            actionType: "INSERTVIEW",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    insertArticle: function (comment) {
+	        var action = {
+	            actionType: "INSERTARTICLE",
+	            comment: comment
+	        }
+	        AppDispatcher.dispatch(action);
+	    },
+	    getArticle: function (comment) {
+	        var action = {
+	            actionType: "GETARTICLE",
+	            comment: comment
+	        }
+	        AppDispatcher.dispatch(action);
+	    }
+
+	}
+
 
 /***/ },
 /* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(150);
-
-	var EventEmitter = __webpack_require__(154).EventEmitter;
-	var assign = __webpack_require__(155);
-
-
-	var comments = [];
-	var user = {};
-	var currentPage = 1;
-	var pageState = "FIRSTPAGE";
-
-
-	var CommentStore = assign({}, EventEmitter.prototype, {
-
-	    emitChange: function () {
-	        this.emit('change');
-	    },
-
-	    addChangeListener: function (callback) {
-	        this.on('change', callback);
-	    },
-
-
-	    removeChangeListener: function (callback) {
-	        this.removeListener('change', callback);
-	    },
-
-	    getAll: function () {
-	        return comments;
-	    },
-	    getPageState(){
-	        return pageState;
-	    },
-	    getCuttentPage(){
-	        return currentPage;
-	    },
-	    setCurrentPage(page){
-	        currentPage = page;
-	    }
-	});
-
-
-	AppDispatcher.register(function (action) {
-	    switch (action.actionType) {
-	        case "REFLASH":
-	            //提交注册信息
-	            var url = "/spingmvc/Page"
-	            var data = action.comment;
-
-	            $.ajax({
-	                type: 'GET',
-	                url: url,
-	                data: data,
-	                error: function () {
-	                    alert(arguments[1]);
-	                },
-	                success: function (e) {
-	                    var result = []
-	                    for (var i in e) {
-	                        result.push(e[i]);
-	                    }
-	                    if (data.state == "down") {
-	                        if (result.length < 6) {
-	                            pageState = "LASTPAGE";
-	                        } else {
-	                            result.pop();
-	                            pageState = "MIDDLEPAGE";
-	                        }
-
-	                    } else {
-	                        if (data.start == 0) {
-	                            pageState = "FIRSTPAGE";
-	                        } else {
-	                            pageState = "MIDDLEPAGE";
-	                        }
-	                    }
-
-	                    comments = result;
-	                    CommentStore.emitChange();
-	                },
-	                dataType: "json"
-	            });
-	            break;
-	        case "LOGIN":
-	            pageState = "NONE";
-	            currentPage = 1;
-	            var login = {id: 1, type: "Login"}
-	            comments = [login];
-	            CommentStore.emitChange();
-	            break;
-	        case "REGISTER":
-	            pageState = "NONE";
-	            currentPage = 1;
-	            //跳到注册面板
-	            var register = {id: 1, type: "Register"}
-	            comments = [register];
-	            CommentStore.emitChange();
-	            break;
-	        case "INSERTVIEW":
-	            pageState = "NONE";
-	            currentPage = 1;
-	            //跳到注册面板
-	            var register = {id: 1, type: "Insert"}
-	            comments = [register];
-	            CommentStore.emitChange();
-	            break;
-	        case "SUBMIT":
-	            //提交注册信息
-	            var url = "/spingmvc/Register"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                error: function () {
-	                    var tem = {id: 1, type: "Alert", text: "出错啦"};
-	                    comments = [tem];
-	                    CommentStore.emitChange();
-	                },
-	                success: function (e) {
-	                    user.id = e;
-	                    var tem = {id: 1, type: "Alert", text: "成功"};
-	                    comments = [tem];
-	                    CommentStore.emitChange();
-	                }
-	            });
-
-	            break;
-	        case "LOGINUSER":
-	            debugger;
-	            var url = "/spingmvc/Login"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                success: function (e) {
-	                    debugger;
-	                    comments = [register];
-	                    CommentStore.emitChange();
-	                }
-	            });
-
-	            break;
-	        case "INSERTARTICLE":
-	            debugger;
-	            var url = "/spingmvc/InsertBlog"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                success: function (e) {
-	                    var tem = {id: 1, type: "Alert", text: "成功"};
-	                    comments = [tem];
-	                    CommentStore.emitChange();
-	                }
-	            });
-
-	            break;
-
-	        default:
-	            break;
-	    }
-	});
-
-	module.exports = CommentStore;
-
-/***/ },
-/* 150 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Dispatcher = __webpack_require__(151).Dispatcher;
+	var Dispatcher = __webpack_require__(150).Dispatcher;
 
 	module.exports = new Dispatcher();
 
 /***/ },
-/* 151 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19240,11 +19095,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Dispatcher = __webpack_require__(152);
+	module.exports.Dispatcher = __webpack_require__(151);
 
 
 /***/ },
-/* 152 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19266,7 +19121,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(153);
+	var invariant = __webpack_require__(152);
 
 	var _prefix = 'ID_';
 
@@ -19481,7 +19336,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 153 */
+/* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19534,6 +19389,195 @@
 
 	module.exports = invariant;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 153 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(149);
+
+	var EventEmitter = __webpack_require__(154).EventEmitter;
+	var assign = __webpack_require__(155);
+
+
+	var comments ={};
+	var user = {};
+	var currentPage = 1;
+	var pageState = "FIRSTPAGE";
+
+
+	var CommentStore = assign({}, EventEmitter.prototype, {
+
+	    emitChange: function () {
+	        this.emit('change');
+	    },
+
+	    addChangeListener: function (callback) {
+	        this.on('change', callback);
+	    },
+
+
+	    removeChangeListener: function (callback) {
+	        this.removeListener('change', callback);
+	    },
+
+	    getAll: function () {
+	        return comments;
+	    },
+	    getPageState(){
+	        return pageState;
+	    },
+	    getCuttentPage(){
+	        return currentPage;
+	    },
+	    setCurrentPage(page){
+	        currentPage = page;
+	    }
+	});
+
+
+	AppDispatcher.register(function (action) {
+	    switch (action.actionType) {
+	        case "REFLASH":
+	            //提交注册信息
+	            var url = "/spingmvc/Page"
+	            var data = action.comment;
+
+	            $.ajax({
+	                type: 'GET',
+	                url: url,
+	                data: data,
+	                error: function () {
+	                    alert(arguments[1]);
+	                },
+	                success: function (e) {
+	                    var result = []
+	                    for (var i in e) {
+	                        result.push(e[i]);
+	                    }
+	                    if (data.state == "down") {
+	                        if (result.length < 6) {
+	                            pageState = "LASTPAGE";
+	                        } else {
+	                            result.pop();
+	                            pageState = "MIDDLEPAGE";
+	                        }
+
+	                    } else {
+	                        if (data.start == 0) {
+	                            pageState = "FIRSTPAGE";
+	                        } else {
+	                            pageState = "MIDDLEPAGE";
+	                        }
+	                    }
+
+	                    comments = result;
+	                    CommentStore.emitChange();
+	                },
+	                dataType: "json"
+	            });
+	            break;
+	        case "LOGIN":
+	            pageState = "NONE";
+	            currentPage = 1;
+	            var login = {id: 1, type: "Login"}
+	            comments = [login];
+	            CommentStore.emitChange();
+	            break;
+	        case "REGISTER":
+	            pageState = "NONE";
+	            currentPage = 1;
+	            //跳到注册面板
+	            var register = {id: 1, type: "Register"}
+	            comments = [register];
+	            CommentStore.emitChange();
+	            break;
+	        case "INSERTVIEW":
+	            pageState = "NONE";
+	            currentPage = 1;
+	            //跳到注册面板
+	            var register = {id: 1, type: "Insert"}
+	            comments = [register];
+	            CommentStore.emitChange();
+	            break;
+	        case "SUBMIT":
+	            //提交注册信息
+	            var url = "/spingmvc/Register"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                error: function () {
+	                    var tem = {id: 1, type: "Alert", text: "出错啦"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
+	                },
+	                success: function (e) {
+	                    user.id = e;
+	                    var tem = {id: 1, type: "Alert", text: "成功"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
+	                }
+	            });
+
+	            break;
+	        case "LOGINUSER":
+	            debugger;
+	            var url = "/spingmvc/Login"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                success: function (e) {
+	                    debugger;
+	                    comments = [register];
+	                    CommentStore.emitChange();
+	                }
+	            });
+
+	            break;
+	        case "INSERTARTICLE":
+	            debugger;
+	            var url = "/spingmvc/InsertBlog"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                success: function (e) {
+	                    var tem = {id: 1, type: "Alert", text: "成功"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
+	                }
+	            });
+
+	            break;
+	        case "GETARTICLE":
+	            debugger;
+	            var url = "/spingmvc/GetBlogById"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                success: function (e) {
+	                    var tem = {id: 1, type: "Alert", text: "成功"};
+	                    comments = e;
+	                    CommentStore.emitChange();
+	                },
+	                dataType: "json"
+	            });
+
+	            break;
+
+	        default:
+	            break;
+	    }
+	});
+
+	module.exports = CommentStore;
 
 /***/ },
 /* 154 */
@@ -19890,72 +19934,99 @@
 /* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(150);
+	var React = __webpack_require__(1);
 
-	module.exports = {
+	var CommentStore = __webpack_require__(153);
+	var CommentActionCreators = __webpack_require__(148);
 
-	    reFlashData: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "REFLASH",
-	            comment: comment
-	        }
+	var CommentAlert = __webpack_require__(157);
+	var CommentText = __webpack_require__(158);
+	var CommentImg = __webpack_require__(159);
+	var CommentLogin = __webpack_require__(161);
+	var CommentRegister = __webpack_require__(162);
+	var CommentInsert = __webpack_require__(163);
+	var CommentFooter = __webpack_require__(164);
 
-	        AppDispatcher.dispatch(action);
-	    },
-	    login: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "LOGIN",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    register: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "REGISTER",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    submitUser: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "SUBMIT",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    loginUser:function(comment){
-	        var action = {
-	            actionType: "LOGINUSER",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    insertview:function(comment){
-	        var action = {
-	            actionType: "INSERTVIEW",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    insertArticle:function(comment){
-	        var action = {
-	            actionType: "INSERTARTICLE",
-	            comment: comment
-	        }
-	        AppDispatcher.dispatch(action);
+	function getStateFromStore() {
+	    return {
+	        state: CommentStore.getAll()
 	    }
-
 	}
 
+	var Comments = React.createClass({displayName: "Comments",
+
+	    onChange: function () {
+	        debugger;
+	        this.setState(getStateFromStore());
+	    },
+
+	    getInitialState: function () {
+	        //alert($.getUrlParam("name"));
+	        var data = {start: 0, end: 5};
+	        CommentActionCreators.reFlashData(data);
+	        return getStateFromStore();
+	    },
+
+	    componentDidMount: function () {
+	        CommentStore.addChangeListener(this.onChange);
+	    },
+
+	    componentWillUnmount: function () {
+	        CommentStore.removeChangeListener(this.onChange);
+	    },
+
+
+	    render: function () {
+	        debugger;
+	        var itemJsx, type = "", list = [];
+	        var imgList = [
+	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
+	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
+	        ];
+	        for (var i in this.state.state) {
+	            switch (this.state.state[i].type) {
+	                case "Text":
+	                    itemJsx = React.createElement(CommentText, {title: this.state.state[i].title, author: "Ben", 
+	                                           text: this.state.state[i].summary});
+	                    break;
+	                case "Img":
+	                    itemJsx = React.createElement(CommentImg, {list: imgList, title: "How to do it!", author: "Ben"});
+	                    break;
+	                case "Login":
+	                    itemJsx = React.createElement(CommentLogin, null);
+	                    break;
+	                case "Register":
+	                    itemJsx = React.createElement(CommentRegister, null);
+	                    break;
+	                case "Alert":
+	                    itemJsx = React.createElement(CommentAlert, {text: this.state.state[i].text});
+	                    break;
+	                case "Insert":
+	                    itemJsx = React.createElement(CommentInsert, null);
+	                    break;
+	                case "Footer":
+	                    itemJsx = React.createElement(CommentFooter, null);
+	                    break;
+
+	            }
+	            list.push(itemJsx);
+	        }
+
+
+	        return (
+	            React.createElement("div", {className: "content pure-u-1 pure-u-md-3-4"}, 
+	                list
+	            )
+
+	        )
+	    },
+	    deleteItem: function (e) {
+	        debugger;
+	        //CommentAction.deleteCommentItem(1);
+	    },
+	});
+
+	module.exports = Comments;
 
 /***/ },
 /* 157 */
@@ -19963,14 +20034,14 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(156);
+	var CommentActionCreators = __webpack_require__(148);
 
 	var CommentAlert = React.createClass({displayName: "CommentAlert",
 
 	    render: function () {
 	        return (
 	            React.createElement("div", {id: "alert"}, 
-	                React.createElement("a", {className: "alert", onClick: this.reloadData, href: "#alert"}, this.props.text)
+	                React.createElement("a", {className: "alert", onClick: this.reloadData}, this.props.text)
 	            )
 	        );
 	    },
@@ -19990,7 +20061,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(156);
+	var CommentActionCreators = __webpack_require__(148);
 
 	var CommentText = React.createClass({displayName: "CommentText",
 	    render: function () {
@@ -20028,7 +20099,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(156);
+	var CommentActionCreators = __webpack_require__(148);
 	var BlogImg = __webpack_require__(160);
 	var CommentImg = React.createClass({displayName: "CommentImg",
 	    render: function () {
@@ -20104,7 +20175,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(156);
+	var CommentActionCreators = __webpack_require__(148);
 	var user = {};
 	var CommentLogin = React.createClass({displayName: "CommentLogin",
 	    render: function () {
@@ -20161,7 +20232,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(156);
+	var CommentActionCreators = __webpack_require__(148);
 	var user = {};
 	var CommentRegister = React.createClass({displayName: "CommentRegister",
 	    render: function () {
@@ -20230,7 +20301,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(156);
+	var CommentActionCreators = __webpack_require__(148);
 	var article = {};
 	var CommentInsert = React.createClass({displayName: "CommentInsert",
 	    render: function () {
@@ -20274,8 +20345,8 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(156);
-	var CommentStore = __webpack_require__(149);
+	var CommentActionCreators = __webpack_require__(148);
+	var CommentStore = __webpack_require__(153);
 
 	function getStateFromStore() {
 	    return {
@@ -20296,7 +20367,7 @@
 	                mod = (
 	                    React.createElement("ul", {className: "nav-list"}, 
 	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {className: "pure-button down-page", onClick: this.downPage}, "down")
+	                            React.createElement("a", {className: "pure-button down-page", onClick: this.downPage}, "下一页")
 	                        )
 	                    ));
 	                break;
@@ -20304,10 +20375,10 @@
 	                mod = (
 	                    React.createElement("ul", {className: "nav-list"}, 
 	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {className: "pure-button up-page", onClick: this.upPage}, "up")
+	                            React.createElement("a", {className: "pure-button up-page", onClick: this.upPage}, "上一页")
 	                        ), 
 	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {className: "pure-button down-page", onClick: this.downPage}, "down")
+	                            React.createElement("a", {className: "pure-button down-page", onClick: this.downPage}, "下一页")
 	                        )
 	                    ));
 	                break;
@@ -20315,7 +20386,7 @@
 	                mod = (
 	                    React.createElement("ul", {className: "nav-list"}, 
 	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {className: "pure-button up-page", onClick: this.upPage}, "up")
+	                            React.createElement("a", {className: "pure-button up-page", onClick: this.upPage}, "上一页")
 	                        )
 	                    ));
 	                break;
@@ -20376,14 +20447,111 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(156);
-	var CommentStore = __webpack_require__(149);
+	var CommentStore = __webpack_require__(153);
+	var CommentActionCreators = __webpack_require__(148);
+
+
+	function getStateFromStore() {
+	    return {
+	        state: CommentStore.getAll()
+	    }
+	}
+	function createMarkup(str) {
+	    return {__html: str};
+	};
+
+
+	var Comments = React.createClass({displayName: "Comments",
+
+	    onChange: function () {
+	        debugger;
+	        this.setState(getStateFromStore());
+	    },
+
+	    getInitialState: function () {
+	        //alert($.getUrlParam("name"));
+	        //var data = {start: 0, end: 5};
+	        //CommentActionCreators.reFlashData(data);
+	        return getStateFromStore();
+	    },
+
+	    componentDidMount: function () {
+	        CommentStore.addChangeListener(this.onChange);
+	    },
+
+	    componentWillUnmount: function () {
+	        CommentStore.removeChangeListener(this.onChange);
+	    },
+
+
+	    render: function () {
+	        debugger;
+	        var itemJsx, type = "", list = [];
+	        var imgList = [
+	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
+	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
+	        ];
+	        var value = "##就是测试啊,怎么回事\n";
+	        value += "***\n"
+	        value += "#就是测试啊,怎么回事\n";
+	        value += "> 就是测试啊,怎么回事\n\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
+	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
+	        value += "hello[^hello]";
+
+	        value = this.props.content;
+
+	        var html = markdown.toHTML(value)
+	        //html = parseDom(html);
+
+
+	        return (
+	            React.createElement("div", {className: "content pure-u-1 pure-u-md-3-4"}, 
+	                React.createElement("div", null, 
+	                    React.createElement("div", {dangerouslySetInnerHTML: createMarkup(html)})
+	                )
+	            )
+
+	        )
+	    },
+	    deleteItem: function (e) {
+	        debugger;
+	        //CommentAction.deleteCommentItem(1);
+	    },
+	});
+
+	module.exports = Comments;
+
+/***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var CommentActionCreators = __webpack_require__(148);
+	var CommentStore = __webpack_require__(153);
 
 	function getStateFromStore() {
 	    return {
 	        userData: ""
 	    }
 	}
+	//<nav className='nav'>
+	//    <ul className='nav-list'>
+	//        <li className='nav-item'>
+	//            <a className='pure-button' onClick={this.login}>Login</a>
+	//        </li>
+	//        <li className='nav-item'>
+	//            <a className='pure-button' onClick={this.register}>Register</a>
+	//        </li>
+	//        <li className='nav-item'>
+	//            <a className='pure-button' onClick={this.insertview}>Insert</a>
+	//        </li>
+	//    </ul>
+	//</nav>
 	var CommentHeader = React.createClass({displayName: "CommentHeader",
 	    getInitialState: function () {
 	        debugger;
@@ -20393,17 +20561,11 @@
 	        return (
 	            React.createElement("div", {className: "sidebar pure-u-1 pure-u-md-1-4"}, 
 	                React.createElement("div", {className: "header"}, 
-	                    React.createElement("h1", {className: "brand-title", onClick: this.reload}, "A Sample Blog"), 
-	                    React.createElement("h2", {className: "brand-tagline"}, "Creating a blog layout using Pure"), 
+	                    React.createElement("h1", {className: "brand-title", onClick: this.reload}, this.props.title), 
+	                    React.createElement("h2", {className: "brand-tagline"}, "Creating a blog create a feature"), 
 
 	                    React.createElement("nav", {className: "nav"}, 
 	                        React.createElement("ul", {className: "nav-list"}, 
-	                            React.createElement("li", {className: "nav-item"}, 
-	                                React.createElement("a", {className: "pure-button", onClick: this.login}, "Login")
-	                            ), 
-	                            React.createElement("li", {className: "nav-item"}, 
-	                                React.createElement("a", {className: "pure-button", onClick: this.register}, "Register")
-	                            ), 
 	                            React.createElement("li", {className: "nav-item"}, 
 	                                React.createElement("a", {className: "pure-button", onClick: this.insertview}, "Insert")
 	                            )
@@ -20446,16 +20608,16 @@
 	module.exports = CommentHeader;
 
 /***/ },
-/* 166 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(167);
+	var content = __webpack_require__(168);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(170)(content, {});
+	var update = __webpack_require__(171)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -20472,21 +20634,21 @@
 	}
 
 /***/ },
-/* 167 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(168)();
+	exports = module.exports = __webpack_require__(169)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "@font-face {\n    font-family: tt; /*这里是说明调用来的字体名字*/\n    src: url(" + __webpack_require__(169) + "); /*这里是字体文件路径*/\n}\n\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #40a070;\n    font-family: 'tt';\n}\n\n#app {\n    overflow-x: auto;\n}\n\n/*------------------------样式-------------------------*/\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background: rgb(61, 79, 93);\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n}\n\n.brand-title {\n    text-transform: uppercase;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(176, 202, 219);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(176, 202, 219);\n    color: #fff;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #aaa;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    font-size: 2em;\n    color: #222;\n    margin-bottom: 0.2em;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: Georgia, \"Cambria\", serif;\n    color: #444;\n    line-height: 1.8em;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #fff;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #ccc;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n}\n\n#content-title {\n    width: 100%;\n\n}\n", ""]);
+	exports.push([module.id, "\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #000000;\n}\n\nimg[alt=\"mark\"] {\n    width: 100%;\n}\n\np {\n    word-break: break-all;\n}\n\n#app {\n    overflow-x: auto;\n    overflow-y: auto;\n    -webkit-overflow-scrolling: touch;\n}\n\n/*------------------------样式-------------------------*/\n\n* {\n    font-family: \"Helvetica Neue\", Helvetica, STHeiTi, sans-serif;\n}\n\n/*指定PC端加载字体*/\n@media (min-width: 48em) {\n    @font-face {\n        font-family: \"tt\"; /*这里是说明调用来的字体名字*/\n        src: url(" + __webpack_require__(170) + "); /*这里是字体文件路径*/\n    }\n    * {\n        font-family: \"tt\";\n    }\n}\n\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background: rgb(61, 79, 93);\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n}\n\n.brand-title {\n    text-transform: uppercase;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(176, 202, 219);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(176, 202, 219);\n    color: #fff;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #aaa;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    cursor: pointer;\n    font-size: 2em;\n    color: #222;\n    margin-bottom: 0.2em;\n}\n\n.post-title:hover {\n    color: #4d85d1;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: \"tt\";\n    color: #444;\n    line-height: 1.8em;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #fff;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #ccc;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n    height: 300px;\n}\n\n#content-title {\n    width: 100%;\n\n}\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 168 */
+/* 169 */
 /***/ function(module, exports) {
 
 	/*
@@ -20542,13 +20704,13 @@
 
 
 /***/ },
-/* 169 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "0d0d0fa5290035f056a62aa165da02ab.ttf";
+	module.exports = __webpack_require__.p + "f5326e1cab3f01a61da850cc5b93ab3f.ttf";
 
 /***/ },
-/* 170 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*

@@ -1,7 +1,3 @@
-@font-face {
-    font-family: tt; /*这里是说明调用来的字体名字*/
-    src: url('resource/qqh.ttf'); /*这里是字体文件路径*/
-}
 
 html, body, #app {
     width: 100%;
@@ -9,15 +5,40 @@ html, body, #app {
 }
 
 body {
-    color: #40a070;
-    font-family: 'tt';
+    color: #000000;
+}
+
+img[alt="mark"] {
+    width: 100%;
+}
+
+p {
+    word-break: break-all;
 }
 
 #app {
     overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /*------------------------样式-------------------------*/
+
+* {
+    font-family: "Helvetica Neue", Helvetica, STHeiTi, sans-serif;
+}
+
+/*指定PC端加载字体*/
+@media (min-width: 48em) {
+    @font-face {
+        font-family: "tt"; /*这里是说明调用来的字体名字*/
+        src: url('resource/kt.ttf'); /*这里是字体文件路径*/
+    }
+    * {
+        font-family: "tt";
+    }
+}
+
 * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -120,9 +141,14 @@ h3 {
 }
 
 .post-title {
+    cursor: pointer;
     font-size: 2em;
     color: #222;
     margin-bottom: 0.2em;
+}
+
+.post-title:hover {
+    color: #4d85d1;
 }
 
 .post-avatar {
@@ -132,7 +158,7 @@ h3 {
 }
 
 .post-description {
-    font-family: Georgia, "Cambria", serif;
+    font-family: "tt";
     color: #444;
     line-height: 1.8em;
 }
@@ -365,6 +391,7 @@ h3 {
 /*针对项目配置*/
 #content {
     width: 100%;
+    height: 300px;
 }
 
 #content-title {

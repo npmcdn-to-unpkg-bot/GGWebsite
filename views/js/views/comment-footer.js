@@ -22,7 +22,7 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a className='pure-button down-page' onClick={this.downPage}>down</a>
+                            <a className='pure-button down-page' onClick={this.downPage}>下一页</a>
                         </li>
                     </ul>);
                 break;
@@ -30,10 +30,10 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a className='pure-button up-page' onClick={this.upPage}>up</a>
+                            <a className='pure-button up-page' onClick={this.upPage}>上一页</a>
                         </li>
                         <li className='nav-item'>
-                            <a className='pure-button down-page' onClick={this.downPage}>down</a>
+                            <a className='pure-button down-page' onClick={this.downPage}>下一页</a>
                         </li>
                     </ul>);
                 break;
@@ -41,7 +41,7 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a className='pure-button up-page' onClick={this.upPage}>up</a>
+                            <a className='pure-button up-page' onClick={this.upPage}>上一页</a>
                         </li>
                     </ul>);
                 break;

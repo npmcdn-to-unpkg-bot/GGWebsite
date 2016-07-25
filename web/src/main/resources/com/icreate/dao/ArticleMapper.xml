@@ -24,9 +24,9 @@
   </sql>
 
   <select id="selectByPage" resultMap="ResultMapWithBLOBs">
-  	select *
-    from article
-    where article_id limit #{start,jdbcType=SMALLINT},#{end,jdbcType=SMALLINT}
+  	select * from (select *
+    from article  ORDER BY article_id DESC ) t where t.article_id LIMIT 
+     #{start,jdbcType=SMALLINT},#{end,jdbcType=SMALLINT} 
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="ResultMapWithBLOBs">
     select 

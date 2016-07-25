@@ -25,6 +25,7 @@ var Comments = React.createClass({
     },
 
     getInitialState: function () {
+        //alert($.getUrlParam("name"));
         var data = {start: 0, end: 5};
         CommentActionCreators.reFlashData(data);
         return getStateFromStore();
@@ -50,7 +51,7 @@ var Comments = React.createClass({
             switch (this.state.state[i].type) {
                 case "Text":
                     itemJsx = <CommentText title={this.state.state[i].title} author='Ben'
-                                           text={this.state.state[i].content}/>;
+                                           text={this.state.state[i].summary}/>;
                     break;
                 case "Img":
                     itemJsx = <CommentImg list={imgList} title='How to do it!' author='Ben'/>;
