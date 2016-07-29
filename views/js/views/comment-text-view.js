@@ -29,11 +29,11 @@ var Comments = React.createClass({
     },
 
     componentDidMount: function () {
-        CommentStore.addChangeListener(this.onChange);
+        CommentStore.addViewChangeListener(this.onChange);
     },
 
     componentWillUnmount: function () {
-        CommentStore.removeChangeListener(this.onChange);
+        CommentStore.removeViewChangeListener(this.onChange);
     },
 
 

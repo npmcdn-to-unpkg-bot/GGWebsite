@@ -1,6 +1,6 @@
 {
-  "author": "Jack Callister",
-  "name": "flux-comment",
+  "author": "GuoFeng",
+  "name": "GGBlog",
   "version": "0.0.1",
   "description": "Experimenting with the flux pattern",
   "repository": "https://github.com/jarsbe/flux-comment",
@@ -23,7 +23,7 @@
     "start": "npm run webpack & npm run serve",
     "start-node": "npm run webpack & npm run serve-node",
     "webpack": "webpack -w",
-    "pack": "webpack -p",
+    "pack": "webpack -d",
     "serve": "cd dist && python -m SimpleHTTPServer",
     "serve-node": "node ./node_modules/node-http-server/server/http.js root=./dist port=8888 launch=now"
   }

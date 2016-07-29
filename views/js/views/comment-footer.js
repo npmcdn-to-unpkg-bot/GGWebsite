@@ -73,6 +73,7 @@ var CommentFooter = React.createClass({
     },
 
     upPage: function () {
+        $('html, body,#app').animate({scrollTop:0}, 'slow');
         this.page = this.state.currentPage;
         this.page = (this.page - 1) < 0 ? 0 : (this.page - 1);
         data = {};
@@ -83,6 +84,8 @@ var CommentFooter = React.createClass({
         CommentActionCreators.reFlashData(data)
     },
     downPage: function () {
+        debugger;
+        $('html, body,#app').animate({scrollTop:0}, 'slow');
         this.page = this.state.currentPage;
         this.page = this.page + 1;
         data = {};

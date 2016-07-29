@@ -21,25 +21,42 @@ var CommentStore = assign({}, EventEmitter.prototype, {
         this.on('change', callback);
     },
 
-
     removeChangeListener: function (callback) {
         this.removeListener('change', callback);
     },
 
-    getAll: function () {
-        return comments;
+    emitViewChange: function () {
+        this.emit('viewchange');
     },
-    getPageState(){
+
+    addViewChangeListener: function (callback) {
+        this.on('viewchange', callback);
+    },
+
+    removeViewChangeListener: function (callback) {
+        this.removeListener('viewchange', callback);
+    },
+
+    getPageState: function () {
         return pageState;
     },
-    getCuttentPage(){
+
+    getCuttentPage: function () {
         return currentPage;
     },
-    setCurrentPage(page){
+
+    setCurrentPage: function (page) {
         currentPage = page;
-    }, getViewState(){
+    },
+
+    getViewState: function () {
         return viewState;
+    },
+    getAll: function () {
+        return comments;
     }
+
+
 });
 
 
@@ -78,7 +95,7 @@ AppDispatcher.register(function (action) {
                             pageState = "MIDDLEPAGE";
                         }
                     }
-
+                    result = result.reverse();
                     comments = result;
                     CommentStore.emitChange();
                 },
@@ -174,7 +191,7 @@ AppDispatcher.register(function (action) {
                     viewState = "ARTICLEVIEW";
                     var tem = {id: 1, type: "Alert", text: "成功"};
                     comments = e.article;
-                    CommentStore.emitChange();
+                    CommentStore.emitViewChange();
                 },
                 dataType: "json"
             });

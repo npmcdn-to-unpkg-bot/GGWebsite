@@ -33,13 +33,13 @@ var CommentHeader = React.createClass({
             case "LISTVIEW":
                 button = (
                     <li className='nav-item'>
-                        <a className='pure-button' onClick={this.insertview}>Insert</a>
+                        <a className='pure-button' onClick={this.insertview}>发布新文章</a>
                     </li>);
                 break;
             case "ARTICLEVIEW":
                 button = (
                     <li className='nav-item'>
-                        <a className='pure-button' onClick={this.reFlashData}>Return</a>
+                        <a className='pure-button' onClick={this.reFlashData}>返回</a>
                     </li>);
                 break;
         }
@@ -47,7 +47,7 @@ var CommentHeader = React.createClass({
             <div className='sidebar pure-u-1 pure-u-md-1-4'>
                 <div className='header'>
                     <h1 className='brand-title' onClick={this.reload}>{this.props.title}</h1>
-                    <h2 className='brand-tagline'>Creating a blog create a feature</h2>
+                    <h2 className='brand-tagline'>这里没有诗,但是会走向远方!</h2>
 
                     <nav className='nav'>
                         <ul className='nav-list'>
@@ -64,12 +64,15 @@ var CommentHeader = React.createClass({
     },
     componentDidMount: function () {
         CommentStore.addChangeListener(this.onChange);
+        CommentStore.addViewChangeListener(this.onChange);
     },
     componentWillUnmount: function () {
         CommentStore.removeChangeListener(this.onChange);
+        CommentStore.removeViewChangeListener(this.onChange);
     },
 
     reFlashData: function () {
+        $('html, body,#app').animate({scrollTop:0}, 'slow');
         var data = {start: 0, end: 5};
         CommentActionCreators.reFlashData(data);
     },

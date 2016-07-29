@@ -1,5 +1,6 @@
 package com.mkking.springmvc.web;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.util.Date;
@@ -23,6 +24,7 @@ import com.icreate.entity.User;
 import com.icreate.service.ArticleService;
 import com.icreate.service.UserService;
 import com.mkking.springmvc.service.HelloService;
+import com.mkking.springmvc.util.FileReader;
 
 @Controller
 public class BlogController {
@@ -46,7 +48,19 @@ public class BlogController {
 	@RequestMapping(value = "/Page", method = RequestMethod.GET)
 	@ResponseBody
 	public void WeChart(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String reult = "测试";
+		String reult = "测试", partPath = "resource/picture/";
+
+		FileReader fr = new FileReader();
+		String path = request.getSession().getServletContext().getRealPath("");
+		path += "/" + partPath;
+
+		System.out.println(path);
+
+		File root = new File(path);
+		String url = request.getContextPath();
+		String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + url
+				+ "/";
+		basePath += partPath;
 
 		response.setContentType("charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
@@ -55,17 +69,24 @@ public class BlogController {
 
 		Short start = Short.valueOf(request.getParameter("start")), end = Short.valueOf(request.getParameter("end"));
 		List<ArticleWithBLOBs> li = articleService.selectByPage(start, end);
-
 		JSONObject jsonObj = new JSONObject("{}");
+		// 判断第一页的时候有图喔
+		if (Short.valueOf(request.getParameter("start")) == 0) {
+			Map<String, Object> img = fr.showAllFiles(root, basePath);
+			jsonObj.put("img", img);
+		}
+
 		for (ArticleWithBLOBs i : li) {
 			Map<String, String> item = new HashMap<String, String>();
 			item.put("id", i.getArticleId().toString());
 			item.put("content", i.getArticleContent());
 			item.put("summary", i.getArticleSummary());
+			item.put("time", i.getArticleTime().toString());
 			item.put("title", i.getArticleName());
 			item.put("type", "Text");
 			jsonObj.put(i.getArticleId().toString(), item);
 		}
+
 		reult = jsonObj.toString();
 
 		PrintWriter out = response.getWriter();
@@ -128,14 +149,16 @@ public class BlogController {
 
 		// Short i = 2;
 		// article.setArticleId(i);
-		int time = (int) new Date().getTime();
+		Long timeLong = new Date().getTime();
+		String timeStr = timeLong.toString();
+		int time = Integer.parseInt(timeStr.substring(0, 8));
 		byte up = 0;
 		// Short id = 2;
 		// article.setArticleId(id);
 		article.setArticleClick(0);
 		article.setArticleIp("123");
 		article.setArticleName(title);
-		article.setArticleTime(345);
+		article.setArticleTime(time);
 		article.setArticleUp(up);
 		article.setArticleContent(content);
 		article.setArticleSummary(summary);

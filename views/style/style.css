@@ -25,7 +25,8 @@ p, a {
 /*------------------------样式-------------------------*/
 
 * {
-    font-family: "Helvetica Neue", Helvetica, STHeiTi, sans-serif;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+
 }
 
 /*指定PC端加载字体*/

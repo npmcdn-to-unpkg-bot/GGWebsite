@@ -43,18 +43,21 @@ var Comments = React.createClass({
     render: function () {
         debugger;
         var itemJsx, type = "", list = [];
-        var imgList = [
-            {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
-            {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
-        ];
+        //var imgList = [
+        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
+        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
+        //];
         for (var i in this.state.state) {
             switch (this.state.state[i].type) {
                 case "Text":
-                    itemJsx = <CommentText id={this.state.state[i].id} title={this.state.state[i].title} author='Ben'
+                    itemJsx = <CommentText id={this.state.state[i].id}
+                                           title={this.state.state[i].title}
+                                           time = {this.state.state[i].time}
+                                           author='Ben'
                                            text={this.state.state[i].summary}/>;
                     break;
                 case "Img":
-                    itemJsx = <CommentImg list={imgList} title='How to do it!' author='Ben'/>;
+                    itemJsx = <CommentImg list={this.state.state[i].list} title='近期分享照片' author='Ben'/>;
                     break;
                 case "Login":
                     itemJsx = <CommentLogin/>;

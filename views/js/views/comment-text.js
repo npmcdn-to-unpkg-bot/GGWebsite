@@ -3,10 +3,16 @@ var React = require('react');
 var CommentActionCreators = require('../actions/comment-action-creators');
 
 var CommentText = React.createClass({
+    getLocalTime: function (nS) {
+        return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/, ' ');
+    },
     render: function () {
+        debugger;
+        var time = this.props.time + "00";
+        var date = this.getLocalTime(time);
         return (
             <div className='posts'>
-                <h1 className='content-subhead'>Pinned Post</h1>
+                <h1 className='content-subhead'>{date}</h1>
                 <section className='post'>
                     <header className='post-header'>
                         <img className='post-avatar' alt='Tilo Mitra&#x27;s avatar' height='48' width='48'
@@ -29,6 +35,7 @@ var CommentText = React.createClass({
         );
     },
     enter: function () {
+        $('html, body,#app').animate({scrollTop:0}, 'slow');
         var data = {
             ArticleId: this.props.id
         }

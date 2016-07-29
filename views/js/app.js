@@ -45,10 +45,12 @@ var App = React.createClass({
     },
     componentDidMount: function () {
         CommentStore.addChangeListener(this.onChange);
+        CommentStore.addViewChangeListener(this.onChange);
     },
 
     componentWillUnmount: function () {
         CommentStore.removeChangeListener(this.onChange);
+        CommentStore.removeViewChangeListener(this.onChange);
     },
     onChange: function () {
         debugger;
@@ -56,7 +58,7 @@ var App = React.createClass({
     },
     render: function () {
         debugger;
-        var title = "Yes this is my Blog!";
+        var title = "发现光明";
 
         switch (this.state.viewState) {
             case "LISTVIEW":
