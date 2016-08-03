@@ -56,6 +56,19 @@ public class HelloController {
 		return "index";
 
 	}
+	@RequestMapping("/we")
+	public String we() {
+
+		return "wechart";
+
+	}
+	@RequestMapping("/getSignature")
+	@ResponseBody
+	public String getSignature(HttpServletRequest request, HttpServletResponse response) {
+		String nonce = request.getParameter("nonce"), timestamp = request.getParameter("timestamp"), url = request.getParameter("url");
+		
+		return checkIt.getSignature(timestamp, nonce, url);
+	}
 
 	@RequestMapping("/gb")
 	public @ResponseBody void tetpage(HttpServletRequest request, HttpServletResponse response) throws Exception {

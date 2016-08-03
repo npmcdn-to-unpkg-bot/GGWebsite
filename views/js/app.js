@@ -7,6 +7,7 @@ var Comments = require('./views/comments');
 var CommentsTextView = require('./views/comment-text-view');
 var CommentHeader = require('./views/comment-header');
 var CommentFooter = require('./views/comment-footer');
+var CommentModal = require('./views/comment-modal');
 
 var comment = null;
 var commentFooter = null;
@@ -76,6 +77,7 @@ var App = React.createClass({
                 <CommentHeader title={title}/>
                 {comment}
                 {commentFooter}
+                <CommentModal></CommentModal>
             </div>
         );
     }

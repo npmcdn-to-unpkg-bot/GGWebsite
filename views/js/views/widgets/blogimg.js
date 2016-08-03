@@ -7,7 +7,7 @@ var BlogImg = React.createClass({
         debugger;
         return (
             <div className='pure-u-1 pure-u-md-1-2'>
-                <a href='http://www.flickr.com/photos/uberlife/8915936174/'>
+                <a data-remodal-target='modal' href='#'>
                     <img alt='Photo of someone working poolside at a resort'
                          className='pure-img-responsive'
                          src={this.props.url}/>

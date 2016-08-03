@@ -52,12 +52,12 @@ var Comments = React.createClass({
                 case "Text":
                     itemJsx = <CommentText id={this.state.state[i].id}
                                            title={this.state.state[i].title}
-                                           time = {this.state.state[i].time}
-                                           author='Ben'
+                                           time={this.state.state[i].time}
+                                           author='Jack'
                                            text={this.state.state[i].summary}/>;
                     break;
                 case "Img":
-                    itemJsx = <CommentImg list={this.state.state[i].list} title='近期分享照片' author='Ben'/>;
+                    itemJsx = <CommentImg list={this.state.state[i].list} title='近期分享照片' author='Jack'/>;
                     break;
                 case "Login":
                     itemJsx = <CommentLogin/>;

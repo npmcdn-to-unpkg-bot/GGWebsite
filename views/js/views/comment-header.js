@@ -2,6 +2,7 @@ var React = require('react');
 
 var CommentActionCreators = require('../actions/comment-action-creators');
 var CommentStore = require('../stores/comment-store');
+var CommentModal = require('../views/comment-modal');
 
 function getStateFromStore() {
     return {
@@ -22,6 +23,7 @@ function getStateFromStore() {
 //        </li>
 //    </ul>
 //</nav>
+//<a className='pure-button'data-remodal-target="modal" href="#">说明</a>
 var CommentHeader = React.createClass({
     getInitialState: function () {
         debugger;
@@ -91,7 +93,6 @@ var CommentHeader = React.createClass({
             end: 5
         }
         CommentActionCreators.reFlashData(obj);
-
     }
 });
 

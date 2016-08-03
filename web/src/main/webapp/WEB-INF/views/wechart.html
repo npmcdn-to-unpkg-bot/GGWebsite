@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<title>体会</title>
+<!--<link rel="stylesheet" type="text/css" href="styles/style.css">-->
+<link
+	href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+<!--[if lte IE 8]>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-old-ie-min.css">
+
+    <![endif]-->
+<!--[if gt IE 8]><!-->
+<link rel="stylesheet"
+	href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+
+
+</head>
+<script>
+	var _hmt = _hmt || [];
+	(function() {
+		var hm = document.createElement("script");
+		hm.src = "//hm.baidu.com/hm.js?fb738fb7e699e550773676b5c9508025";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	})();
+</script>
+
+
+<body>
+	<main id="app"></main>
+	<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+	<script src="resource/scripts/markdown.min.js"></script>
+	<script src="resource/scripts/remodal.min.js"></script>
+	<!--<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>-->
+	<script src="resource/scripts/bundle.js"></script>
+</body>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+	var url = window.location.href;
+	var timestamp = Date.parse( new Date());
+	$.get("getSignature?nonce=test&timestamp="+timestamp+"&url="+url, function(result){
+		debugger;
+		wx.config({
+			debug : false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+			appId : 'wxc1360ff4bfb0b416', // 必填，公众号的唯一标识
+			timestamp : timestamp, // 必填，生成签名的时间戳
+			nonceStr : 'test', // 必填，生成签名的随机串
+			signature : result,// 必填，签名，见附录1
+			jsApiList : [ "onMenuShareTimeline",
+			              "onMenuShareAppMessage" ]
+		// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+		});
+		wx.ready(function() {
+			var shareData = {
+					title : '体会',
+					desc : '怎么说能,就是测试一下',
+					link : 'http://ggwebsite.duapp.com/spingmvc/cc',
+					imgUrl : 'http://ggwebsite.duapp.com/spingmvc/resource/img/icon.jpg'
+				};
+				wx.onMenuShareAppMessage(shareData);
+				wx.onMenuShareTimeline(shareData);
+			// config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+		});
+		wx.error(function(res) {
+		/* 	alert("error"); */
+			// config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+
+		});
+	})
+	
+	
+</script>
+
+</html>
