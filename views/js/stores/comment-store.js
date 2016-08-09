@@ -189,7 +189,6 @@ AppDispatcher.register(function (action) {
                 data: data,
                 success: function (e) {
                     viewState = "ARTICLEVIEW";
-                    var tem = {id: 1, type: "Alert", text: "成功"};
                     comments = e.article;
                     CommentStore.emitViewChange();
                 },

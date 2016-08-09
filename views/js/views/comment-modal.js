@@ -15,7 +15,7 @@ var CommentModal = React.createClass({
                 </p>
                 <br/>
                 <button data-remodal-action='cancel' className='remodal-cancel'>关闭</button>
-                <button data-remodal-action='confirm' className='remodal-confirm'>好吧,那就先这样</button>
+                <button data-remodal-action='confirm' className='remodal-confirm'>好吧</button>
             </div>
         );
     },

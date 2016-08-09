@@ -53,6 +53,7 @@ var Comments = React.createClass({
                     itemJsx = <CommentText id={this.state.state[i].id}
                                            title={this.state.state[i].title}
                                            time={this.state.state[i].time}
+                                           sort={this.state.state[i].sort}
                                            author='Jack'
                                            text={this.state.state[i].summary}/>;
                     break;

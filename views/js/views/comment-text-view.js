@@ -60,11 +60,13 @@ var Comments = React.createClass({
         var html = markdown.toHTML(value, 'Maruku')
         //html = parseDom(html);
 
-
+        var url = window.location.href + "?ArticleId=" + this.props.id;
         return (
             <div className='content pure-u-1 pure-u-md-3-4'>
-                <div>
+                <div className='content-text'>
                     <div dangerouslySetInnerHTML={createMarkup(html)}/>
+                    <a href={url} className='pure-button'>跳转</a>
+                    <a data-remodal-target='modal' className='pure-button'>分享</a>
                 </div>
             </div>
 

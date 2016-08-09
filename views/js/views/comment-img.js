@@ -19,9 +19,9 @@ var CommentImg = React.createClass({
                              src='/spingmvc/resource/img/icon1.jpg'/>
                         <h2 className='post-title'>{this.props.title}</h2>
                         <p className='post-meta'>
-                            By <a href='#' className='post-author'>{this.props.author}</a> under <a
-                            className='post-category post-category-design' href='#'>CSS</a> <a
-                            className='post-category post-category-pure' href='#'>Pure</a>
+                            By <a href='#' className='post-author'>{this.props.author}</a>  置顶  <a
+                            className='post-category post-category-design' href='#'>美图</a> <a
+                            className='post-category post-category-pure' href='#'>近照</a>
                         </p>
                     </header>
 

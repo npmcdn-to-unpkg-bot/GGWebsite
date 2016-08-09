@@ -806,6 +806,9 @@ html.remodal-is-locked {
 
 #content-title {
     width: 100%;
-
+}
+.content-text{
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 

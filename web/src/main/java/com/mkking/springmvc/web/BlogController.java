@@ -83,6 +83,7 @@ public class BlogController {
 			item.put("summary", i.getArticleSummary());
 			item.put("time", i.getArticleTime().toString());
 			item.put("title", i.getArticleName());
+			item.put("sort", i.getSortArticleId().toString());
 			item.put("type", "Text");
 			jsonObj.put(i.getArticleId().toString(), item);
 		}
@@ -193,6 +194,7 @@ public class BlogController {
 		item.put("content", article.getArticleContent());
 		item.put("title", article.getArticleName());
 		item.put("type", "Text");
+		item.put("id", article.getArticleId().toString());
 		jsonObj.put("article", item);
 
 		reult = jsonObj.toString();

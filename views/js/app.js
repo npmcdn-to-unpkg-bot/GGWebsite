@@ -26,8 +26,6 @@ function getStateFromStore() {
         article: CommentStore.getAll() || {},
         viewState: CommentStore.getViewState()
     }
-
-
 }
 
 var App = React.createClass({
@@ -67,7 +65,9 @@ var App = React.createClass({
                 commentFooter = (<CommentFooter />);
                 break;
             case "ARTICLEVIEW":
-                comment = (<CommentsTextView content={this.state.article.content}></CommentsTextView>);
+                comment = (<CommentsTextView id={this.state.article.id}
+                                             content={this.state.article.content}>
+                </CommentsTextView>);
                 title = this.state.article.title;
                 commentFooter = null;
                 break;
