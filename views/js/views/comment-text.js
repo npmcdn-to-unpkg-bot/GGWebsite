@@ -7,9 +7,16 @@ var CommentText = React.createClass({
         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/, ' ');
     },
     render: function () {
-        debugger;
+
         var time = this.props.time + "00";
-        var date = this.getLocalTime(time);
+        var myDate = new Date(Number(time));
+        var year = myDate.getFullYear();
+        var month = myDate.getMonth() + 1;
+        var date = myDate.getDate();
+        var dateArr = ["日", "一", '二', '三', '四', '五', '六'];
+        var day = myDate.getDay();
+        var date = " " + year + "年" + month + "月" + date + "日" + " 星期" + dateArr[day] + " ";
+
         var hrefStr = "#atricleid/" + this.props.id;
         var tap;
         switch (this.props.sort) {

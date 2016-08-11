@@ -295,6 +295,7 @@ h3 {
 }
 
 .alert {
+
     background-color: #c4453c;
     background-image: -webkit-linear-gradient(135deg, transparent,
     transparent 25%, hsla(0, 0%, 0%, .05) 25%,
@@ -332,6 +333,7 @@ h3 {
     text-decoration: none;
     top: -45px;
     width: 100%;
+    line-height:0.5;
     -webkit-animation: alert 1s ease forwards;
     -moz-animation: alert 1s ease forwards;
     -ms-animation: alert 1s ease forwards;

@@ -9,7 +9,7 @@ var user = {};
 var currentPage = 1;
 var pageState = "FIRSTPAGE";
 var viewState = "LISTVIEW";
-
+var currentTitle = "发现光明";
 
 var CommentStore = assign({}, EventEmitter.prototype, {
 
@@ -43,6 +43,8 @@ var CommentStore = assign({}, EventEmitter.prototype, {
     },
     getAll: function () {
         return comments;
+    },getTitle:function(){
+        return currentTitle;
     }
 
 
@@ -175,6 +177,7 @@ AppDispatcher.register(function (action) {
                 success: function (e) {
                     pageState = "NONE";
                     viewState = "ARTICLEVIEW";
+                    currentTitle = e.article.title;
                     comments = [e.article];
                     CommentStore.emitChange();
                 },

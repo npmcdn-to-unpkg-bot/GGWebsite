@@ -20,10 +20,9 @@ var App = React.createClass({
 
     render: function () {
         debugger;
-        var title = "发现光明";
         return (
             <div id='layout' className='pure-g'>
-                <CommentHeader title={title}/>
+                <CommentHeader/>
                 <Comments />
                 <CommentFooter />
                 <CommentModal></CommentModal>

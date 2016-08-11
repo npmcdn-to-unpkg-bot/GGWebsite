@@ -12,7 +12,7 @@ var CommentInsert = React.createClass({
                         <label>标题</label>
                         <input id='content-title' onChange={this.titleChange} placeholder='标题' required/>
                         <select id='class' onChange={this.classChange}>
-                            <option id='1' data='1'>日常</option>
+                            <option id='1' data='1' selected='selected'>日常</option>
                             <option id='2' data='2'>技术</option>
                             <option id='3' data='3'>摄影</option>
                         </select>
@@ -31,9 +31,10 @@ var CommentInsert = React.createClass({
         article.title = e.target.value;
     }, contentChange: function (e) {
         article.content = e.target.value;
-    }, classChange:function(e){
+    }, classChange: function (e) {
         article.class = e.target.selectedOptions[0].id;
     }, submit: function (e) {
+        article.class = article.class || "1";
         CommentActionCreators.insertArticle(article);
     }
 });

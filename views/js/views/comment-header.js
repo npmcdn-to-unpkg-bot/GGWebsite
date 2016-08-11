@@ -7,7 +7,8 @@ var CommentModal = require('../views/comment-modal');
 function getStateFromStore() {
     return {
         viewState: CommentStore.getViewState(),
-        userData: ""
+        userData: "",
+        title:CommentStore.getTitle()
     }
 }
 //<nav className='nav'>
@@ -48,7 +49,7 @@ var CommentHeader = React.createClass({
         return (
             <div className='sidebar pure-u-1 pure-u-md-1-4'>
                 <div className='header'>
-                    <h1 className='brand-title' onClick={this.reload}>{this.props.title}</h1>
+                    <h1 className='brand-title' onClick={this.reload}>{this.state.title}</h1>
                     <h4 className='brand-tagline'>这里没有诗,但是会走向远方!</h4>
 
                     <nav className='nav'>
