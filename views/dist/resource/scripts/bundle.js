@@ -46,83 +46,32 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
-	var CommentStore = __webpack_require__(153);
 
-	var Comments = __webpack_require__(156);
-	var CommentsTextView = __webpack_require__(165);
-	var CommentHeader = __webpack_require__(166);
-	var CommentFooter = __webpack_require__(164);
-	var CommentModal = __webpack_require__(167);
+	var Comments = __webpack_require__(148);
 
-	var comment = null;
-	var commentFooter = null;
-	__webpack_require__(168)
-
-	function getQueryString(name) {
-	    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-	    var r = window.location.search.substr(1).match(reg);
-	    if (r != null) {
-	        return unescape(r[2]);
-	    }
-	    return null;
-	}
-	function getStateFromStore() {
-	    return {
-	        article: CommentStore.getAll() || {},
-	        viewState: CommentStore.getViewState()
-	    }
+	var CommentHeader = __webpack_require__(164);
+	var CommentFooter = __webpack_require__(166);
+	var CommentModal = __webpack_require__(165);
+	var CommentRouter = __webpack_require__(167);
 
 
-	}
+	__webpack_require__(169)
+
+	CommentRouter.init();
+	window.location.hash = window.location.hash || "home";
+
+
 
 	var App = React.createClass({displayName: "App",
-	    getInitialState: function () {
-	        if (getQueryString("ArticleId")) {
-	            var data = {
-	                ArticleId: getQueryString("ArticleId")
-	            }
-	            CommentActionCreators.getArticle(data);
-	        } else {
-	            var data = {start: 0, end: 5};
-	            CommentActionCreators.reFlashData(data);
-	        }
-	        debugger;
-	        return getStateFromStore() || {};
-	    },
-	    componentDidMount: function () {
-	        CommentStore.addChangeListener(this.onChange);
-	        CommentStore.addViewChangeListener(this.onChange);
-	    },
 
-	    componentWillUnmount: function () {
-	        CommentStore.removeChangeListener(this.onChange);
-	        CommentStore.removeViewChangeListener(this.onChange);
-	    },
-	    onChange: function () {
-	        debugger;
-	        this.setState(getStateFromStore());
-	    },
 	    render: function () {
 	        debugger;
 	        var title = "发现光明";
-
-	        switch (this.state.viewState) {
-	            case "LISTVIEW":
-	                comment = (React.createElement(Comments, null));
-	                commentFooter = (React.createElement(CommentFooter, null));
-	                break;
-	            case "ARTICLEVIEW":
-	                comment = (React.createElement(CommentsTextView, {content: this.state.article.content}));
-	                title = this.state.article.title;
-	                commentFooter = null;
-	                break;
-	        }
 	        return (
 	            React.createElement("div", {id: "layout", className: "pure-g"}, 
 	                React.createElement(CommentHeader, {title: title}), 
-	                comment, 
-	                commentFooter, 
+	                React.createElement(Comments, null), 
+	                React.createElement(CommentFooter, null), 
 	                React.createElement(CommentModal, null)
 	            )
 	        );
@@ -19017,90 +18966,313 @@
 /* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(149);
+	var React = __webpack_require__(1);
 
-	module.exports = {
+	var CommentStore = __webpack_require__(149);
+	var CommentActionCreators = __webpack_require__(156);
 
-	    reFlashData: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "REFLASH",
-	            comment: comment
-	        }
+	var CommentAlert = __webpack_require__(157);
+	var CommentText = __webpack_require__(158);
+	var CommentImg = __webpack_require__(159);
+	var CommentLogin = __webpack_require__(161);
+	var CommentRegister = __webpack_require__(162);
+	var CommentInsert = __webpack_require__(163);
+	var CommentsTextView = __webpack_require__(175);
 
-	        AppDispatcher.dispatch(action);
-	    },
-	    login: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "LOGIN",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    register: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "REGISTER",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    submitUser: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "SUBMIT",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    loginUser: function (comment) {
-	        var action = {
-	            actionType: "LOGINUSER",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    insertview: function (comment) {
-	        var action = {
-	            actionType: "INSERTVIEW",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    insertArticle: function (comment) {
-	        var action = {
-	            actionType: "INSERTARTICLE",
-	            comment: comment
-	        }
-	        AppDispatcher.dispatch(action);
-	    },
-	    getArticle: function (comment) {
-	        var action = {
-	            actionType: "GETARTICLE",
-	            comment: comment
-	        }
-	        AppDispatcher.dispatch(action);
+	function getStateFromStore() {
+	    return {
+	        state: CommentStore.getAll()
 	    }
-
 	}
 
+	var Comments = React.createClass({displayName: "Comments",
+
+	    onChange: function () {
+	        debugger;
+	        this.setState(getStateFromStore());
+	    },
+
+	    getInitialState: function () {
+	        //alert($.getUrlParam("name"));
+	        //var data = {start: 0, end: 5};
+	        //CommentActionCreators.reFlashData(data);
+	        return getStateFromStore();
+	    },
+
+	    componentDidMount: function () {
+	        CommentStore.addChangeListener(this.onChange);
+	    },
+
+	    componentWillUnmount: function () {
+	        CommentStore.removeChangeListener(this.onChange);
+	    },
+
+
+	    render: function () {
+	        debugger;
+	        var itemJsx, type = "", list = [];
+	        //var imgList = [
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
+	        //];
+	        for (var i in this.state.state) {
+	            switch (this.state.state[i].type) {
+	                case "Text":
+	                    itemJsx = React.createElement(CommentText, {id: this.state.state[i].id, 
+	                                           title: this.state.state[i].title, 
+	                                           time: this.state.state[i].time, 
+	                                           sort: this.state.state[i].sort, 
+	                                           author: "Jack", 
+	                                           text: this.state.state[i].summary});
+	                    break;
+	                case "Img":
+	                    itemJsx = React.createElement(CommentImg, {list: this.state.state[i].list, 
+	                                          title: "近期分享照片", 
+	                                          author: "Jack"});
+	                    break;
+	                case "Login":
+	                    itemJsx = React.createElement(CommentLogin, null);
+	                    break;
+	                case "Register":
+	                    itemJsx = React.createElement(CommentRegister, null);
+	                    break;
+	                case "Alert":
+	                    itemJsx = React.createElement(CommentAlert, {text: this.state.state[i].text});
+	                    break;
+	                case "Insert":
+	                    itemJsx = React.createElement(CommentInsert, null);
+	                    break;
+	                case "Article":
+	                    itemJsx = React.createElement(CommentsTextView, {id: this.state.state[i].id, 
+	                                                content: this.state.state[i].content});
+	                    break;
+
+	            }
+	            list.push(itemJsx);
+	        }
+
+
+	        return (
+	            React.createElement("div", {className: "content pure-u-1 pure-u-md-3-4"}, 
+	                list
+	            )
+
+	        )
+	    },
+	    deleteItem: function (e) {
+	        debugger;
+	        //CommentAction.deleteCommentItem(1);
+	    },
+	});
+
+	module.exports = Comments;
 
 /***/ },
 /* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Dispatcher = __webpack_require__(150).Dispatcher;
+	var AppDispatcher = __webpack_require__(150);
+
+	var EventEmitter = __webpack_require__(154).EventEmitter;
+	var assign = __webpack_require__(155);
+
+
+	var comments = {};
+	var user = {};
+	var currentPage = 1;
+	var pageState = "FIRSTPAGE";
+	var viewState = "LISTVIEW";
+
+
+	var CommentStore = assign({}, EventEmitter.prototype, {
+
+	    emitChange: function () {
+	        this.emit('change');
+	    },
+
+	    addChangeListener: function (callback) {
+	        this.on('change', callback);
+	    },
+
+	    removeChangeListener: function (callback) {
+	        this.removeListener('change', callback);
+	    },
+
+
+	    getPageState: function () {
+	        return pageState;
+	    },
+
+	    getCuttentPage: function () {
+	        return currentPage;
+	    },
+
+	    setCurrentPage: function (page) {
+	        currentPage = page;
+	    },
+
+	    getViewState: function () {
+	        return viewState;
+	    },
+	    getAll: function () {
+	        return comments;
+	    }
+
+
+	});
+
+
+	AppDispatcher.register(function (action) {
+	    switch (action.actionType) {
+	        case "REFLASH":
+	            //提交注册信息
+	            var url = "/spingmvc/Page"
+	            var data = action.comment;
+	            currentPage = ((data.start / 5) + 1)
+	            data.end = (currentPage == 1 ? 5 : 6);
+	            $.ajax({
+	                type: 'GET',
+	                url: url,
+	                data: data,
+	                error: function () {
+	                    alert(arguments[1]);
+	                },
+	                success: function (e) {
+	                    viewState = "LISTVIEW";
+	                    var result = []
+	                    for (var i in e) {
+	                        result.push(e[i]);
+	                    }
+	                    if (data.start == 0) {
+	                        pageState = "FIRSTPAGE";
+	                    } else if (result.length < 6) {
+	                        pageState = "LASTPAGE";
+	                    } else {
+	                        result.pop();
+	                        pageState = "MIDDLEPAGE";
+	                    }
+
+
+	                    result = result.reverse();
+	                    comments = result;
+	                    CommentStore.emitChange();
+	                },
+	                dataType: "json"
+	            });
+	            break;
+	        case "LOGIN":
+	            pageState = "NONE";
+	            currentPage = 1;
+	            var login = {id: 1, type: "Login"}
+	            comments = [login];
+	            CommentStore.emitChange();
+	            break;
+	        case "REGISTER":
+	            pageState = "NONE";
+	            currentPage = 1;
+	            //跳到注册面板
+	            var register = {id: 1, type: "Register"}
+	            comments = [register];
+	            CommentStore.emitChange();
+	            break;
+	        case "INSERTVIEW":
+	            pageState = "NONE";
+	            currentPage = 1;
+	            //跳到注册面板
+	            var register = {id: 1, type: "Insert"}
+	            comments = [register];
+	            CommentStore.emitChange();
+	            break;
+	        case "SUBMIT":
+	            //提交注册信息
+	            var url = "/spingmvc/Register"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                error: function () {
+	                    var tem = {id: 1, type: "Alert", text: "出错啦"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
+	                },
+	                success: function (e) {
+	                    user.id = e;
+	                    var tem = {id: 1, type: "Alert", text: "成功"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
+	                }
+	            });
+
+	            break;
+	        case "LOGINUSER":
+	            debugger;
+	            var url = "/spingmvc/Login"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                success: function (e) {
+	                    debugger;
+	                    comments = [register];
+	                    CommentStore.emitChange();
+	                }
+	            });
+
+	            break;
+	        case "INSERTARTICLE":
+	            debugger;
+	            var url = "/spingmvc/InsertBlog"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                success: function (e) {
+	                    var tem = {id: 1, type: "Alert", text: "成功"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
+	                }
+	            });
+
+	            break;
+	        case "GETARTICLE":
+	            debugger;
+	            var url = "/spingmvc/GetBlogById"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                success: function (e) {
+	                    pageState = "NONE";
+	                    viewState = "ARTICLEVIEW";
+	                    comments = [e.article];
+	                    CommentStore.emitChange();
+	                },
+	                dataType: "json"
+	            });
+
+	            break;
+
+	        default:
+	            break;
+	    }
+	});
+
+	module.exports = CommentStore;
+
+/***/ },
+/* 150 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(151).Dispatcher;
 
 	module.exports = new Dispatcher();
 
 /***/ },
-/* 150 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19112,11 +19284,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Dispatcher = __webpack_require__(151);
+	module.exports.Dispatcher = __webpack_require__(152);
 
 
 /***/ },
-/* 151 */
+/* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19138,7 +19310,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(152);
+	var invariant = __webpack_require__(153);
 
 	var _prefix = 'ID_';
 
@@ -19353,7 +19525,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 152 */
+/* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19406,217 +19578,6 @@
 
 	module.exports = invariant;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
-/* 153 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(149);
-
-	var EventEmitter = __webpack_require__(154).EventEmitter;
-	var assign = __webpack_require__(155);
-
-
-	var comments = {};
-	var user = {};
-	var currentPage = 1;
-	var pageState = "FIRSTPAGE";
-	var viewState = "LISTVIEW";
-
-
-	var CommentStore = assign({}, EventEmitter.prototype, {
-
-	    emitChange: function () {
-	        this.emit('change');
-	    },
-
-	    addChangeListener: function (callback) {
-	        this.on('change', callback);
-	    },
-
-	    removeChangeListener: function (callback) {
-	        this.removeListener('change', callback);
-	    },
-
-	    emitViewChange: function () {
-	        this.emit('viewchange');
-	    },
-
-	    addViewChangeListener: function (callback) {
-	        this.on('viewchange', callback);
-	    },
-
-	    removeViewChangeListener: function (callback) {
-	        this.removeListener('viewchange', callback);
-	    },
-
-	    getPageState: function () {
-	        return pageState;
-	    },
-
-	    getCuttentPage: function () {
-	        return currentPage;
-	    },
-
-	    setCurrentPage: function (page) {
-	        currentPage = page;
-	    },
-
-	    getViewState: function () {
-	        return viewState;
-	    },
-	    getAll: function () {
-	        return comments;
-	    }
-
-
-	});
-
-
-	AppDispatcher.register(function (action) {
-	    switch (action.actionType) {
-	        case "REFLASH":
-	            //提交注册信息
-	            var url = "/spingmvc/Page"
-	            var data = action.comment;
-
-	            $.ajax({
-	                type: 'GET',
-	                url: url,
-	                data: data,
-	                error: function () {
-	                    alert(arguments[1]);
-	                },
-	                success: function (e) {
-	                    viewState = "LISTVIEW";
-	                    var result = []
-	                    for (var i in e) {
-	                        result.push(e[i]);
-	                    }
-	                    if (data.state == "down") {
-	                        if (result.length < 6) {
-	                            pageState = "LASTPAGE";
-	                        } else {
-	                            result.pop();
-	                            pageState = "MIDDLEPAGE";
-	                        }
-
-	                    } else {
-	                        if (data.start == 0) {
-	                            pageState = "FIRSTPAGE";
-	                        } else {
-	                            pageState = "MIDDLEPAGE";
-	                        }
-	                    }
-	                    result = result.reverse();
-	                    comments = result;
-	                    CommentStore.emitChange();
-	                },
-	                dataType: "json"
-	            });
-	            break;
-	        case "LOGIN":
-	            pageState = "NONE";
-	            currentPage = 1;
-	            var login = {id: 1, type: "Login"}
-	            comments = [login];
-	            CommentStore.emitChange();
-	            break;
-	        case "REGISTER":
-	            pageState = "NONE";
-	            currentPage = 1;
-	            //跳到注册面板
-	            var register = {id: 1, type: "Register"}
-	            comments = [register];
-	            CommentStore.emitChange();
-	            break;
-	        case "INSERTVIEW":
-	            pageState = "NONE";
-	            currentPage = 1;
-	            //跳到注册面板
-	            var register = {id: 1, type: "Insert"}
-	            comments = [register];
-	            CommentStore.emitChange();
-	            break;
-	        case "SUBMIT":
-	            //提交注册信息
-	            var url = "/spingmvc/Register"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                error: function () {
-	                    var tem = {id: 1, type: "Alert", text: "出错啦"};
-	                    comments = [tem];
-	                    CommentStore.emitChange();
-	                },
-	                success: function (e) {
-	                    user.id = e;
-	                    var tem = {id: 1, type: "Alert", text: "成功"};
-	                    comments = [tem];
-	                    CommentStore.emitChange();
-	                }
-	            });
-
-	            break;
-	        case "LOGINUSER":
-	            debugger;
-	            var url = "/spingmvc/Login"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                success: function (e) {
-	                    debugger;
-	                    comments = [register];
-	                    CommentStore.emitChange();
-	                }
-	            });
-
-	            break;
-	        case "INSERTARTICLE":
-	            debugger;
-	            var url = "/spingmvc/InsertBlog"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                success: function (e) {
-	                    var tem = {id: 1, type: "Alert", text: "成功"};
-	                    comments = [tem];
-	                    CommentStore.emitChange();
-	                }
-	            });
-
-	            break;
-	        case "GETARTICLE":
-	            debugger;
-	            var url = "/spingmvc/GetBlogById"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                success: function (e) {
-	                    viewState = "ARTICLEVIEW";
-	                    var tem = {id: 1, type: "Alert", text: "成功"};
-	                    comments = e.article;
-	                    CommentStore.emitViewChange();
-	                },
-	                dataType: "json"
-	            });
-
-	            break;
-
-	        default:
-	            break;
-	    }
-	});
-
-	module.exports = CommentStore;
 
 /***/ },
 /* 154 */
@@ -19973,102 +19934,79 @@
 /* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
+	var AppDispatcher = __webpack_require__(150);
 
-	var CommentStore = __webpack_require__(153);
-	var CommentActionCreators = __webpack_require__(148);
+	module.exports = {
 
-	var CommentAlert = __webpack_require__(157);
-	var CommentText = __webpack_require__(158);
-	var CommentImg = __webpack_require__(159);
-	var CommentLogin = __webpack_require__(161);
-	var CommentRegister = __webpack_require__(162);
-	var CommentInsert = __webpack_require__(163);
-	var CommentFooter = __webpack_require__(164);
-
-	function getStateFromStore() {
-	    return {
-	        state: CommentStore.getAll()
-	    }
-	}
-
-	var Comments = React.createClass({displayName: "Comments",
-
-	    onChange: function () {
+	    reFlashData: function (comment) {
 	        debugger;
-	        this.setState(getStateFromStore());
-	    },
-
-	    getInitialState: function () {
-	        //alert($.getUrlParam("name"));
-	        //var data = {start: 0, end: 5};
-	        //CommentActionCreators.reFlashData(data);
-	        return getStateFromStore();
-	    },
-
-	    componentDidMount: function () {
-	        CommentStore.addChangeListener(this.onChange);
-	    },
-
-	    componentWillUnmount: function () {
-	        CommentStore.removeChangeListener(this.onChange);
-	    },
-
-
-	    render: function () {
-	        debugger;
-	        var itemJsx, type = "", list = [];
-	        //var imgList = [
-	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
-	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
-	        //];
-	        for (var i in this.state.state) {
-	            switch (this.state.state[i].type) {
-	                case "Text":
-	                    itemJsx = React.createElement(CommentText, {id: this.state.state[i].id, 
-	                                           title: this.state.state[i].title, 
-	                                           time: this.state.state[i].time, 
-	                                           author: "Jack", 
-	                                           text: this.state.state[i].summary});
-	                    break;
-	                case "Img":
-	                    itemJsx = React.createElement(CommentImg, {list: this.state.state[i].list, title: "近期分享照片", author: "Jack"});
-	                    break;
-	                case "Login":
-	                    itemJsx = React.createElement(CommentLogin, null);
-	                    break;
-	                case "Register":
-	                    itemJsx = React.createElement(CommentRegister, null);
-	                    break;
-	                case "Alert":
-	                    itemJsx = React.createElement(CommentAlert, {text: this.state.state[i].text});
-	                    break;
-	                case "Insert":
-	                    itemJsx = React.createElement(CommentInsert, null);
-	                    break;
-	                case "Footer":
-	                    itemJsx = React.createElement(CommentFooter, null);
-	                    break;
-
-	            }
-	            list.push(itemJsx);
+	        var action = {
+	            actionType: "REFLASH",
+	            comment: comment
 	        }
 
-
-	        return (
-	            React.createElement("div", {className: "content pure-u-1 pure-u-md-3-4"}, 
-	                list
-	            )
-
-	        )
+	        AppDispatcher.dispatch(action);
 	    },
-	    deleteItem: function (e) {
+	    login: function (comment) {
 	        debugger;
-	        //CommentAction.deleteCommentItem(1);
-	    },
-	});
+	        var action = {
+	            actionType: "LOGIN",
+	            comment: comment
+	        }
 
-	module.exports = Comments;
+	        AppDispatcher.dispatch(action);
+	    },
+	    register: function (comment) {
+	        debugger;
+	        var action = {
+	            actionType: "REGISTER",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    submitUser: function (comment) {
+	        debugger;
+	        var action = {
+	            actionType: "SUBMIT",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    loginUser: function (comment) {
+	        var action = {
+	            actionType: "LOGINUSER",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    insertview: function (comment) {
+	        var action = {
+	            actionType: "INSERTVIEW",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    insertArticle: function (comment) {
+	        var action = {
+	            actionType: "INSERTARTICLE",
+	            comment: comment
+	        }
+	        AppDispatcher.dispatch(action);
+	    },
+	    getArticle: function (comment) {
+	        var action = {
+	            actionType: "GETARTICLE",
+	            comment: comment
+	        }
+	        AppDispatcher.dispatch(action);
+	    }
+
+	}
+
 
 /***/ },
 /* 157 */
@@ -20076,7 +20014,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 
 	var CommentAlert = React.createClass({displayName: "CommentAlert",
 
@@ -20103,7 +20041,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 
 	var CommentText = React.createClass({displayName: "CommentText",
 	    getLocalTime: function (nS) {
@@ -20113,6 +20051,22 @@
 	        debugger;
 	        var time = this.props.time + "00";
 	        var date = this.getLocalTime(time);
+	        var hrefStr = "#atricleid/" + this.props.id;
+	        var tap;
+	        switch (this.props.sort) {
+	            case "1":
+	                tap = (React.createElement("a", {className: "post-category post-category-pure", href: "#"}, "日常"));
+	                break;
+	            case "2":
+	                tap = (React.createElement("a", {className: "post-category post-category-design", href: "#"}, "技术"));
+	                break;
+	            case "3":
+	                tap = (React.createElement("a", {className: "post-category post-category-pure", href: "#"}, "摄影"));
+	                break;
+	            default:
+	                tap = (React.createElement("a", {className: "post-category post-category-design", href: "#"}, "不知"));
+	                break;
+	        }
 	        return (
 	            React.createElement("div", {className: "posts"}, 
 	                React.createElement("h1", {className: "content-subhead"}, date), 
@@ -20120,11 +20074,11 @@
 	                    React.createElement("header", {className: "post-header"}, 
 	                        React.createElement("img", {className: "post-avatar", alt: "Tilo Mitra's avatar", height: "48", width: "48", 
 	                             src: "/spingmvc/resource/img/icon.jpg"}), 
-	                        React.createElement("h2", {onClick: this.enter, className: "post-title"}, this.props.title), 
+	                        React.createElement("h2", {className: "post-title"}, React.createElement("a", {href: hrefStr}, this.props.title)), 
 	                        React.createElement("p", {className: "post-meta"}, 
-	                            "By ", React.createElement("a", {className: "post-author"}, this.props.author), " under ", React.createElement("a", {
-	                            className: "post-category post-category-design", href: "#"}, "CSS"), " ", React.createElement("a", {
-	                            className: "post-category post-category-pure", href: "#"}, "Pure")
+	                            React.createElement("a", {className: "post-author"}, this.props.author), 
+	                            React.createElement("a", null, " 点赞留言功能尚未开通 "), 
+	                            tap
 	                        )
 	                    ), 
 	                    React.createElement("div", {id: this.props.id, className: "post-description"}, 
@@ -20136,13 +20090,6 @@
 	            )
 
 	        );
-	    },
-	    enter: function () {
-	        $('html, body,#app').animate({scrollTop:0}, 'slow');
-	        var data = {
-	            ArticleId: this.props.id
-	        }
-	        CommentActionCreators.getArticle(data);
 	    }
 	});
 
@@ -20154,7 +20101,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 	var BlogImg = __webpack_require__(160);
 	var CommentImg = React.createClass({displayName: "CommentImg",
 	    render: function () {
@@ -20173,9 +20120,9 @@
 	                             src: "/spingmvc/resource/img/icon1.jpg"}), 
 	                        React.createElement("h2", {className: "post-title"}, this.props.title), 
 	                        React.createElement("p", {className: "post-meta"}, 
-	                            "By ", React.createElement("a", {href: "#", className: "post-author"}, this.props.author), " under ", React.createElement("a", {
-	                            className: "post-category post-category-design", href: "#"}, "CSS"), " ", React.createElement("a", {
-	                            className: "post-category post-category-pure", href: "#"}, "Pure")
+	                            "By ", React.createElement("a", {href: "#", className: "post-author"}, this.props.author), "  置顶  ", React.createElement("a", {
+	                            className: "post-category post-category-design", href: "#"}, "美图"), " ", React.createElement("a", {
+	                            className: "post-category post-category-pure", href: "#"}, "近照")
 	                        )
 	                    ), 
 
@@ -20216,7 +20163,7 @@
 	    render: function () {
 	        debugger;
 	        return (
-	            React.createElement("div", {className: "pure-u-1 pure-u-md-1-2"}, 
+	            React.createElement("div", {className: "pure-u-1 pure-u-md-1-2 padding-5px"}, 
 	                React.createElement("a", {"data-remodal-target": "modal", href: "#"}, 
 	                    React.createElement("img", {alt: "Photo of someone working poolside at a resort", 
 	                         className: "pure-img-responsive", 
@@ -20239,7 +20186,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 	var user = {};
 	var CommentLogin = React.createClass({displayName: "CommentLogin",
 	    render: function () {
@@ -20296,7 +20243,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 	var user = {};
 	var CommentRegister = React.createClass({displayName: "CommentRegister",
 	    render: function () {
@@ -20365,22 +20312,24 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 	var article = {};
 	var CommentInsert = React.createClass({displayName: "CommentInsert",
 	    render: function () {
 	        return (
 	            React.createElement("div", {className: "posts"}, 
-	                React.createElement("h1", {className: "content-subhead"}, "Pinned Post"), 
+	                React.createElement("h1", {className: "content-subhead"}, "发布文章"), 
 	                React.createElement("div", {className: "pure-form pure-form-stacked"}, 
 	                    React.createElement("fieldset", null, 
-	                        React.createElement("legend", null, "堆叠式表单"), 
-
-	                        React.createElement("label", null, "Title"), 
-	                        React.createElement("input", {id: "content-title", onChange: this.titleChange, placeholder: "Title", required: true}), 
-
-	                        React.createElement("label", null, "Content"), 
-	                        React.createElement("textarea", {id: "content", onChange: this.contentChange, placeholder: "Content"}), 
+	                        React.createElement("label", null, "标题"), 
+	                        React.createElement("input", {id: "content-title", onChange: this.titleChange, placeholder: "标题", required: true}), 
+	                        React.createElement("select", {id: "class", onChange: this.classChange}, 
+	                            React.createElement("option", {id: "1", data: "1"}, "日常"), 
+	                            React.createElement("option", {id: "2", data: "2"}, "技术"), 
+	                            React.createElement("option", {id: "3", data: "3"}, "摄影")
+	                        ), 
+	                        React.createElement("label", null, "内容"), 
+	                        React.createElement("textarea", {id: "content", onChange: this.contentChange, placeholder: "这里是写入Markdown的格式"}), 
 	                        React.createElement("button", {onClick: this.submit, className: "pure-button pure-button-primary"}, "发布")
 	                    )
 	                )
@@ -20389,16 +20338,16 @@
 	        );
 	    },
 	    deleteItem: function (e) {
-	        debugger;
 	        CommentActionCreators.deleteCommentItem(this.props);
-	    },
-	    titleChange: function (e) {
+	    }, titleChange: function (e) {
 	        article.title = e.target.value;
 	    }, contentChange: function (e) {
 	        article.content = e.target.value;
+	    }, classChange:function(e){
+	        article.class = e.target.selectedOptions[0].id;
 	    }, submit: function (e) {
 	        CommentActionCreators.insertArticle(article);
-	    },
+	    }
 	});
 
 	module.exports = CommentInsert;
@@ -20409,198 +20358,9 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
-	var CommentStore = __webpack_require__(153);
-
-	function getStateFromStore() {
-	    return {
-	        pageState: CommentStore.getPageState(),
-	        currentPage: CommentStore.getCuttentPage()
-	    }
-	}
-	var CommentFooter = React.createClass({displayName: "CommentFooter",
-	    getInitialState: function () {
-	        debugger;
-	        return getStateFromStore();
-	    },
-	    render: function () {
-	        var mod;
-	        debugger;
-	        switch (this.state.pageState) {
-	            case "FIRSTPAGE":
-	                mod = (
-	                    React.createElement("ul", {className: "nav-list"}, 
-	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {className: "pure-button down-page", onClick: this.downPage}, "下一页")
-	                        )
-	                    ));
-	                break;
-	            case "MIDDLEPAGE":
-	                mod = (
-	                    React.createElement("ul", {className: "nav-list"}, 
-	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {className: "pure-button up-page", onClick: this.upPage}, "上一页")
-	                        ), 
-	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {className: "pure-button down-page", onClick: this.downPage}, "下一页")
-	                        )
-	                    ));
-	                break;
-	            case "LASTPAGE":
-	                mod = (
-	                    React.createElement("ul", {className: "nav-list"}, 
-	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {className: "pure-button up-page", onClick: this.upPage}, "上一页")
-	                        )
-	                    ));
-	                break;
-	            case "NONE":
-	                mod = null;
-	                break;
-	        }
-
-	        return (
-	            React.createElement("div", {className: "pure-u-1"}, 
-	                React.createElement("div", {className: "footer"}, 
-	                    React.createElement("nav", {className: "nav"}, 
-	                        mod
-	                    )
-	                )
-	            )
-
-	        );
-	    },
-	    onChange: function () {
-	        debugger;
-	        this.setState(getStateFromStore());
-	    },
-	    componentDidMount: function () {
-	        CommentStore.addChangeListener(this.onChange);
-	    },
-	    componentWillUnmount: function () {
-	        CommentStore.removeChangeListener(this.onChange);
-	    },
-
-	    upPage: function () {
-	        $('html, body,#app').animate({scrollTop:0}, 'slow');
-	        this.page = this.state.currentPage;
-	        this.page = (this.page - 1) < 0 ? 0 : (this.page - 1);
-	        data = {};
-	        data.start = (this.page - 1) * 5;
-	        data.end = 5;
-	        data.state = "up";
-	        CommentStore.setCurrentPage(this.page);
-	        CommentActionCreators.reFlashData(data)
-	    },
-	    downPage: function () {
-	        debugger;
-	        $('html, body,#app').animate({scrollTop:0}, 'slow');
-	        this.page = this.state.currentPage;
-	        this.page = this.page + 1;
-	        data = {};
-	        data.start = (this.page - 1) * 5;
-	        data.end = 6;
-	        data.state = "down";
-	        CommentStore.setCurrentPage(this.page);
-	        CommentActionCreators.reFlashData(data)
-	    }
-	});
-
-	module.exports = CommentFooter;
-
-/***/ },
-/* 165 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-	var CommentStore = __webpack_require__(153);
-	var CommentActionCreators = __webpack_require__(148);
-
-
-	function getStateFromStore() {
-	    return {
-	        state: CommentStore.getAll()
-	    }
-	}
-	function createMarkup(str) {
-	    return {__html: str};
-	};
-
-
-	var Comments = React.createClass({displayName: "Comments",
-
-	    onChange: function () {
-	        debugger;
-	        this.setState(getStateFromStore());
-	    },
-
-	    getInitialState: function () {
-	        //alert($.getUrlParam("name"));
-	        //var data = {start: 0, end: 5};
-	        //CommentActionCreators.reFlashData(data);
-	        return getStateFromStore();
-	    },
-
-	    componentDidMount: function () {
-	        CommentStore.addViewChangeListener(this.onChange);
-	    },
-
-	    componentWillUnmount: function () {
-	        CommentStore.removeViewChangeListener(this.onChange);
-	    },
-
-
-	    render: function () {
-	        debugger;
-	        var itemJsx, type = "", list = [];
-	        var imgList = [
-	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
-	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
-	        ];
-	        var value = "##就是测试啊,怎么回事\n";
-	        value += "***\n"
-	        value += "#就是测试啊,怎么回事\n";
-	        value += "> 就是测试啊,怎么回事\n\n";
-	        value += "* 就是测试啊,怎么回事\n";
-	        value += "* 就是测试啊,怎么回事\n";
-	        value += "* 就是测试啊,怎么回事\n";
-	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
-	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
-	        value += "hello[^hello]";
-
-	        value = this.props.content;
-
-	        var html = markdown.toHTML(value, 'Maruku')
-	        //html = parseDom(html);
-
-
-	        return (
-	            React.createElement("div", {className: "content pure-u-1 pure-u-md-3-4"}, 
-	                React.createElement("div", null, 
-	                    React.createElement("div", {dangerouslySetInnerHTML: createMarkup(html)})
-	                )
-	            )
-
-	        )
-	    },
-	    deleteItem: function (e) {
-	        debugger;
-	        //CommentAction.deleteCommentItem(1);
-	    },
-	});
-
-	module.exports = Comments;
-
-/***/ },
-/* 166 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-	var CommentActionCreators = __webpack_require__(148);
-	var CommentStore = __webpack_require__(153);
-	var CommentModal = __webpack_require__(167);
+	var CommentActionCreators = __webpack_require__(156);
+	var CommentStore = __webpack_require__(149);
+	var CommentModal = __webpack_require__(165);
 
 	function getStateFromStore() {
 	    return {
@@ -20633,13 +20393,13 @@
 	            case "LISTVIEW":
 	                button = (
 	                    React.createElement("li", {className: "nav-item"}, 
-	                        React.createElement("a", {className: "pure-button", onClick: this.insertview}, "发布新文章")
+	                        React.createElement("a", {className: "pure-button", href: "#public", onClick: this.insertview}, "发布新文章")
 	                    ));
 	                break;
 	            case "ARTICLEVIEW":
 	                button = (
 	                    React.createElement("li", {className: "nav-item"}, 
-	                        React.createElement("a", {className: "pure-button", onClick: this.reFlashData}, "返回")
+	                        React.createElement("a", {className: "pure-button", href: "#home"}, "返回")
 	                    ));
 	                break;
 	        }
@@ -20647,7 +20407,7 @@
 	            React.createElement("div", {className: "sidebar pure-u-1 pure-u-md-1-4"}, 
 	                React.createElement("div", {className: "header"}, 
 	                    React.createElement("h1", {className: "brand-title", onClick: this.reload}, this.props.title), 
-	                    React.createElement("h2", {className: "brand-tagline"}, "这里没有诗,但是会走向远方!"), 
+	                    React.createElement("h4", {className: "brand-tagline"}, "这里没有诗,但是会走向远方!"), 
 
 	                    React.createElement("nav", {className: "nav"}, 
 	                        React.createElement("ul", {className: "nav-list"}, 
@@ -20664,17 +20424,11 @@
 	    },
 	    componentDidMount: function () {
 	        CommentStore.addChangeListener(this.onChange);
-	        CommentStore.addViewChangeListener(this.onChange);
+
 	    },
 	    componentWillUnmount: function () {
 	        CommentStore.removeChangeListener(this.onChange);
-	        CommentStore.removeViewChangeListener(this.onChange);
-	    },
 
-	    reFlashData: function () {
-	        $('html, body,#app').animate({scrollTop:0}, 'slow');
-	        var data = {start: 0, end: 5};
-	        CommentActionCreators.reFlashData(data);
 	    },
 	    login: function (e) {
 	        debugger;
@@ -20685,24 +20439,18 @@
 	    },
 	    insertview: function (e) {
 	        CommentActionCreators.insertview();
-	    }, reload: function () {
-	        var obj = {
-	            start: 0,
-	            end: 5
-	        }
-	        CommentActionCreators.reFlashData(obj);
 	    }
 	});
 
 	module.exports = CommentHeader;
 
 /***/ },
-/* 167 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 
 	var inst = $('[data-remodal-id=modal]').remodal();
 	var CommentModal = React.createClass({displayName: "CommentModal",
@@ -20717,7 +20465,7 @@
 	                ), 
 	                React.createElement("br", null), 
 	                React.createElement("button", {"data-remodal-action": "cancel", className: "remodal-cancel"}, "关闭"), 
-	                React.createElement("button", {"data-remodal-action": "confirm", className: "remodal-confirm"}, "好吧,那就先这样")
+	                React.createElement("button", {"data-remodal-action": "confirm", className: "remodal-confirm"}, "好吧")
 	            )
 	        );
 	    },
@@ -20733,16 +20481,862 @@
 	module.exports = CommentModal;
 
 /***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var CommentActionCreators = __webpack_require__(156);
+	var CommentStore = __webpack_require__(149);
+
+	function getStateFromStore() {
+	    return {
+	        pageState: CommentStore.getPageState(),
+	        currentPage: CommentStore.getCuttentPage()
+	    }
+	}
+	var CommentFooter = React.createClass({displayName: "CommentFooter",
+	    getInitialState: function () {
+	        debugger;
+	        return getStateFromStore();
+	    },
+	    render: function () {
+	        var mod;
+	        debugger;
+	        var nextHref = "#/page/"+(Number(this.state.currentPage)+1);
+	        var lastHref = "#/page/"+(Number(this.state.currentPage)-1);
+	        debugger;
+	        switch (this.state.pageState) {
+	            case "FIRSTPAGE":
+	                mod = (
+	                    React.createElement("ul", {className: "nav-list"}, 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {href: nextHref, className: "pure-button down-page"}, "下一页")
+	                        )
+	                    ));
+	                break;
+	            case "MIDDLEPAGE":
+	                mod = (
+	                    React.createElement("ul", {className: "nav-list"}, 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {href: lastHref, className: "pure-button up-page"}, "上一页")
+	                        ), 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {href: nextHref, className: "pure-button down-page"}, "下一页")
+	                        )
+	                    ));
+	                break;
+	            case "LASTPAGE":
+	                mod = (
+	                    React.createElement("ul", {className: "nav-list"}, 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {href: lastHref, className: "pure-button up-page"}, "上一页")
+	                        )
+	                    ));
+	                break;
+	            case "NONE":
+	                mod = null;
+	                break;
+	        }
+
+	        return (
+	            React.createElement("div", {className: "pure-u-1"}, 
+	                React.createElement("div", {className: "footer"}, 
+	                    React.createElement("nav", {className: "nav"}, 
+	                        mod
+	                    )
+	                )
+	            )
+
+	        );
+	    },
+	    onChange: function () {
+	        debugger;
+	        this.setState(getStateFromStore());
+	    },
+	    componentDidMount: function () {
+	        CommentStore.addChangeListener(this.onChange);
+	    },
+	    componentWillUnmount: function () {
+	        CommentStore.removeChangeListener(this.onChange);
+	    }
+	});
+
+	module.exports = CommentFooter;
+
+/***/ },
+/* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CommentRouter = __webpack_require__(168).Router;
+	var CommentActionCreators = __webpack_require__(156);
+
+	var router = new CommentRouter({
+	    '/public': function () {
+	    },
+	    '/atricleid/:id': function (id) {
+	        $('html, body,#app').animate({scrollTop: 0}, 'slow');
+	        var data = {
+	            ArticleId: id
+	        }
+	        CommentActionCreators.getArticle(data);
+	    },
+	    '/home': function () {
+	        var data = {start: 0, end: 5};
+	        CommentActionCreators.reFlashData(data);
+	    },
+	    '/page/:num': function (num) {
+	        $('html, body,#app').animate({scrollTop: 0}, 'slow');
+	        num = Number(num);
+	        var data = {start: (num - 1) * 5};
+	        CommentActionCreators.reFlashData(data);
+	    }
+	});
+
+
+	module.exports = router;
+
+/***/ },
 /* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+
+	//
+	// Generated on Tue Dec 16 2014 12:13:47 GMT+0100 (CET) by Charlie Robbins, Paolo Fragomeni & the Contributors (Using Codesurgeon).
+	// Version 1.2.6
+	//
+
+	(function (exports) {
+
+	/*
+	 * browser.js: Browser specific functionality for director.
+	 *
+	 * (C) 2011, Charlie Robbins, Paolo Fragomeni, & the Contributors.
+	 * MIT LICENSE
+	 *
+	 */
+
+	var dloc = document.location;
+
+	function dlocHashEmpty() {
+	  // Non-IE browsers return '' when the address bar shows '#'; Director's logic
+	  // assumes both mean empty.
+	  return dloc.hash === '' || dloc.hash === '#';
+	}
+
+	var listener = {
+	  mode: 'modern',
+	  hash: dloc.hash,
+	  history: false,
+
+	  check: function () {
+	    var h = dloc.hash;
+	    if (h != this.hash) {
+	      this.hash = h;
+	      this.onHashChanged();
+	    }
+	  },
+
+	  fire: function () {
+	    if (this.mode === 'modern') {
+	      this.history === true ? window.onpopstate() : window.onhashchange();
+	    }
+	    else {
+	      this.onHashChanged();
+	    }
+	  },
+
+	  init: function (fn, history) {
+	    var self = this;
+	    this.history = history;
+
+	    if (!Router.listeners) {
+	      Router.listeners = [];
+	    }
+
+	    function onchange(onChangeEvent) {
+	      for (var i = 0, l = Router.listeners.length; i < l; i++) {
+	        Router.listeners[i](onChangeEvent);
+	      }
+	    }
+
+	    //note IE8 is being counted as 'modern' because it has the hashchange event
+	    if ('onhashchange' in window && (document.documentMode === undefined
+	      || document.documentMode > 7)) {
+	      // At least for now HTML5 history is available for 'modern' browsers only
+	      if (this.history === true) {
+	        // There is an old bug in Chrome that causes onpopstate to fire even
+	        // upon initial page load. Since the handler is run manually in init(),
+	        // this would cause Chrome to run it twise. Currently the only
+	        // workaround seems to be to set the handler after the initial page load
+	        // http://code.google.com/p/chromium/issues/detail?id=63040
+	        setTimeout(function() {
+	          window.onpopstate = onchange;
+	        }, 500);
+	      }
+	      else {
+	        window.onhashchange = onchange;
+	      }
+	      this.mode = 'modern';
+	    }
+	    else {
+	      //
+	      // IE support, based on a concept by Erik Arvidson ...
+	      //
+	      var frame = document.createElement('iframe');
+	      frame.id = 'state-frame';
+	      frame.style.display = 'none';
+	      document.body.appendChild(frame);
+	      this.writeFrame('');
+
+	      if ('onpropertychange' in document && 'attachEvent' in document) {
+	        document.attachEvent('onpropertychange', function () {
+	          if (event.propertyName === 'location') {
+	            self.check();
+	          }
+	        });
+	      }
+
+	      window.setInterval(function () { self.check(); }, 50);
+
+	      this.onHashChanged = onchange;
+	      this.mode = 'legacy';
+	    }
+
+	    Router.listeners.push(fn);
+
+	    return this.mode;
+	  },
+
+	  destroy: function (fn) {
+	    if (!Router || !Router.listeners) {
+	      return;
+	    }
+
+	    var listeners = Router.listeners;
+
+	    for (var i = listeners.length - 1; i >= 0; i--) {
+	      if (listeners[i] === fn) {
+	        listeners.splice(i, 1);
+	      }
+	    }
+	  },
+
+	  setHash: function (s) {
+	    // Mozilla always adds an entry to the history
+	    if (this.mode === 'legacy') {
+	      this.writeFrame(s);
+	    }
+
+	    if (this.history === true) {
+	      window.history.pushState({}, document.title, s);
+	      // Fire an onpopstate event manually since pushing does not obviously
+	      // trigger the pop event.
+	      this.fire();
+	    } else {
+	      dloc.hash = (s[0] === '/') ? s : '/' + s;
+	    }
+	    return this;
+	  },
+
+	  writeFrame: function (s) {
+	    // IE support...
+	    var f = document.getElementById('state-frame');
+	    var d = f.contentDocument || f.contentWindow.document;
+	    d.open();
+	    d.write("<script>_hash = '" + s + "'; onload = parent.listener.syncHash;<script>");
+	    d.close();
+	  },
+
+	  syncHash: function () {
+	    // IE support...
+	    var s = this._hash;
+	    if (s != dloc.hash) {
+	      dloc.hash = s;
+	    }
+	    return this;
+	  },
+
+	  onHashChanged: function () {}
+	};
+
+	var Router = exports.Router = function (routes) {
+	  if (!(this instanceof Router)) return new Router(routes);
+
+	  this.params   = {};
+	  this.routes   = {};
+	  this.methods  = ['on', 'once', 'after', 'before'];
+	  this.scope    = [];
+	  this._methods = {};
+
+	  this._insert = this.insert;
+	  this.insert = this.insertEx;
+
+	  this.historySupport = (window.history != null ? window.history.pushState : null) != null
+
+	  this.configure();
+	  this.mount(routes || {});
+	};
+
+	Router.prototype.init = function (r) {
+	  var self = this
+	    , routeTo;
+	  this.handler = function(onChangeEvent) {
+	    var newURL = onChangeEvent && onChangeEvent.newURL || window.location.hash;
+	    var url = self.history === true ? self.getPath() : newURL.replace(/.*#/, '');
+	    self.dispatch('on', url.charAt(0) === '/' ? url : '/' + url);
+	  };
+
+	  listener.init(this.handler, this.history);
+
+	  if (this.history === false) {
+	    if (dlocHashEmpty() && r) {
+	      dloc.hash = r;
+	    } else if (!dlocHashEmpty()) {
+	      self.dispatch('on', '/' + dloc.hash.replace(/^(#\/|#|\/)/, ''));
+	    }
+	  }
+	  else {
+	    if (this.convert_hash_in_init) {
+	      // Use hash as route
+	      routeTo = dlocHashEmpty() && r ? r : !dlocHashEmpty() ? dloc.hash.replace(/^#/, '') : null;
+	      if (routeTo) {
+	        window.history.replaceState({}, document.title, routeTo);
+	      }
+	    }
+	    else {
+	      // Use canonical url
+	      routeTo = this.getPath();
+	    }
+
+	    // router has been initialized, but due to the chrome bug it will not
+	    // yet actually route HTML5 history state changes. Thus, decide if should route.
+	    if (routeTo || this.run_in_init === true) {
+	      this.handler();
+	    }
+	  }
+
+	  return this;
+	};
+
+	Router.prototype.explode = function () {
+	  var v = this.history === true ? this.getPath() : dloc.hash;
+	  if (v.charAt(1) === '/') { v=v.slice(1) }
+	  return v.slice(1, v.length).split("/");
+	};
+
+	Router.prototype.setRoute = function (i, v, val) {
+	  var url = this.explode();
+
+	  if (typeof i === 'number' && typeof v === 'string') {
+	    url[i] = v;
+	  }
+	  else if (typeof val === 'string') {
+	    url.splice(i, v, s);
+	  }
+	  else {
+	    url = [i];
+	  }
+
+	  listener.setHash(url.join('/'));
+	  return url;
+	};
+
+	//
+	// ### function insertEx(method, path, route, parent)
+	// #### @method {string} Method to insert the specific `route`.
+	// #### @path {Array} Parsed path to insert the `route` at.
+	// #### @route {Array|function} Route handlers to insert.
+	// #### @parent {Object} **Optional** Parent "routes" to insert into.
+	// insert a callback that will only occur once per the matched route.
+	//
+	Router.prototype.insertEx = function(method, path, route, parent) {
+	  if (method === "once") {
+	    method = "on";
+	    route = function(route) {
+	      var once = false;
+	      return function() {
+	        if (once) return;
+	        once = true;
+	        return route.apply(this, arguments);
+	      };
+	    }(route);
+	  }
+	  return this._insert(method, path, route, parent);
+	};
+
+	Router.prototype.getRoute = function (v) {
+	  var ret = v;
+
+	  if (typeof v === "number") {
+	    ret = this.explode()[v];
+	  }
+	  else if (typeof v === "string"){
+	    var h = this.explode();
+	    ret = h.indexOf(v);
+	  }
+	  else {
+	    ret = this.explode();
+	  }
+
+	  return ret;
+	};
+
+	Router.prototype.destroy = function () {
+	  listener.destroy(this.handler);
+	  return this;
+	};
+
+	Router.prototype.getPath = function () {
+	  var path = window.location.pathname;
+	  if (path.substr(0, 1) !== '/') {
+	    path = '/' + path;
+	  }
+	  return path;
+	};
+	function _every(arr, iterator) {
+	  for (var i = 0; i < arr.length; i += 1) {
+	    if (iterator(arr[i], i, arr) === false) {
+	      return;
+	    }
+	  }
+	}
+
+	function _flatten(arr) {
+	  var flat = [];
+	  for (var i = 0, n = arr.length; i < n; i++) {
+	    flat = flat.concat(arr[i]);
+	  }
+	  return flat;
+	}
+
+	function _asyncEverySeries(arr, iterator, callback) {
+	  if (!arr.length) {
+	    return callback();
+	  }
+	  var completed = 0;
+	  (function iterate() {
+	    iterator(arr[completed], function(err) {
+	      if (err || err === false) {
+	        callback(err);
+	        callback = function() {};
+	      } else {
+	        completed += 1;
+	        if (completed === arr.length) {
+	          callback();
+	        } else {
+	          iterate();
+	        }
+	      }
+	    });
+	  })();
+	}
+
+	function paramifyString(str, params, mod) {
+	  mod = str;
+	  for (var param in params) {
+	    if (params.hasOwnProperty(param)) {
+	      mod = params[param](str);
+	      if (mod !== str) {
+	        break;
+	      }
+	    }
+	  }
+	  return mod === str ? "([._a-zA-Z0-9-%()]+)" : mod;
+	}
+
+	function regifyString(str, params) {
+	  var matches, last = 0, out = "";
+	  while (matches = str.substr(last).match(/[^\w\d\- %@&]*\*[^\w\d\- %@&]*/)) {
+	    last = matches.index + matches[0].length;
+	    matches[0] = matches[0].replace(/^\*/, "([_.()!\\ %@&a-zA-Z0-9-]+)");
+	    out += str.substr(0, matches.index) + matches[0];
+	  }
+	  str = out += str.substr(last);
+	  var captures = str.match(/:([^\/]+)/ig), capture, length;
+	  if (captures) {
+	    length = captures.length;
+	    for (var i = 0; i < length; i++) {
+	      capture = captures[i];
+	      if (capture.slice(0, 2) === "::") {
+	        str = capture.slice(1);
+	      } else {
+	        str = str.replace(capture, paramifyString(capture, params));
+	      }
+	    }
+	  }
+	  return str;
+	}
+
+	function terminator(routes, delimiter, start, stop) {
+	  var last = 0, left = 0, right = 0, start = (start || "(").toString(), stop = (stop || ")").toString(), i;
+	  for (i = 0; i < routes.length; i++) {
+	    var chunk = routes[i];
+	    if (chunk.indexOf(start, last) > chunk.indexOf(stop, last) || ~chunk.indexOf(start, last) && !~chunk.indexOf(stop, last) || !~chunk.indexOf(start, last) && ~chunk.indexOf(stop, last)) {
+	      left = chunk.indexOf(start, last);
+	      right = chunk.indexOf(stop, last);
+	      if (~left && !~right || !~left && ~right) {
+	        var tmp = routes.slice(0, (i || 1) + 1).join(delimiter);
+	        routes = [ tmp ].concat(routes.slice((i || 1) + 1));
+	      }
+	      last = (right > left ? right : left) + 1;
+	      i = 0;
+	    } else {
+	      last = 0;
+	    }
+	  }
+	  return routes;
+	}
+
+	var QUERY_SEPARATOR = /\?.*/;
+
+	Router.prototype.configure = function(options) {
+	  options = options || {};
+	  for (var i = 0; i < this.methods.length; i++) {
+	    this._methods[this.methods[i]] = true;
+	  }
+	  this.recurse = options.recurse || this.recurse || false;
+	  this.async = options.async || false;
+	  this.delimiter = options.delimiter || "/";
+	  this.strict = typeof options.strict === "undefined" ? true : options.strict;
+	  this.notfound = options.notfound;
+	  this.resource = options.resource;
+	  this.history = options.html5history && this.historySupport || false;
+	  this.run_in_init = this.history === true && options.run_handler_in_init !== false;
+	  this.convert_hash_in_init = this.history === true && options.convert_hash_in_init !== false;
+	  this.every = {
+	    after: options.after || null,
+	    before: options.before || null,
+	    on: options.on || null
+	  };
+	  return this;
+	};
+
+	Router.prototype.param = function(token, matcher) {
+	  if (token[0] !== ":") {
+	    token = ":" + token;
+	  }
+	  var compiled = new RegExp(token, "g");
+	  this.params[token] = function(str) {
+	    return str.replace(compiled, matcher.source || matcher);
+	  };
+	  return this;
+	};
+
+	Router.prototype.on = Router.prototype.route = function(method, path, route) {
+	  var self = this;
+	  if (!route && typeof path == "function") {
+	    route = path;
+	    path = method;
+	    method = "on";
+	  }
+	  if (Array.isArray(path)) {
+	    return path.forEach(function(p) {
+	      self.on(method, p, route);
+	    });
+	  }
+	  if (path.source) {
+	    path = path.source.replace(/\\\//ig, "/");
+	  }
+	  if (Array.isArray(method)) {
+	    return method.forEach(function(m) {
+	      self.on(m.toLowerCase(), path, route);
+	    });
+	  }
+	  path = path.split(new RegExp(this.delimiter));
+	  path = terminator(path, this.delimiter);
+	  this.insert(method, this.scope.concat(path), route);
+	};
+
+	Router.prototype.path = function(path, routesFn) {
+	  var self = this, length = this.scope.length;
+	  if (path.source) {
+	    path = path.source.replace(/\\\//ig, "/");
+	  }
+	  path = path.split(new RegExp(this.delimiter));
+	  path = terminator(path, this.delimiter);
+	  this.scope = this.scope.concat(path);
+	  routesFn.call(this, this);
+	  this.scope.splice(length, path.length);
+	};
+
+	Router.prototype.dispatch = function(method, path, callback) {
+	  var self = this, fns = this.traverse(method, path.replace(QUERY_SEPARATOR, ""), this.routes, ""), invoked = this._invoked, after;
+	  this._invoked = true;
+	  if (!fns || fns.length === 0) {
+	    this.last = [];
+	    if (typeof this.notfound === "function") {
+	      this.invoke([ this.notfound ], {
+	        method: method,
+	        path: path
+	      }, callback);
+	    }
+	    return false;
+	  }
+	  if (this.recurse === "forward") {
+	    fns = fns.reverse();
+	  }
+	  function updateAndInvoke() {
+	    self.last = fns.after;
+	    self.invoke(self.runlist(fns), self, callback);
+	  }
+	  after = this.every && this.every.after ? [ this.every.after ].concat(this.last) : [ this.last ];
+	  if (after && after.length > 0 && invoked) {
+	    if (this.async) {
+	      this.invoke(after, this, updateAndInvoke);
+	    } else {
+	      this.invoke(after, this);
+	      updateAndInvoke();
+	    }
+	    return true;
+	  }
+	  updateAndInvoke();
+	  return true;
+	};
+
+	Router.prototype.invoke = function(fns, thisArg, callback) {
+	  var self = this;
+	  var apply;
+	  if (this.async) {
+	    apply = function(fn, next) {
+	      if (Array.isArray(fn)) {
+	        return _asyncEverySeries(fn, apply, next);
+	      } else if (typeof fn == "function") {
+	        fn.apply(thisArg, (fns.captures || []).concat(next));
+	      }
+	    };
+	    _asyncEverySeries(fns, apply, function() {
+	      if (callback) {
+	        callback.apply(thisArg, arguments);
+	      }
+	    });
+	  } else {
+	    apply = function(fn) {
+	      if (Array.isArray(fn)) {
+	        return _every(fn, apply);
+	      } else if (typeof fn === "function") {
+	        return fn.apply(thisArg, fns.captures || []);
+	      } else if (typeof fn === "string" && self.resource) {
+	        self.resource[fn].apply(thisArg, fns.captures || []);
+	      }
+	    };
+	    _every(fns, apply);
+	  }
+	};
+
+	Router.prototype.traverse = function(method, path, routes, regexp, filter) {
+	  var fns = [], current, exact, match, next, that;
+	  function filterRoutes(routes) {
+	    if (!filter) {
+	      return routes;
+	    }
+	    function deepCopy(source) {
+	      var result = [];
+	      for (var i = 0; i < source.length; i++) {
+	        result[i] = Array.isArray(source[i]) ? deepCopy(source[i]) : source[i];
+	      }
+	      return result;
+	    }
+	    function applyFilter(fns) {
+	      for (var i = fns.length - 1; i >= 0; i--) {
+	        if (Array.isArray(fns[i])) {
+	          applyFilter(fns[i]);
+	          if (fns[i].length === 0) {
+	            fns.splice(i, 1);
+	          }
+	        } else {
+	          if (!filter(fns[i])) {
+	            fns.splice(i, 1);
+	          }
+	        }
+	      }
+	    }
+	    var newRoutes = deepCopy(routes);
+	    newRoutes.matched = routes.matched;
+	    newRoutes.captures = routes.captures;
+	    newRoutes.after = routes.after.filter(filter);
+	    applyFilter(newRoutes);
+	    return newRoutes;
+	  }
+	  if (path === this.delimiter && routes[method]) {
+	    next = [ [ routes.before, routes[method] ].filter(Boolean) ];
+	    next.after = [ routes.after ].filter(Boolean);
+	    next.matched = true;
+	    next.captures = [];
+	    return filterRoutes(next);
+	  }
+	  for (var r in routes) {
+	    if (routes.hasOwnProperty(r) && (!this._methods[r] || this._methods[r] && typeof routes[r] === "object" && !Array.isArray(routes[r]))) {
+	      current = exact = regexp + this.delimiter + r;
+	      if (!this.strict) {
+	        exact += "[" + this.delimiter + "]?";
+	      }
+	      match = path.match(new RegExp("^" + exact));
+	      if (!match) {
+	        continue;
+	      }
+	      if (match[0] && match[0] == path && routes[r][method]) {
+	        next = [ [ routes[r].before, routes[r][method] ].filter(Boolean) ];
+	        next.after = [ routes[r].after ].filter(Boolean);
+	        next.matched = true;
+	        next.captures = match.slice(1);
+	        if (this.recurse && routes === this.routes) {
+	          next.push([ routes.before, routes.on ].filter(Boolean));
+	          next.after = next.after.concat([ routes.after ].filter(Boolean));
+	        }
+	        return filterRoutes(next);
+	      }
+	      next = this.traverse(method, path, routes[r], current);
+	      if (next.matched) {
+	        if (next.length > 0) {
+	          fns = fns.concat(next);
+	        }
+	        if (this.recurse) {
+	          fns.push([ routes[r].before, routes[r].on ].filter(Boolean));
+	          next.after = next.after.concat([ routes[r].after ].filter(Boolean));
+	          if (routes === this.routes) {
+	            fns.push([ routes["before"], routes["on"] ].filter(Boolean));
+	            next.after = next.after.concat([ routes["after"] ].filter(Boolean));
+	          }
+	        }
+	        fns.matched = true;
+	        fns.captures = next.captures;
+	        fns.after = next.after;
+	        return filterRoutes(fns);
+	      }
+	    }
+	  }
+	  return false;
+	};
+
+	Router.prototype.insert = function(method, path, route, parent) {
+	  var methodType, parentType, isArray, nested, part;
+	  path = path.filter(function(p) {
+	    return p && p.length > 0;
+	  });
+	  parent = parent || this.routes;
+	  part = path.shift();
+	  if (/\:|\*/.test(part) && !/\\d|\\w/.test(part)) {
+	    part = regifyString(part, this.params);
+	  }
+	  if (path.length > 0) {
+	    parent[part] = parent[part] || {};
+	    return this.insert(method, path, route, parent[part]);
+	  }
+	  if (!part && !path.length && parent === this.routes) {
+	    methodType = typeof parent[method];
+	    switch (methodType) {
+	     case "function":
+	      parent[method] = [ parent[method], route ];
+	      return;
+	     case "object":
+	      parent[method].push(route);
+	      return;
+	     case "undefined":
+	      parent[method] = route;
+	      return;
+	    }
+	    return;
+	  }
+	  parentType = typeof parent[part];
+	  isArray = Array.isArray(parent[part]);
+	  if (parent[part] && !isArray && parentType == "object") {
+	    methodType = typeof parent[part][method];
+	    switch (methodType) {
+	     case "function":
+	      parent[part][method] = [ parent[part][method], route ];
+	      return;
+	     case "object":
+	      parent[part][method].push(route);
+	      return;
+	     case "undefined":
+	      parent[part][method] = route;
+	      return;
+	    }
+	  } else if (parentType == "undefined") {
+	    nested = {};
+	    nested[method] = route;
+	    parent[part] = nested;
+	    return;
+	  }
+	  throw new Error("Invalid route context: " + parentType);
+	};
+
+
+
+	Router.prototype.extend = function(methods) {
+	  var self = this, len = methods.length, i;
+	  function extend(method) {
+	    self._methods[method] = true;
+	    self[method] = function() {
+	      var extra = arguments.length === 1 ? [ method, "" ] : [ method ];
+	      self.on.apply(self, extra.concat(Array.prototype.slice.call(arguments)));
+	    };
+	  }
+	  for (i = 0; i < len; i++) {
+	    extend(methods[i]);
+	  }
+	};
+
+	Router.prototype.runlist = function(fns) {
+	  var runlist = this.every && this.every.before ? [ this.every.before ].concat(_flatten(fns)) : _flatten(fns);
+	  if (this.every && this.every.on) {
+	    runlist.push(this.every.on);
+	  }
+	  runlist.captures = fns.captures;
+	  runlist.source = fns.source;
+	  return runlist;
+	};
+
+	Router.prototype.mount = function(routes, path) {
+	  if (!routes || typeof routes !== "object" || Array.isArray(routes)) {
+	    return;
+	  }
+	  var self = this;
+	  path = path || [];
+	  if (!Array.isArray(path)) {
+	    path = path.split(self.delimiter);
+	  }
+	  function insertOrMount(route, local) {
+	    var rename = route, parts = route.split(self.delimiter), routeType = typeof routes[route], isRoute = parts[0] === "" || !self._methods[parts[0]], event = isRoute ? "on" : rename;
+	    if (isRoute) {
+	      rename = rename.slice((rename.match(new RegExp("^" + self.delimiter)) || [ "" ])[0].length);
+	      parts.shift();
+	    }
+	    if (isRoute && routeType === "object" && !Array.isArray(routes[route])) {
+	      local = local.concat(parts);
+	      self.mount(routes[route], local);
+	      return;
+	    }
+	    if (isRoute) {
+	      local = local.concat(rename.split(self.delimiter));
+	      local = terminator(local, self.delimiter);
+	    }
+	    self.insert(event, local, routes[route]);
+	  }
+	  for (var route in routes) {
+	    if (routes.hasOwnProperty(route)) {
+	      insertOrMount(route, path.slice(0));
+	    }
+	  }
+	};
+
+
+
+	}( true ? exports : window));
+
+/***/ },
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(169);
+	var content = __webpack_require__(170);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(172)(content, {});
+	var update = __webpack_require__(174)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -20759,21 +21353,21 @@
 	}
 
 /***/ },
-/* 169 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(170)();
+	exports = module.exports = __webpack_require__(171)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #000000;\n}\n\nimg[alt=\"mark\"] {\n    width: 100%;\n}\n\np, a {\n    word-break: break-all;\n}\n\n#app {\n    overflow-x: auto;\n    overflow-y: auto;\n    -webkit-overflow-scrolling: touch;\n}\n\n/*------------------------样式-------------------------*/\n\n* {\n    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;\n\n}\n\n/*指定PC端加载字体*/\n@media (min-width: 48em) {\n    @font-face {\n        font-family: \"tt\"; /*这里是说明调用来的字体名字*/\n        src: url(" + __webpack_require__(171) + "); /*这里是字体文件路径*/\n    }\n    * {\n        font-family: \"tt\";\n    }\n}\n\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background-image: url(" + __webpack_require__(173) + ");\n    background-repeat: no-repeat;\n    background-size: cover;\n    /*background: rgb(61, 79, 93);*/\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n}\n\n.brand-title {\n    text-transform: uppercase;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(176, 202, 219);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(176, 202, 219);\n    color: #fff;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #aaa;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    cursor: pointer;\n    font-size: 2em;\n    color: #222;\n    margin-bottom: 0.2em;\n}\n\n.post-title:hover {\n    color: #4d85d1;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: \"tt\";\n    color: #444;\n    line-height: 1.8em;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #fff;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #ccc;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's default mobile first theme\n   ========================================================================== */\n\n/* Default theme styles for the background */\n\n.remodal-bg.remodal-is-opening,\n.remodal-bg.remodal-is-opened {\n    -webkit-filter: blur(3px);\n    filter: blur(3px);\n}\n\n/* Default theme styles of the overlay */\n\n.remodal-overlay {\n    background: rgba(43, 46, 56, 0.9);\n}\n\n.remodal-overlay.remodal-is-opening,\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal-overlay.remodal-is-opening {\n    -webkit-animation-name: remodal-overlay-opening-keyframes;\n    animation-name: remodal-overlay-opening-keyframes;\n}\n\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-name: remodal-overlay-closing-keyframes;\n    animation-name: remodal-overlay-closing-keyframes;\n}\n\n/* Default theme styles of the wrapper */\n\n.remodal-wrapper {\n    padding: 10px 10px 0;\n}\n\n/* Default theme styles of the modal dialog */\n\n.remodal {\n    box-sizing: border-box;\n    width: 100%;\n    margin-bottom: 10px;\n    padding: 35px;\n\n    -webkit-transform: translate3d(0, 0, 0);\n    transform: translate3d(0, 0, 0);\n\n    color: #2b2e38;\n    background: #fff;\n}\n\n.remodal.remodal-is-opening,\n.remodal.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal.remodal-is-opening {\n    -webkit-animation-name: remodal-opening-keyframes;\n    animation-name: remodal-opening-keyframes;\n}\n\n.remodal.remodal-is-closing {\n    -webkit-animation-name: remodal-closing-keyframes;\n    animation-name: remodal-closing-keyframes;\n}\n\n/* Vertical align of the modal dialog */\n\n.remodal,\n.remodal-wrapper:after {\n    vertical-align: middle;\n}\n\n/* Close button */\n\n.remodal-close {\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n    overflow: visible;\n\n    width: 35px;\n    height: 35px;\n    margin: 0;\n    padding: 0;\n\n    cursor: pointer;\n    -webkit-transition: color 0.2s;\n    transition: color 0.2s;\n    text-decoration: none;\n\n    color: #95979c;\n    border: 0;\n    outline: 0;\n    background: transparent;\n}\n\n.remodal-close:hover,\n.remodal-close:focus {\n    color: #2b2e38;\n}\n\n.remodal-close:before {\n    font-family: Arial, \"Helvetica CY\", \"Nimbus Sans L\", sans-serif !important;\n    font-size: 25px;\n    line-height: 35px;\n\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n\n    width: 35px;\n\n    content: \"\\D7\";\n    text-align: center;\n}\n\n/* Dialog buttons */\n\n.remodal-confirm,\n.remodal-cancel {\n    font: inherit;\n\n    display: inline-block;\n    overflow: visible;\n\n    min-width: 110px;\n    margin: 0;\n    padding: 12px 0;\n\n    cursor: pointer;\n    -webkit-transition: background 0.2s;\n    transition: background 0.2s;\n    text-align: center;\n    vertical-align: middle;\n    text-decoration: none;\n\n    border: 0;\n    outline: 0;\n}\n\n.remodal-confirm {\n    color: #fff;\n    background: #81c784;\n}\n\n.remodal-confirm:hover,\n.remodal-confirm:focus {\n    background: #66bb6a;\n}\n\n.remodal-cancel {\n    color: #fff;\n    background: #e57373;\n}\n\n.remodal-cancel:hover,\n.remodal-cancel:focus {\n    background: #ef5350;\n}\n\n/* Remove inner padding and border in Firefox 4+ for the button tag. */\n\n.remodal-confirm::-moz-focus-inner,\n.remodal-cancel::-moz-focus-inner,\n.remodal-close::-moz-focus-inner {\n    padding: 0;\n\n    border: 0;\n}\n\n/* Keyframes\n   ========================================================================== */\n\n@-webkit-keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n/* Media queries\n   ========================================================================== */\n\n@media only screen and (min-width: 641px) {\n    .remodal {\n        max-width: 700px;\n    }\n}\n\n/* IE8\n   ========================================================================== */\n\n.lt-ie9 .remodal-overlay {\n    background: #2b2e38;\n}\n\n.lt-ie9 .remodal {\n    width: 700px;\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's necessary styles\n   ========================================================================== */\n\n/* Hide scroll bar */\n\nhtml.remodal-is-locked {\n    overflow: hidden;\n\n    -ms-touch-action: none;\n    touch-action: none;\n}\n\n/* Anti FOUC */\n\n.remodal,\n[data-remodal-id] {\n    display: none;\n}\n\n/* Necessary styles of the overlay */\n\n.remodal-overlay {\n    position: fixed;\n    z-index: 9999;\n    top: -5000px;\n    right: -5000px;\n    bottom: -5000px;\n    left: -5000px;\n\n    display: none;\n}\n\n/* Necessary styles of the wrapper */\n\n.remodal-wrapper {\n    position: fixed;\n    z-index: 10000;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n\n    display: none;\n    overflow: auto;\n\n    text-align: center;\n\n    -webkit-overflow-scrolling: touch;\n}\n\n.remodal-wrapper:after {\n    display: inline-block;\n\n    height: 100%;\n    margin-left: -0.05em;\n\n    content: \"\";\n}\n\n/* Fix iPad, iPhone glitches */\n\n.remodal-overlay,\n.remodal-wrapper {\n    -webkit-backface-visibility: hidden;\n    backface-visibility: hidden;\n}\n\n/* Necessary styles of the modal dialog */\n\n.remodal {\n    position: relative;\n\n    outline: none;\n\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;\n    text-size-adjust: 100%;\n}\n\n.remodal-is-initialized {\n    /* Disable Anti-FOUC */\n    display: inline-block;\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n    height: 300px;\n}\n\n#content-title {\n    width: 100%;\n\n}\n\n", ""]);
+	exports.push([module.id, "\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #000000;\n}\n\nimg[alt=\"mark\"] {\n    width: 100%;\n}\n\np, a {\n    word-break: break-all;\n}\n\n#app {\n    overflow-x: auto;\n    overflow-y: auto;\n    -webkit-overflow-scrolling: touch;\n}\n\n/*------------------------样式-------------------------*/\n\n* {\n    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;\n\n}\n\n/*指定PC端加载字体*/\n@media (min-width: 48em) {\n    @font-face {\n        font-family: \"tt\"; /*这里是说明调用来的字体名字*/\n        src: url(" + __webpack_require__(172) + "); /*这里是字体文件路径*/\n    }\n    * {\n        font-family: \"tt\";\n    }\n}\n\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    border-radius: 10px;\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background-image: url(" + __webpack_require__(173) + ");\n    background-repeat: no-repeat;\n    background-size: cover;\n    /*background: rgb(61, 79, 93);*/\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n    color:black;\n}\n\n.brand-title {\n    text-transform: uppercase;\n    font-size: 4em;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(0, 0, 0);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(0, 0, 0);\n    color: black;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #000000;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    cursor: pointer;\n    font-size: 2em;\n    color: #000000;\n    margin-bottom: 0.2em;\n}\n.post-title>a{\n    color: #000000\n}\n\n.post-title:hover {\n    color: #4d85d1;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: \"tt\";\n    color: #444;\n    line-height: 1.8em;\n}\n.post-description>p{\n    color: #999999;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #000000;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #000000;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's default mobile first theme\n   ========================================================================== */\n\n/* Default theme styles for the background */\n\n.remodal-bg.remodal-is-opening,\n.remodal-bg.remodal-is-opened {\n    -webkit-filter: blur(3px);\n    filter: blur(3px);\n}\n\n/* Default theme styles of the overlay */\n\n.remodal-overlay {\n    background: rgba(43, 46, 56, 0.9);\n}\n\n.remodal-overlay.remodal-is-opening,\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal-overlay.remodal-is-opening {\n    -webkit-animation-name: remodal-overlay-opening-keyframes;\n    animation-name: remodal-overlay-opening-keyframes;\n}\n\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-name: remodal-overlay-closing-keyframes;\n    animation-name: remodal-overlay-closing-keyframes;\n}\n\n/* Default theme styles of the wrapper */\n\n.remodal-wrapper {\n    padding: 10px 10px 0;\n}\n\n/* Default theme styles of the modal dialog */\n\n.remodal {\n    box-sizing: border-box;\n    width: 100%;\n    margin-bottom: 10px;\n    padding: 35px;\n\n    -webkit-transform: translate3d(0, 0, 0);\n    transform: translate3d(0, 0, 0);\n\n    color: #2b2e38;\n    background: #fff;\n}\n\n.remodal.remodal-is-opening,\n.remodal.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal.remodal-is-opening {\n    -webkit-animation-name: remodal-opening-keyframes;\n    animation-name: remodal-opening-keyframes;\n}\n\n.remodal.remodal-is-closing {\n    -webkit-animation-name: remodal-closing-keyframes;\n    animation-name: remodal-closing-keyframes;\n}\n\n/* Vertical align of the modal dialog */\n\n.remodal,\n.remodal-wrapper:after {\n    vertical-align: middle;\n}\n\n/* Close button */\n\n.remodal-close {\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n    overflow: visible;\n\n    width: 35px;\n    height: 35px;\n    margin: 0;\n    padding: 0;\n\n    cursor: pointer;\n    -webkit-transition: color 0.2s;\n    transition: color 0.2s;\n    text-decoration: none;\n\n    color: #95979c;\n    border: 0;\n    outline: 0;\n    background: transparent;\n}\n\n.remodal-close:hover,\n.remodal-close:focus {\n    color: #2b2e38;\n}\n\n.remodal-close:before {\n    font-family: Arial, \"Helvetica CY\", \"Nimbus Sans L\", sans-serif !important;\n    font-size: 25px;\n    line-height: 35px;\n\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n\n    width: 35px;\n\n    content: \"\\D7\";\n    text-align: center;\n}\n\n/* Dialog buttons */\n\n.remodal-confirm,\n.remodal-cancel {\n    font: inherit;\n\n    display: inline-block;\n    overflow: visible;\n\n    min-width: 110px;\n    margin: 0;\n    padding: 12px 0;\n\n    cursor: pointer;\n    -webkit-transition: background 0.2s;\n    transition: background 0.2s;\n    text-align: center;\n    vertical-align: middle;\n    text-decoration: none;\n\n    border: 0;\n    outline: 0;\n}\n\n.remodal-confirm {\n    color: #fff;\n    background: #81c784;\n}\n\n.remodal-confirm:hover,\n.remodal-confirm:focus {\n    background: #66bb6a;\n}\n\n.remodal-cancel {\n    color: #fff;\n    background: #e57373;\n}\n\n.remodal-cancel:hover,\n.remodal-cancel:focus {\n    background: #ef5350;\n}\n\n/* Remove inner padding and border in Firefox 4+ for the button tag. */\n\n.remodal-confirm::-moz-focus-inner,\n.remodal-cancel::-moz-focus-inner,\n.remodal-close::-moz-focus-inner {\n    padding: 0;\n\n    border: 0;\n}\n\n/* Keyframes\n   ========================================================================== */\n\n@-webkit-keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n/* Media queries\n   ========================================================================== */\n\n@media only screen and (min-width: 641px) {\n    .remodal {\n        max-width: 700px;\n    }\n}\n\n/* IE8\n   ========================================================================== */\n\n.lt-ie9 .remodal-overlay {\n    background: #2b2e38;\n}\n\n.lt-ie9 .remodal {\n    width: 700px;\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's necessary styles\n   ========================================================================== */\n\n/* Hide scroll bar */\n\nhtml.remodal-is-locked {\n    overflow: hidden;\n\n    -ms-touch-action: none;\n    touch-action: none;\n}\n\n/* Anti FOUC */\n\n.remodal,\n[data-remodal-id] {\n    display: none;\n}\n\n/* Necessary styles of the overlay */\n\n.remodal-overlay {\n    position: fixed;\n    z-index: 9999;\n    top: -5000px;\n    right: -5000px;\n    bottom: -5000px;\n    left: -5000px;\n\n    display: none;\n}\n\n/* Necessary styles of the wrapper */\n\n.remodal-wrapper {\n    position: fixed;\n    z-index: 10000;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n\n    display: none;\n    overflow: auto;\n\n    text-align: center;\n\n    -webkit-overflow-scrolling: touch;\n}\n\n.remodal-wrapper:after {\n    display: inline-block;\n\n    height: 100%;\n    margin-left: -0.05em;\n\n    content: \"\";\n}\n\n/* Fix iPad, iPhone glitches */\n\n.remodal-overlay,\n.remodal-wrapper {\n    -webkit-backface-visibility: hidden;\n    backface-visibility: hidden;\n}\n\n/* Necessary styles of the modal dialog */\n\n.remodal {\n    position: relative;\n\n    outline: none;\n\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;\n    text-size-adjust: 100%;\n}\n\n.remodal-is-initialized {\n    /* Disable Anti-FOUC */\n    display: inline-block;\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n    height: 300px;\n}\n\n#content-title {\n    width: 100%;\n}\n.content-text{\n    padding-top: 20px;\n    padding-bottom: 20px;\n}\n.padding-5px{\n    padding: 5px;\n}\n\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 170 */
+/* 171 */
 /***/ function(module, exports) {
 
 	/*
@@ -20829,13 +21423,19 @@
 
 
 /***/ },
-/* 171 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "f5326e1cab3f01a61da850cc5b93ab3f.ttf";
 
 /***/ },
-/* 172 */
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "22b5c33ba122844efaa4c52937afd379.jpg";
+
+/***/ },
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -21087,10 +21687,55 @@
 
 
 /***/ },
-/* 173 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "22b5c33ba122844efaa4c52937afd379.jpg";
+	var React = __webpack_require__(1);
+
+
+	function createMarkup(str) {
+	    return {__html: str};
+	};
+
+
+	var Comments = React.createClass({displayName: "Comments",
+
+
+
+	    render: function () {
+
+	        //var itemJsx, type = "", list = [];
+	        //var imgList = [
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
+	        //];
+	        var value = "##就是测试啊,怎么回事\n";
+	        value += "***\n"
+	        value += "#就是测试啊,怎么回事\n";
+	        value += "> 就是测试啊,怎么回事\n\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
+	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
+	        value += "hello[^hello]";
+
+	        value = this.props.content;
+
+	        var html = markdown.toHTML(value, 'Maruku')
+
+	        return (
+
+	            React.createElement("div", {className: "content-text"}, 
+	                React.createElement("div", {dangerouslySetInnerHTML: createMarkup(html)})
+	            )
+
+
+	        )
+	    }
+	});
+
+	module.exports = Comments;
 
 /***/ }
 /******/ ]);

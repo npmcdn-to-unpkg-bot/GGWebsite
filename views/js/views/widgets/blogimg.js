@@ -6,7 +6,7 @@ var BlogImg = React.createClass({
     render: function () {
         debugger;
         return (
-            <div className='pure-u-1 pure-u-md-1-2'>
+            <div className='pure-u-1 pure-u-md-1-2 padding-5px'>
                 <a data-remodal-target='modal' href='#'>
                     <img alt='Photo of someone working poolside at a resort'
                          className='pure-img-responsive'

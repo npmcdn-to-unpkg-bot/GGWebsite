@@ -62,6 +62,7 @@ h3 {
 
 /* LAYOUT CSS */
 .pure-img-responsive {
+    border-radius: 10px;
     max-width: 100%;
     height: auto;
 }
@@ -87,15 +88,17 @@ h3 {
 .brand-title,
 .brand-tagline {
     margin: 0;
+    color:black;
 }
 
 .brand-title {
     text-transform: uppercase;
+    font-size: 4em;
 }
 
 .brand-tagline {
     font-weight: 300;
-    color: rgb(176, 202, 219);
+    color: rgb(0, 0, 0);
 }
 
 .nav-list {
@@ -112,8 +115,8 @@ h3 {
 
 .nav-item a {
     background: transparent;
-    border: 2px solid rgb(176, 202, 219);
-    color: #fff;
+    border: 2px solid rgb(0, 0, 0);
+    color: black;
     margin-top: 1em;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -128,7 +131,7 @@ h3 {
 
 .content-subhead {
     text-transform: uppercase;
-    color: #aaa;
+    color: #000000;
     border-bottom: 1px solid #eee;
     padding: 0.4em 0;
     font-size: 80%;
@@ -147,8 +150,11 @@ h3 {
 .post-title {
     cursor: pointer;
     font-size: 2em;
-    color: #222;
+    color: #000000;
     margin-bottom: 0.2em;
+}
+.post-title>a{
+    color: #000000
 }
 
 .post-title:hover {
@@ -165,6 +171,9 @@ h3 {
     font-family: "tt";
     color: #444;
     line-height: 1.8em;
+}
+.post-description>p{
+    color: #999999;
 }
 
 .post-meta {
@@ -204,7 +213,7 @@ h3 {
 .post-image-meta {
     margin-top: -3.5em;
     margin-left: 1em;
-    color: #fff;
+    color: #000000;
     text-shadow: 0 1px 1px #333;
 }
 
@@ -214,7 +223,7 @@ h3 {
 }
 
 .footer a {
-    color: #ccc;
+    color: #000000;
     font-size: 80%;
 }
 
@@ -810,5 +819,8 @@ html.remodal-is-locked {
 .content-text{
     padding-top: 20px;
     padding-bottom: 20px;
+}
+.padding-5px{
+    padding: 5px;
 }
 

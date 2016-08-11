@@ -14,10 +14,13 @@ var CommentText = React.createClass({
         var tap;
         switch (this.props.sort) {
             case "1":
-                tap = (<a className='post-category post-category-pure' href='#'>CSS</a>);
+                tap = (<a className='post-category post-category-pure' href='#'>日常</a>);
                 break;
             case "2":
                 tap = (<a className='post-category post-category-design' href='#'>技术</a>);
+                break;
+            case "3":
+                tap = (<a className='post-category post-category-pure' href='#'>摄影</a>);
                 break;
             default:
                 tap = (<a className='post-category post-category-design' href='#'>不知</a>);
@@ -30,7 +33,7 @@ var CommentText = React.createClass({
                     <header className='post-header'>
                         <img className='post-avatar' alt='Tilo Mitra&#x27;s avatar' height='48' width='48'
                              src='/spingmvc/resource/img/icon.jpg'/>
-                        <h2 onClick={this.enter} className='post-title'><a href={hrefStr}>{this.props.title}</a></h2>
+                        <h2 className='post-title'><a href={hrefStr}>{this.props.title}</a></h2>
                         <p className='post-meta'>
                             <a className='post-author'>{this.props.author}</a>
                             <a> 点赞留言功能尚未开通 </a>
@@ -45,15 +48,7 @@ var CommentText = React.createClass({
                 </section>
             </div>
 
-        )
-            ;
-    },
-    enter: function () {
-        $('html, body,#app').animate({scrollTop: 0}, 'slow');
-        var data = {
-            ArticleId: this.props.id
-        }
-        CommentActionCreators.getArticle(data);
+        );
     }
 });
 

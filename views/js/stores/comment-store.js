@@ -25,17 +25,6 @@ var CommentStore = assign({}, EventEmitter.prototype, {
         this.removeListener('change', callback);
     },
 
-    emitViewChange: function () {
-        this.emit('viewchange');
-    },
-
-    addViewChangeListener: function (callback) {
-        this.on('viewchange', callback);
-    },
-
-    removeViewChangeListener: function (callback) {
-        this.removeListener('viewchange', callback);
-    },
 
     getPageState: function () {
         return pageState;
@@ -66,7 +55,8 @@ AppDispatcher.register(function (action) {
             //提交注册信息
             var url = "/spingmvc/Page"
             var data = action.comment;
-
+            currentPage = ((data.start / 5) + 1)
+            data.end = (currentPage == 1 ? 5 : 6);
             $.ajax({
                 type: 'GET',
                 url: url,
@@ -80,21 +70,16 @@ AppDispatcher.register(function (action) {
                     for (var i in e) {
                         result.push(e[i]);
                     }
-                    if (data.state == "down") {
-                        if (result.length < 6) {
-                            pageState = "LASTPAGE";
-                        } else {
-                            result.pop();
-                            pageState = "MIDDLEPAGE";
-                        }
-
+                    if (data.start == 0) {
+                        pageState = "FIRSTPAGE";
+                    } else if (result.length < 6) {
+                        pageState = "LASTPAGE";
                     } else {
-                        if (data.start == 0) {
-                            pageState = "FIRSTPAGE";
-                        } else {
-                            pageState = "MIDDLEPAGE";
-                        }
+                        result.pop();
+                        pageState = "MIDDLEPAGE";
                     }
+
+
                     result = result.reverse();
                     comments = result;
                     CommentStore.emitChange();
@@ -188,9 +173,10 @@ AppDispatcher.register(function (action) {
                 url: url,
                 data: data,
                 success: function (e) {
+                    pageState = "NONE";
                     viewState = "ARTICLEVIEW";
-                    comments = e.article;
-                    CommentStore.emitViewChange();
+                    comments = [e.article];
+                    CommentStore.emitChange();
                 },
                 dataType: "json"
             });

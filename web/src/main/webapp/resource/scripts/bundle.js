@@ -46,68 +46,32 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentStore = __webpack_require__(153);
 
-	var Comments = __webpack_require__(156);
-	var CommentsTextView = __webpack_require__(165);
-	var CommentHeader = __webpack_require__(166);
-	var CommentFooter = __webpack_require__(164);
-	var CommentModal = __webpack_require__(167);
-	var CommentRouter = __webpack_require__(174);
+	var Comments = __webpack_require__(148);
 
-	var comment = null;
-	var commentFooter = null;
-	__webpack_require__(168)
+	var CommentHeader = __webpack_require__(164);
+	var CommentFooter = __webpack_require__(166);
+	var CommentModal = __webpack_require__(165);
+	var CommentRouter = __webpack_require__(167);
+
+
+	__webpack_require__(169)
 
 	CommentRouter.init();
 	window.location.hash = window.location.hash || "home";
 
 
-	function getStateFromStore() {
-	    return {
-	        article: CommentStore.getAll() || {},
-	        viewState: CommentStore.getViewState()
-	    }
-	}
 
 	var App = React.createClass({displayName: "App",
-	    getInitialState: function () {
-	        return getStateFromStore() || {};
-	    },
-	    componentDidMount: function () {
-	        CommentStore.addChangeListener(this.onChange);
-	        CommentStore.addViewChangeListener(this.onChange);
-	    },
 
-	    componentWillUnmount: function () {
-	        CommentStore.removeChangeListener(this.onChange);
-	        CommentStore.removeViewChangeListener(this.onChange);
-	    },
-	    onChange: function () {
-	        debugger;
-	        this.setState(getStateFromStore());
-	    },
 	    render: function () {
 	        debugger;
 	        var title = "发现光明";
-	        switch (this.state.viewState) {
-	            case "LISTVIEW":
-	                comment = (React.createElement(Comments, null));
-	                commentFooter = (React.createElement(CommentFooter, null));
-	                break;
-	            case "ARTICLEVIEW":
-	                comment = (React.createElement(CommentsTextView, {id: this.state.article.id, 
-	                                             content: this.state.article.content}
-	                ));
-	                title = this.state.article.title;
-	                commentFooter = null;
-	                break;
-	        }
 	        return (
 	            React.createElement("div", {id: "layout", className: "pure-g"}, 
 	                React.createElement(CommentHeader, {title: title}), 
-	                comment, 
-	                commentFooter, 
+	                React.createElement(Comments, null), 
+	                React.createElement(CommentFooter, null), 
 	                React.createElement(CommentModal, null)
 	            )
 	        );
@@ -19002,90 +18966,313 @@
 /* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(149);
+	var React = __webpack_require__(1);
 
-	module.exports = {
+	var CommentStore = __webpack_require__(149);
+	var CommentActionCreators = __webpack_require__(156);
 
-	    reFlashData: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "REFLASH",
-	            comment: comment
-	        }
+	var CommentAlert = __webpack_require__(157);
+	var CommentText = __webpack_require__(158);
+	var CommentImg = __webpack_require__(159);
+	var CommentLogin = __webpack_require__(161);
+	var CommentRegister = __webpack_require__(162);
+	var CommentInsert = __webpack_require__(163);
+	var CommentsTextView = __webpack_require__(175);
 
-	        AppDispatcher.dispatch(action);
-	    },
-	    login: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "LOGIN",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    register: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "REGISTER",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    submitUser: function (comment) {
-	        debugger;
-	        var action = {
-	            actionType: "SUBMIT",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    loginUser: function (comment) {
-	        var action = {
-	            actionType: "LOGINUSER",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    insertview: function (comment) {
-	        var action = {
-	            actionType: "INSERTVIEW",
-	            comment: comment
-	        }
-
-	        AppDispatcher.dispatch(action);
-	    },
-	    insertArticle: function (comment) {
-	        var action = {
-	            actionType: "INSERTARTICLE",
-	            comment: comment
-	        }
-	        AppDispatcher.dispatch(action);
-	    },
-	    getArticle: function (comment) {
-	        var action = {
-	            actionType: "GETARTICLE",
-	            comment: comment
-	        }
-	        AppDispatcher.dispatch(action);
+	function getStateFromStore() {
+	    return {
+	        state: CommentStore.getAll()
 	    }
-
 	}
 
+	var Comments = React.createClass({displayName: "Comments",
+
+	    onChange: function () {
+	        debugger;
+	        this.setState(getStateFromStore());
+	    },
+
+	    getInitialState: function () {
+	        //alert($.getUrlParam("name"));
+	        //var data = {start: 0, end: 5};
+	        //CommentActionCreators.reFlashData(data);
+	        return getStateFromStore();
+	    },
+
+	    componentDidMount: function () {
+	        CommentStore.addChangeListener(this.onChange);
+	    },
+
+	    componentWillUnmount: function () {
+	        CommentStore.removeChangeListener(this.onChange);
+	    },
+
+
+	    render: function () {
+	        debugger;
+	        var itemJsx, type = "", list = [];
+	        //var imgList = [
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
+	        //];
+	        for (var i in this.state.state) {
+	            switch (this.state.state[i].type) {
+	                case "Text":
+	                    itemJsx = React.createElement(CommentText, {id: this.state.state[i].id, 
+	                                           title: this.state.state[i].title, 
+	                                           time: this.state.state[i].time, 
+	                                           sort: this.state.state[i].sort, 
+	                                           author: "Jack", 
+	                                           text: this.state.state[i].summary});
+	                    break;
+	                case "Img":
+	                    itemJsx = React.createElement(CommentImg, {list: this.state.state[i].list, 
+	                                          title: "近期分享照片", 
+	                                          author: "Jack"});
+	                    break;
+	                case "Login":
+	                    itemJsx = React.createElement(CommentLogin, null);
+	                    break;
+	                case "Register":
+	                    itemJsx = React.createElement(CommentRegister, null);
+	                    break;
+	                case "Alert":
+	                    itemJsx = React.createElement(CommentAlert, {text: this.state.state[i].text});
+	                    break;
+	                case "Insert":
+	                    itemJsx = React.createElement(CommentInsert, null);
+	                    break;
+	                case "Article":
+	                    itemJsx = React.createElement(CommentsTextView, {id: this.state.state[i].id, 
+	                                                content: this.state.state[i].content});
+	                    break;
+
+	            }
+	            list.push(itemJsx);
+	        }
+
+
+	        return (
+	            React.createElement("div", {className: "content pure-u-1 pure-u-md-3-4"}, 
+	                list
+	            )
+
+	        )
+	    },
+	    deleteItem: function (e) {
+	        debugger;
+	        //CommentAction.deleteCommentItem(1);
+	    },
+	});
+
+	module.exports = Comments;
 
 /***/ },
 /* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Dispatcher = __webpack_require__(150).Dispatcher;
+	var AppDispatcher = __webpack_require__(150);
+
+	var EventEmitter = __webpack_require__(154).EventEmitter;
+	var assign = __webpack_require__(155);
+
+
+	var comments = {};
+	var user = {};
+	var currentPage = 1;
+	var pageState = "FIRSTPAGE";
+	var viewState = "LISTVIEW";
+
+
+	var CommentStore = assign({}, EventEmitter.prototype, {
+
+	    emitChange: function () {
+	        this.emit('change');
+	    },
+
+	    addChangeListener: function (callback) {
+	        this.on('change', callback);
+	    },
+
+	    removeChangeListener: function (callback) {
+	        this.removeListener('change', callback);
+	    },
+
+
+	    getPageState: function () {
+	        return pageState;
+	    },
+
+	    getCuttentPage: function () {
+	        return currentPage;
+	    },
+
+	    setCurrentPage: function (page) {
+	        currentPage = page;
+	    },
+
+	    getViewState: function () {
+	        return viewState;
+	    },
+	    getAll: function () {
+	        return comments;
+	    }
+
+
+	});
+
+
+	AppDispatcher.register(function (action) {
+	    switch (action.actionType) {
+	        case "REFLASH":
+	            //提交注册信息
+	            var url = "/spingmvc/Page"
+	            var data = action.comment;
+	            currentPage = ((data.start / 5) + 1)
+	            data.end = (currentPage == 1 ? 5 : 6);
+	            $.ajax({
+	                type: 'GET',
+	                url: url,
+	                data: data,
+	                error: function () {
+	                    alert(arguments[1]);
+	                },
+	                success: function (e) {
+	                    viewState = "LISTVIEW";
+	                    var result = []
+	                    for (var i in e) {
+	                        result.push(e[i]);
+	                    }
+	                    if (data.start == 0) {
+	                        pageState = "FIRSTPAGE";
+	                    } else if (result.length < 6) {
+	                        pageState = "LASTPAGE";
+	                    } else {
+	                        result.pop();
+	                        pageState = "MIDDLEPAGE";
+	                    }
+
+
+	                    result = result.reverse();
+	                    comments = result;
+	                    CommentStore.emitChange();
+	                },
+	                dataType: "json"
+	            });
+	            break;
+	        case "LOGIN":
+	            pageState = "NONE";
+	            currentPage = 1;
+	            var login = {id: 1, type: "Login"}
+	            comments = [login];
+	            CommentStore.emitChange();
+	            break;
+	        case "REGISTER":
+	            pageState = "NONE";
+	            currentPage = 1;
+	            //跳到注册面板
+	            var register = {id: 1, type: "Register"}
+	            comments = [register];
+	            CommentStore.emitChange();
+	            break;
+	        case "INSERTVIEW":
+	            pageState = "NONE";
+	            currentPage = 1;
+	            //跳到注册面板
+	            var register = {id: 1, type: "Insert"}
+	            comments = [register];
+	            CommentStore.emitChange();
+	            break;
+	        case "SUBMIT":
+	            //提交注册信息
+	            var url = "/spingmvc/Register"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                error: function () {
+	                    var tem = {id: 1, type: "Alert", text: "出错啦"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
+	                },
+	                success: function (e) {
+	                    user.id = e;
+	                    var tem = {id: 1, type: "Alert", text: "成功"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
+	                }
+	            });
+
+	            break;
+	        case "LOGINUSER":
+	            debugger;
+	            var url = "/spingmvc/Login"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                success: function (e) {
+	                    debugger;
+	                    comments = [register];
+	                    CommentStore.emitChange();
+	                }
+	            });
+
+	            break;
+	        case "INSERTARTICLE":
+	            debugger;
+	            var url = "/spingmvc/InsertBlog"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                success: function (e) {
+	                    var tem = {id: 1, type: "Alert", text: "成功"};
+	                    comments = [tem];
+	                    CommentStore.emitChange();
+	                }
+	            });
+
+	            break;
+	        case "GETARTICLE":
+	            debugger;
+	            var url = "/spingmvc/GetBlogById"
+	            var data = action.comment;
+	            $.ajax({
+	                type: 'POST',
+	                url: url,
+	                data: data,
+	                success: function (e) {
+	                    pageState = "NONE";
+	                    viewState = "ARTICLEVIEW";
+	                    comments = [e.article];
+	                    CommentStore.emitChange();
+	                },
+	                dataType: "json"
+	            });
+
+	            break;
+
+	        default:
+	            break;
+	    }
+	});
+
+	module.exports = CommentStore;
+
+/***/ },
+/* 150 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(151).Dispatcher;
 
 	module.exports = new Dispatcher();
 
 /***/ },
-/* 150 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19097,11 +19284,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Dispatcher = __webpack_require__(151);
+	module.exports.Dispatcher = __webpack_require__(152);
 
 
 /***/ },
-/* 151 */
+/* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19123,7 +19310,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(152);
+	var invariant = __webpack_require__(153);
 
 	var _prefix = 'ID_';
 
@@ -19338,7 +19525,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 152 */
+/* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19391,216 +19578,6 @@
 
 	module.exports = invariant;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
-/* 153 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(149);
-
-	var EventEmitter = __webpack_require__(154).EventEmitter;
-	var assign = __webpack_require__(155);
-
-
-	var comments = {};
-	var user = {};
-	var currentPage = 1;
-	var pageState = "FIRSTPAGE";
-	var viewState = "LISTVIEW";
-
-
-	var CommentStore = assign({}, EventEmitter.prototype, {
-
-	    emitChange: function () {
-	        this.emit('change');
-	    },
-
-	    addChangeListener: function (callback) {
-	        this.on('change', callback);
-	    },
-
-	    removeChangeListener: function (callback) {
-	        this.removeListener('change', callback);
-	    },
-
-	    emitViewChange: function () {
-	        this.emit('viewchange');
-	    },
-
-	    addViewChangeListener: function (callback) {
-	        this.on('viewchange', callback);
-	    },
-
-	    removeViewChangeListener: function (callback) {
-	        this.removeListener('viewchange', callback);
-	    },
-
-	    getPageState: function () {
-	        return pageState;
-	    },
-
-	    getCuttentPage: function () {
-	        return currentPage;
-	    },
-
-	    setCurrentPage: function (page) {
-	        currentPage = page;
-	    },
-
-	    getViewState: function () {
-	        return viewState;
-	    },
-	    getAll: function () {
-	        return comments;
-	    }
-
-
-	});
-
-
-	AppDispatcher.register(function (action) {
-	    switch (action.actionType) {
-	        case "REFLASH":
-	            //提交注册信息
-	            var url = "/spingmvc/Page"
-	            var data = action.comment;
-
-	            $.ajax({
-	                type: 'GET',
-	                url: url,
-	                data: data,
-	                error: function () {
-	                    alert(arguments[1]);
-	                },
-	                success: function (e) {
-	                    viewState = "LISTVIEW";
-	                    var result = []
-	                    for (var i in e) {
-	                        result.push(e[i]);
-	                    }
-	                    if (data.state == "down") {
-	                        if (result.length < 6) {
-	                            pageState = "LASTPAGE";
-	                        } else {
-	                            result.pop();
-	                            pageState = "MIDDLEPAGE";
-	                        }
-
-	                    } else {
-	                        if (data.start == 0) {
-	                            pageState = "FIRSTPAGE";
-	                        } else {
-	                            pageState = "MIDDLEPAGE";
-	                        }
-	                    }
-	                    result = result.reverse();
-	                    comments = result;
-	                    CommentStore.emitChange();
-	                },
-	                dataType: "json"
-	            });
-	            break;
-	        case "LOGIN":
-	            pageState = "NONE";
-	            currentPage = 1;
-	            var login = {id: 1, type: "Login"}
-	            comments = [login];
-	            CommentStore.emitChange();
-	            break;
-	        case "REGISTER":
-	            pageState = "NONE";
-	            currentPage = 1;
-	            //跳到注册面板
-	            var register = {id: 1, type: "Register"}
-	            comments = [register];
-	            CommentStore.emitChange();
-	            break;
-	        case "INSERTVIEW":
-	            pageState = "NONE";
-	            currentPage = 1;
-	            //跳到注册面板
-	            var register = {id: 1, type: "Insert"}
-	            comments = [register];
-	            CommentStore.emitChange();
-	            break;
-	        case "SUBMIT":
-	            //提交注册信息
-	            var url = "/spingmvc/Register"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                error: function () {
-	                    var tem = {id: 1, type: "Alert", text: "出错啦"};
-	                    comments = [tem];
-	                    CommentStore.emitChange();
-	                },
-	                success: function (e) {
-	                    user.id = e;
-	                    var tem = {id: 1, type: "Alert", text: "成功"};
-	                    comments = [tem];
-	                    CommentStore.emitChange();
-	                }
-	            });
-
-	            break;
-	        case "LOGINUSER":
-	            debugger;
-	            var url = "/spingmvc/Login"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                success: function (e) {
-	                    debugger;
-	                    comments = [register];
-	                    CommentStore.emitChange();
-	                }
-	            });
-
-	            break;
-	        case "INSERTARTICLE":
-	            debugger;
-	            var url = "/spingmvc/InsertBlog"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                success: function (e) {
-	                    var tem = {id: 1, type: "Alert", text: "成功"};
-	                    comments = [tem];
-	                    CommentStore.emitChange();
-	                }
-	            });
-
-	            break;
-	        case "GETARTICLE":
-	            debugger;
-	            var url = "/spingmvc/GetBlogById"
-	            var data = action.comment;
-	            $.ajax({
-	                type: 'POST',
-	                url: url,
-	                data: data,
-	                success: function (e) {
-	                    viewState = "ARTICLEVIEW";
-	                    comments = e.article;
-	                    CommentStore.emitViewChange();
-	                },
-	                dataType: "json"
-	            });
-
-	            break;
-
-	        default:
-	            break;
-	    }
-	});
-
-	module.exports = CommentStore;
 
 /***/ },
 /* 154 */
@@ -19957,103 +19934,79 @@
 /* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
+	var AppDispatcher = __webpack_require__(150);
 
-	var CommentStore = __webpack_require__(153);
-	var CommentActionCreators = __webpack_require__(148);
+	module.exports = {
 
-	var CommentAlert = __webpack_require__(157);
-	var CommentText = __webpack_require__(158);
-	var CommentImg = __webpack_require__(159);
-	var CommentLogin = __webpack_require__(161);
-	var CommentRegister = __webpack_require__(162);
-	var CommentInsert = __webpack_require__(163);
-	var CommentFooter = __webpack_require__(164);
-
-	function getStateFromStore() {
-	    return {
-	        state: CommentStore.getAll()
-	    }
-	}
-
-	var Comments = React.createClass({displayName: "Comments",
-
-	    onChange: function () {
+	    reFlashData: function (comment) {
 	        debugger;
-	        this.setState(getStateFromStore());
-	    },
-
-	    getInitialState: function () {
-	        //alert($.getUrlParam("name"));
-	        //var data = {start: 0, end: 5};
-	        //CommentActionCreators.reFlashData(data);
-	        return getStateFromStore();
-	    },
-
-	    componentDidMount: function () {
-	        CommentStore.addChangeListener(this.onChange);
-	    },
-
-	    componentWillUnmount: function () {
-	        CommentStore.removeChangeListener(this.onChange);
-	    },
-
-
-	    render: function () {
-	        debugger;
-	        var itemJsx, type = "", list = [];
-	        //var imgList = [
-	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
-	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
-	        //];
-	        for (var i in this.state.state) {
-	            switch (this.state.state[i].type) {
-	                case "Text":
-	                    itemJsx = React.createElement(CommentText, {id: this.state.state[i].id, 
-	                                           title: this.state.state[i].title, 
-	                                           time: this.state.state[i].time, 
-	                                           sort: this.state.state[i].sort, 
-	                                           author: "Jack", 
-	                                           text: this.state.state[i].summary});
-	                    break;
-	                case "Img":
-	                    itemJsx = React.createElement(CommentImg, {list: this.state.state[i].list, title: "近期分享照片", author: "Jack"});
-	                    break;
-	                case "Login":
-	                    itemJsx = React.createElement(CommentLogin, null);
-	                    break;
-	                case "Register":
-	                    itemJsx = React.createElement(CommentRegister, null);
-	                    break;
-	                case "Alert":
-	                    itemJsx = React.createElement(CommentAlert, {text: this.state.state[i].text});
-	                    break;
-	                case "Insert":
-	                    itemJsx = React.createElement(CommentInsert, null);
-	                    break;
-	                case "Footer":
-	                    itemJsx = React.createElement(CommentFooter, null);
-	                    break;
-
-	            }
-	            list.push(itemJsx);
+	        var action = {
+	            actionType: "REFLASH",
+	            comment: comment
 	        }
 
-
-	        return (
-	            React.createElement("div", {className: "content pure-u-1 pure-u-md-3-4"}, 
-	                list
-	            )
-
-	        )
+	        AppDispatcher.dispatch(action);
 	    },
-	    deleteItem: function (e) {
+	    login: function (comment) {
 	        debugger;
-	        //CommentAction.deleteCommentItem(1);
-	    },
-	});
+	        var action = {
+	            actionType: "LOGIN",
+	            comment: comment
+	        }
 
-	module.exports = Comments;
+	        AppDispatcher.dispatch(action);
+	    },
+	    register: function (comment) {
+	        debugger;
+	        var action = {
+	            actionType: "REGISTER",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    submitUser: function (comment) {
+	        debugger;
+	        var action = {
+	            actionType: "SUBMIT",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    loginUser: function (comment) {
+	        var action = {
+	            actionType: "LOGINUSER",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    insertview: function (comment) {
+	        var action = {
+	            actionType: "INSERTVIEW",
+	            comment: comment
+	        }
+
+	        AppDispatcher.dispatch(action);
+	    },
+	    insertArticle: function (comment) {
+	        var action = {
+	            actionType: "INSERTARTICLE",
+	            comment: comment
+	        }
+	        AppDispatcher.dispatch(action);
+	    },
+	    getArticle: function (comment) {
+	        var action = {
+	            actionType: "GETARTICLE",
+	            comment: comment
+	        }
+	        AppDispatcher.dispatch(action);
+	    }
+
+	}
+
 
 /***/ },
 /* 157 */
@@ -20061,7 +20014,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 
 	var CommentAlert = React.createClass({displayName: "CommentAlert",
 
@@ -20088,7 +20041,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 
 	var CommentText = React.createClass({displayName: "CommentText",
 	    getLocalTime: function (nS) {
@@ -20102,10 +20055,13 @@
 	        var tap;
 	        switch (this.props.sort) {
 	            case "1":
-	                tap = (React.createElement("a", {className: "post-category post-category-pure", href: "#"}, "CSS"));
+	                tap = (React.createElement("a", {className: "post-category post-category-pure", href: "#"}, "日常"));
 	                break;
 	            case "2":
 	                tap = (React.createElement("a", {className: "post-category post-category-design", href: "#"}, "技术"));
+	                break;
+	            case "3":
+	                tap = (React.createElement("a", {className: "post-category post-category-pure", href: "#"}, "摄影"));
 	                break;
 	            default:
 	                tap = (React.createElement("a", {className: "post-category post-category-design", href: "#"}, "不知"));
@@ -20118,7 +20074,7 @@
 	                    React.createElement("header", {className: "post-header"}, 
 	                        React.createElement("img", {className: "post-avatar", alt: "Tilo Mitra's avatar", height: "48", width: "48", 
 	                             src: "/spingmvc/resource/img/icon.jpg"}), 
-	                        React.createElement("h2", {onClick: this.enter, className: "post-title"}, React.createElement("a", {href: hrefStr}, this.props.title)), 
+	                        React.createElement("h2", {className: "post-title"}, React.createElement("a", {href: hrefStr}, this.props.title)), 
 	                        React.createElement("p", {className: "post-meta"}, 
 	                            React.createElement("a", {className: "post-author"}, this.props.author), 
 	                            React.createElement("a", null, " 点赞留言功能尚未开通 "), 
@@ -20133,15 +20089,7 @@
 	                )
 	            )
 
-	        )
-	            ;
-	    },
-	    enter: function () {
-	        $('html, body,#app').animate({scrollTop: 0}, 'slow');
-	        var data = {
-	            ArticleId: this.props.id
-	        }
-	        CommentActionCreators.getArticle(data);
+	        );
 	    }
 	});
 
@@ -20153,7 +20101,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 	var BlogImg = __webpack_require__(160);
 	var CommentImg = React.createClass({displayName: "CommentImg",
 	    render: function () {
@@ -20215,7 +20163,7 @@
 	    render: function () {
 	        debugger;
 	        return (
-	            React.createElement("div", {className: "pure-u-1 pure-u-md-1-2"}, 
+	            React.createElement("div", {className: "pure-u-1 pure-u-md-1-2 padding-5px"}, 
 	                React.createElement("a", {"data-remodal-target": "modal", href: "#"}, 
 	                    React.createElement("img", {alt: "Photo of someone working poolside at a resort", 
 	                         className: "pure-img-responsive", 
@@ -20238,7 +20186,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 	var user = {};
 	var CommentLogin = React.createClass({displayName: "CommentLogin",
 	    render: function () {
@@ -20295,7 +20243,7 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 	var user = {};
 	var CommentRegister = React.createClass({displayName: "CommentRegister",
 	    render: function () {
@@ -20364,22 +20312,24 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 	var article = {};
 	var CommentInsert = React.createClass({displayName: "CommentInsert",
 	    render: function () {
 	        return (
 	            React.createElement("div", {className: "posts"}, 
-	                React.createElement("h1", {className: "content-subhead"}, "Pinned Post"), 
+	                React.createElement("h1", {className: "content-subhead"}, "发布文章"), 
 	                React.createElement("div", {className: "pure-form pure-form-stacked"}, 
 	                    React.createElement("fieldset", null, 
-	                        React.createElement("legend", null, "堆叠式表单"), 
-
-	                        React.createElement("label", null, "Title"), 
-	                        React.createElement("input", {id: "content-title", onChange: this.titleChange, placeholder: "Title", required: true}), 
-
-	                        React.createElement("label", null, "Content"), 
-	                        React.createElement("textarea", {id: "content", onChange: this.contentChange, placeholder: "Content"}), 
+	                        React.createElement("label", null, "标题"), 
+	                        React.createElement("input", {id: "content-title", onChange: this.titleChange, placeholder: "标题", required: true}), 
+	                        React.createElement("select", {id: "class", onChange: this.classChange}, 
+	                            React.createElement("option", {id: "1", data: "1"}, "日常"), 
+	                            React.createElement("option", {id: "2", data: "2"}, "技术"), 
+	                            React.createElement("option", {id: "3", data: "3"}, "摄影")
+	                        ), 
+	                        React.createElement("label", null, "内容"), 
+	                        React.createElement("textarea", {id: "content", onChange: this.contentChange, placeholder: "这里是写入Markdown的格式"}), 
 	                        React.createElement("button", {onClick: this.submit, className: "pure-button pure-button-primary"}, "发布")
 	                    )
 	                )
@@ -20388,16 +20338,16 @@
 	        );
 	    },
 	    deleteItem: function (e) {
-	        debugger;
 	        CommentActionCreators.deleteCommentItem(this.props);
-	    },
-	    titleChange: function (e) {
+	    }, titleChange: function (e) {
 	        article.title = e.target.value;
 	    }, contentChange: function (e) {
 	        article.content = e.target.value;
+	    }, classChange:function(e){
+	        article.class = e.target.selectedOptions[0].id;
 	    }, submit: function (e) {
 	        CommentActionCreators.insertArticle(article);
-	    },
+	    }
 	});
 
 	module.exports = CommentInsert;
@@ -20408,202 +20358,9 @@
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
-	var CommentStore = __webpack_require__(153);
-
-	function getStateFromStore() {
-	    return {
-	        pageState: CommentStore.getPageState(),
-	        currentPage: CommentStore.getCuttentPage()
-	    }
-	}
-	var CommentFooter = React.createClass({displayName: "CommentFooter",
-	    getInitialState: function () {
-	        debugger;
-	        return getStateFromStore();
-	    },
-	    render: function () {
-	        var mod;
-	        var nextHref = "#/page/"+(Number(this.state.currentPage)+1);
-	        var lastHref = "#/page/"+(Number(this.state.currentPage)-1);
-	        debugger;
-	        switch (this.state.pageState) {
-	            case "FIRSTPAGE":
-	                mod = (
-	                    React.createElement("ul", {className: "nav-list"}, 
-	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {href: nextHref, className: "pure-button down-page", onClick: this.downPage}, "下一页")
-	                        )
-	                    ));
-	                break;
-	            case "MIDDLEPAGE":
-	                mod = (
-	                    React.createElement("ul", {className: "nav-list"}, 
-	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {href: lastHref, className: "pure-button up-page", onClick: this.upPage}, "上一页")
-	                        ), 
-	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {href: nextHref, className: "pure-button down-page", onClick: this.downPage}, "下一页")
-	                        )
-	                    ));
-	                break;
-	            case "LASTPAGE":
-	                mod = (
-	                    React.createElement("ul", {className: "nav-list"}, 
-	                        React.createElement("li", {className: "nav-item"}, 
-	                            React.createElement("a", {href: lastHref, className: "pure-button up-page", onClick: this.upPage}, "上一页")
-	                        )
-	                    ));
-	                break;
-	            case "NONE":
-	                mod = null;
-	                break;
-	        }
-
-	        return (
-	            React.createElement("div", {className: "pure-u-1"}, 
-	                React.createElement("div", {className: "footer"}, 
-	                    React.createElement("nav", {className: "nav"}, 
-	                        mod
-	                    )
-	                )
-	            )
-
-	        );
-	    },
-	    onChange: function () {
-	        debugger;
-	        this.setState(getStateFromStore());
-	    },
-	    componentDidMount: function () {
-	        CommentStore.addChangeListener(this.onChange);
-	    },
-	    componentWillUnmount: function () {
-	        CommentStore.removeChangeListener(this.onChange);
-	    },
-
-	    upPage: function () {
-	        $('html, body,#app').animate({scrollTop:0}, 'slow');
-	        this.page = this.state.currentPage;
-	        this.page = (this.page - 1) < 0 ? 0 : (this.page - 1);
-	        data = {};
-	        data.start = (this.page - 1) * 5;
-	        data.end = 5;
-	        data.state = "up";
-	        CommentStore.setCurrentPage(this.page);
-	        CommentActionCreators.reFlashData(data)
-	    },
-	    downPage: function () {
-	        debugger;
-	        $('html, body,#app').animate({scrollTop:0}, 'slow');
-	        this.page = this.state.currentPage;
-	        this.page = this.page + 1;
-	        data = {};
-	        data.start = (this.page - 1) * 5;
-	        data.end = 6;
-	        data.state = "down";
-	        CommentStore.setCurrentPage(this.page);
-	        CommentActionCreators.reFlashData(data)
-	    }
-	});
-
-	module.exports = CommentFooter;
-
-/***/ },
-/* 165 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-	var CommentStore = __webpack_require__(153);
-	var CommentActionCreators = __webpack_require__(148);
-
-
-	function getStateFromStore() {
-	    return {
-	        state: CommentStore.getAll()
-	    }
-	}
-	function createMarkup(str) {
-	    return {__html: str};
-	};
-
-
-	var Comments = React.createClass({displayName: "Comments",
-
-	    onChange: function () {
-	        debugger;
-	        this.setState(getStateFromStore());
-	    },
-
-	    getInitialState: function () {
-	        //alert($.getUrlParam("name"));
-	        //var data = {start: 0, end: 5};
-	        //CommentActionCreators.reFlashData(data);
-	        return getStateFromStore();
-	    },
-
-	    componentDidMount: function () {
-	        CommentStore.addViewChangeListener(this.onChange);
-	    },
-
-	    componentWillUnmount: function () {
-	        CommentStore.removeViewChangeListener(this.onChange);
-	    },
-
-
-	    render: function () {
-	        debugger;
-	        var itemJsx, type = "", list = [];
-	        var imgList = [
-	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
-	            {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
-	        ];
-	        var value = "##就是测试啊,怎么回事\n";
-	        value += "***\n"
-	        value += "#就是测试啊,怎么回事\n";
-	        value += "> 就是测试啊,怎么回事\n\n";
-	        value += "* 就是测试啊,怎么回事\n";
-	        value += "* 就是测试啊,怎么回事\n";
-	        value += "* 就是测试啊,怎么回事\n";
-	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
-	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
-	        value += "hello[^hello]";
-
-	        value = this.props.content;
-
-	        var html = markdown.toHTML(value, 'Maruku')
-	        //html = parseDom(html);
-
-	        var url = window.location.href + "?ArticleId=" + this.props.id;
-	        return (
-	            React.createElement("div", {className: "content pure-u-1 pure-u-md-3-4"}, 
-	                React.createElement("div", {className: "content-text"}, 
-	                    React.createElement("div", {dangerouslySetInnerHTML: createMarkup(html)}), 
-	                    React.createElement("a", {href: url, className: "pure-button"}, "跳转"), 
-	                    React.createElement("a", {"data-remodal-target": "modal", className: "pure-button"}, "分享")
-	                )
-	            )
-
-	        )
-	    },
-	    deleteItem: function (e) {
-	        debugger;
-	        //CommentAction.deleteCommentItem(1);
-	    },
-	});
-
-	module.exports = Comments;
-
-/***/ },
-/* 166 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-	var CommentActionCreators = __webpack_require__(148);
-	var CommentStore = __webpack_require__(153);
-	var CommentModal = __webpack_require__(167);
+	var CommentActionCreators = __webpack_require__(156);
+	var CommentStore = __webpack_require__(149);
+	var CommentModal = __webpack_require__(165);
 
 	function getStateFromStore() {
 	    return {
@@ -20642,7 +20399,7 @@
 	            case "ARTICLEVIEW":
 	                button = (
 	                    React.createElement("li", {className: "nav-item"}, 
-	                        React.createElement("a", {className: "pure-button", href: "#home", onClick: this.reFlashData}, "返回")
+	                        React.createElement("a", {className: "pure-button", href: "#home"}, "返回")
 	                    ));
 	                break;
 	        }
@@ -20650,7 +20407,7 @@
 	            React.createElement("div", {className: "sidebar pure-u-1 pure-u-md-1-4"}, 
 	                React.createElement("div", {className: "header"}, 
 	                    React.createElement("h1", {className: "brand-title", onClick: this.reload}, this.props.title), 
-	                    React.createElement("h2", {className: "brand-tagline"}, "这里没有诗,但是会走向远方!"), 
+	                    React.createElement("h4", {className: "brand-tagline"}, "这里没有诗,但是会走向远方!"), 
 
 	                    React.createElement("nav", {className: "nav"}, 
 	                        React.createElement("ul", {className: "nav-list"}, 
@@ -20667,11 +20424,11 @@
 	    },
 	    componentDidMount: function () {
 	        CommentStore.addChangeListener(this.onChange);
-	        CommentStore.addViewChangeListener(this.onChange);
+
 	    },
 	    componentWillUnmount: function () {
 	        CommentStore.removeChangeListener(this.onChange);
-	        CommentStore.removeViewChangeListener(this.onChange);
+
 	    },
 	    login: function (e) {
 	        debugger;
@@ -20682,24 +20439,18 @@
 	    },
 	    insertview: function (e) {
 	        CommentActionCreators.insertview();
-	    }, reload: function () {
-	        var obj = {
-	            start: 0,
-	            end: 5
-	        }
-	        CommentActionCreators.reFlashData(obj);
 	    }
 	});
 
 	module.exports = CommentHeader;
 
 /***/ },
-/* 167 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentActionCreators = __webpack_require__(156);
 
 	var inst = $('[data-remodal-id=modal]').remodal();
 	var CommentModal = React.createClass({displayName: "CommentModal",
@@ -20730,376 +20481,101 @@
 	module.exports = CommentModal;
 
 /***/ },
-/* 168 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// style-loader: Adds some css to the DOM by adding a <style> tag
+	var React = __webpack_require__(1);
 
-	// load the styles
-	var content = __webpack_require__(169);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(173)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./style.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./style.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
+	var CommentActionCreators = __webpack_require__(156);
+	var CommentStore = __webpack_require__(149);
+
+	function getStateFromStore() {
+	    return {
+	        pageState: CommentStore.getPageState(),
+	        currentPage: CommentStore.getCuttentPage()
+	    }
 	}
+	var CommentFooter = React.createClass({displayName: "CommentFooter",
+	    getInitialState: function () {
+	        debugger;
+	        return getStateFromStore();
+	    },
+	    render: function () {
+	        var mod;
+	        debugger;
+	        var nextHref = "#/page/"+(Number(this.state.currentPage)+1);
+	        var lastHref = "#/page/"+(Number(this.state.currentPage)-1);
+	        debugger;
+	        switch (this.state.pageState) {
+	            case "FIRSTPAGE":
+	                mod = (
+	                    React.createElement("ul", {className: "nav-list"}, 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {href: nextHref, className: "pure-button down-page"}, "下一页")
+	                        )
+	                    ));
+	                break;
+	            case "MIDDLEPAGE":
+	                mod = (
+	                    React.createElement("ul", {className: "nav-list"}, 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {href: lastHref, className: "pure-button up-page"}, "上一页")
+	                        ), 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {href: nextHref, className: "pure-button down-page"}, "下一页")
+	                        )
+	                    ));
+	                break;
+	            case "LASTPAGE":
+	                mod = (
+	                    React.createElement("ul", {className: "nav-list"}, 
+	                        React.createElement("li", {className: "nav-item"}, 
+	                            React.createElement("a", {href: lastHref, className: "pure-button up-page"}, "上一页")
+	                        )
+	                    ));
+	                break;
+	            case "NONE":
+	                mod = null;
+	                break;
+	        }
+
+	        return (
+	            React.createElement("div", {className: "pure-u-1"}, 
+	                React.createElement("div", {className: "footer"}, 
+	                    React.createElement("nav", {className: "nav"}, 
+	                        mod
+	                    )
+	                )
+	            )
+
+	        );
+	    },
+	    onChange: function () {
+	        debugger;
+	        this.setState(getStateFromStore());
+	    },
+	    componentDidMount: function () {
+	        CommentStore.addChangeListener(this.onChange);
+	    },
+	    componentWillUnmount: function () {
+	        CommentStore.removeChangeListener(this.onChange);
+	    }
+	});
+
+	module.exports = CommentFooter;
 
 /***/ },
-/* 169 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(170)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #000000;\n}\n\nimg[alt=\"mark\"] {\n    width: 100%;\n}\n\np, a {\n    word-break: break-all;\n}\n\n#app {\n    overflow-x: auto;\n    overflow-y: auto;\n    -webkit-overflow-scrolling: touch;\n}\n\n/*------------------------样式-------------------------*/\n\n* {\n    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;\n\n}\n\n/*指定PC端加载字体*/\n@media (min-width: 48em) {\n    @font-face {\n        font-family: \"tt\"; /*这里是说明调用来的字体名字*/\n        src: url(" + __webpack_require__(171) + "); /*这里是字体文件路径*/\n    }\n    * {\n        font-family: \"tt\";\n    }\n}\n\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background-image: url(" + __webpack_require__(172) + ");\n    background-repeat: no-repeat;\n    background-size: cover;\n    /*background: rgb(61, 79, 93);*/\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n}\n\n.brand-title {\n    text-transform: uppercase;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(176, 202, 219);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(176, 202, 219);\n    color: #fff;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #aaa;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    cursor: pointer;\n    font-size: 2em;\n    color: #222;\n    margin-bottom: 0.2em;\n}\n\n.post-title:hover {\n    color: #4d85d1;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: \"tt\";\n    color: #444;\n    line-height: 1.8em;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #fff;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #ccc;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's default mobile first theme\n   ========================================================================== */\n\n/* Default theme styles for the background */\n\n.remodal-bg.remodal-is-opening,\n.remodal-bg.remodal-is-opened {\n    -webkit-filter: blur(3px);\n    filter: blur(3px);\n}\n\n/* Default theme styles of the overlay */\n\n.remodal-overlay {\n    background: rgba(43, 46, 56, 0.9);\n}\n\n.remodal-overlay.remodal-is-opening,\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal-overlay.remodal-is-opening {\n    -webkit-animation-name: remodal-overlay-opening-keyframes;\n    animation-name: remodal-overlay-opening-keyframes;\n}\n\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-name: remodal-overlay-closing-keyframes;\n    animation-name: remodal-overlay-closing-keyframes;\n}\n\n/* Default theme styles of the wrapper */\n\n.remodal-wrapper {\n    padding: 10px 10px 0;\n}\n\n/* Default theme styles of the modal dialog */\n\n.remodal {\n    box-sizing: border-box;\n    width: 100%;\n    margin-bottom: 10px;\n    padding: 35px;\n\n    -webkit-transform: translate3d(0, 0, 0);\n    transform: translate3d(0, 0, 0);\n\n    color: #2b2e38;\n    background: #fff;\n}\n\n.remodal.remodal-is-opening,\n.remodal.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal.remodal-is-opening {\n    -webkit-animation-name: remodal-opening-keyframes;\n    animation-name: remodal-opening-keyframes;\n}\n\n.remodal.remodal-is-closing {\n    -webkit-animation-name: remodal-closing-keyframes;\n    animation-name: remodal-closing-keyframes;\n}\n\n/* Vertical align of the modal dialog */\n\n.remodal,\n.remodal-wrapper:after {\n    vertical-align: middle;\n}\n\n/* Close button */\n\n.remodal-close {\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n    overflow: visible;\n\n    width: 35px;\n    height: 35px;\n    margin: 0;\n    padding: 0;\n\n    cursor: pointer;\n    -webkit-transition: color 0.2s;\n    transition: color 0.2s;\n    text-decoration: none;\n\n    color: #95979c;\n    border: 0;\n    outline: 0;\n    background: transparent;\n}\n\n.remodal-close:hover,\n.remodal-close:focus {\n    color: #2b2e38;\n}\n\n.remodal-close:before {\n    font-family: Arial, \"Helvetica CY\", \"Nimbus Sans L\", sans-serif !important;\n    font-size: 25px;\n    line-height: 35px;\n\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n\n    width: 35px;\n\n    content: \"\\D7\";\n    text-align: center;\n}\n\n/* Dialog buttons */\n\n.remodal-confirm,\n.remodal-cancel {\n    font: inherit;\n\n    display: inline-block;\n    overflow: visible;\n\n    min-width: 110px;\n    margin: 0;\n    padding: 12px 0;\n\n    cursor: pointer;\n    -webkit-transition: background 0.2s;\n    transition: background 0.2s;\n    text-align: center;\n    vertical-align: middle;\n    text-decoration: none;\n\n    border: 0;\n    outline: 0;\n}\n\n.remodal-confirm {\n    color: #fff;\n    background: #81c784;\n}\n\n.remodal-confirm:hover,\n.remodal-confirm:focus {\n    background: #66bb6a;\n}\n\n.remodal-cancel {\n    color: #fff;\n    background: #e57373;\n}\n\n.remodal-cancel:hover,\n.remodal-cancel:focus {\n    background: #ef5350;\n}\n\n/* Remove inner padding and border in Firefox 4+ for the button tag. */\n\n.remodal-confirm::-moz-focus-inner,\n.remodal-cancel::-moz-focus-inner,\n.remodal-close::-moz-focus-inner {\n    padding: 0;\n\n    border: 0;\n}\n\n/* Keyframes\n   ========================================================================== */\n\n@-webkit-keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n/* Media queries\n   ========================================================================== */\n\n@media only screen and (min-width: 641px) {\n    .remodal {\n        max-width: 700px;\n    }\n}\n\n/* IE8\n   ========================================================================== */\n\n.lt-ie9 .remodal-overlay {\n    background: #2b2e38;\n}\n\n.lt-ie9 .remodal {\n    width: 700px;\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's necessary styles\n   ========================================================================== */\n\n/* Hide scroll bar */\n\nhtml.remodal-is-locked {\n    overflow: hidden;\n\n    -ms-touch-action: none;\n    touch-action: none;\n}\n\n/* Anti FOUC */\n\n.remodal,\n[data-remodal-id] {\n    display: none;\n}\n\n/* Necessary styles of the overlay */\n\n.remodal-overlay {\n    position: fixed;\n    z-index: 9999;\n    top: -5000px;\n    right: -5000px;\n    bottom: -5000px;\n    left: -5000px;\n\n    display: none;\n}\n\n/* Necessary styles of the wrapper */\n\n.remodal-wrapper {\n    position: fixed;\n    z-index: 10000;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n\n    display: none;\n    overflow: auto;\n\n    text-align: center;\n\n    -webkit-overflow-scrolling: touch;\n}\n\n.remodal-wrapper:after {\n    display: inline-block;\n\n    height: 100%;\n    margin-left: -0.05em;\n\n    content: \"\";\n}\n\n/* Fix iPad, iPhone glitches */\n\n.remodal-overlay,\n.remodal-wrapper {\n    -webkit-backface-visibility: hidden;\n    backface-visibility: hidden;\n}\n\n/* Necessary styles of the modal dialog */\n\n.remodal {\n    position: relative;\n\n    outline: none;\n\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;\n    text-size-adjust: 100%;\n}\n\n.remodal-is-initialized {\n    /* Disable Anti-FOUC */\n    display: inline-block;\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n    height: 300px;\n}\n\n#content-title {\n    width: 100%;\n}\n.content-text{\n    padding-top: 20px;\n    padding-bottom: 20px;\n}\n\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 170 */
-/***/ function(module, exports) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 171 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "f5326e1cab3f01a61da850cc5b93ab3f.ttf";
-
-/***/ },
-/* 172 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "22b5c33ba122844efaa4c52937afd379.jpg";
-
-/***/ },
-/* 173 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isOldIE = memoize(function() {
-			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0,
-		styleElementsInsertedAtTop = [];
-
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
-
-		options = options || {};
-		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-		// By default, add <style> tags to the bottom of <head>.
-		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-
-	function insertStyleElement(options, styleElement) {
-		var head = getHeadElement();
-		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-		if (options.insertAt === "top") {
-			if(!lastStyleElementInsertedAtTop) {
-				head.insertBefore(styleElement, head.firstChild);
-			} else if(lastStyleElementInsertedAtTop.nextSibling) {
-				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-			} else {
-				head.appendChild(styleElement);
-			}
-			styleElementsInsertedAtTop.push(styleElement);
-		} else if (options.insertAt === "bottom") {
-			head.appendChild(styleElement);
-		} else {
-			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-		}
-	}
-
-	function removeStyleElement(styleElement) {
-		styleElement.parentNode.removeChild(styleElement);
-		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-		if(idx >= 0) {
-			styleElementsInsertedAtTop.splice(idx, 1);
-		}
-	}
-
-	function createStyleElement(options) {
-		var styleElement = document.createElement("style");
-		styleElement.type = "text/css";
-		insertStyleElement(options, styleElement);
-		return styleElement;
-	}
-
-	function createLinkElement(options) {
-		var linkElement = document.createElement("link");
-		linkElement.rel = "stylesheet";
-		insertStyleElement(options, linkElement);
-		return linkElement;
-	}
-
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement(options));
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else if(obj.sourceMap &&
-			typeof URL === "function" &&
-			typeof URL.createObjectURL === "function" &&
-			typeof URL.revokeObjectURL === "function" &&
-			typeof Blob === "function" &&
-			typeof btoa === "function") {
-			styleElement = createLinkElement(options);
-			update = updateLink.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-				if(styleElement.href)
-					URL.revokeObjectURL(styleElement.href);
-			};
-		} else {
-			styleElement = createStyleElement(options);
-			update = applyToTag.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-			};
-		}
-
-		update(obj);
-
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-
-	var replaceText = (function () {
-		var textStore = [];
-
-		return function (index, replacement) {
-			textStore[index] = replacement;
-			return textStore.filter(Boolean).join('\n');
-		};
-	})();
-
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
-
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-
-	function updateLink(linkElement, obj) {
-		var css = obj.css;
-		var sourceMap = obj.sourceMap;
-
-		if(sourceMap) {
-			// http://stackoverflow.com/a/26603875
-			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-		}
-
-		var blob = new Blob([css], { type: "text/css" });
-
-		var oldSrc = linkElement.href;
-
-		linkElement.href = URL.createObjectURL(blob);
-
-		if(oldSrc)
-			URL.revokeObjectURL(oldSrc);
-	}
-
-
-/***/ },
-/* 174 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var CommentRouter = __webpack_require__(175).Router;
-	var CommentActionCreators = __webpack_require__(148);
+	var CommentRouter = __webpack_require__(168).Router;
+	var CommentActionCreators = __webpack_require__(156);
 
 	var router = new CommentRouter({
 	    '/public': function () {
 	    },
 	    '/atricleid/:id': function (id) {
+	        $('html, body,#app').animate({scrollTop: 0}, 'slow');
 	        var data = {
 	            ArticleId: id
 	        }
@@ -21110,8 +20586,9 @@
 	        CommentActionCreators.reFlashData(data);
 	    },
 	    '/page/:num': function (num) {
+	        $('html, body,#app').animate({scrollTop: 0}, 'slow');
 	        num = Number(num);
-	        var data = {start: (num - 1) * 5, end: ((num - 1) * 5 + 5)};
+	        var data = {start: (num - 1) * 5};
 	        CommentActionCreators.reFlashData(data);
 	    }
 	});
@@ -21120,7 +20597,7 @@
 	module.exports = router;
 
 /***/ },
-/* 175 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -21333,7 +20810,7 @@
 	      routeTo = this.getPath();
 	    }
 
-	    // Router has been initialized, but due to the chrome bug it will not
+	    // router has been initialized, but due to the chrome bug it will not
 	    // yet actually route HTML5 history state changes. Thus, decide if should route.
 	    if (routeTo || this.run_in_init === true) {
 	      this.handler();
@@ -21848,6 +21325,417 @@
 
 
 	}( true ? exports : window));
+
+/***/ },
+/* 169 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(170);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(174)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./style.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./style.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 170 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(171)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #000000;\n}\n\nimg[alt=\"mark\"] {\n    width: 100%;\n}\n\np, a {\n    word-break: break-all;\n}\n\n#app {\n    overflow-x: auto;\n    overflow-y: auto;\n    -webkit-overflow-scrolling: touch;\n}\n\n/*------------------------样式-------------------------*/\n\n* {\n    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;\n\n}\n\n/*指定PC端加载字体*/\n@media (min-width: 48em) {\n    @font-face {\n        font-family: \"tt\"; /*这里是说明调用来的字体名字*/\n        src: url(" + __webpack_require__(172) + "); /*这里是字体文件路径*/\n    }\n    * {\n        font-family: \"tt\";\n    }\n}\n\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    border-radius: 10px;\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background-image: url(" + __webpack_require__(173) + ");\n    background-repeat: no-repeat;\n    background-size: cover;\n    /*background: rgb(61, 79, 93);*/\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n    color:black;\n}\n\n.brand-title {\n    text-transform: uppercase;\n    font-size: 4em;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(0, 0, 0);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(0, 0, 0);\n    color: black;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #000000;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    cursor: pointer;\n    font-size: 2em;\n    color: #000000;\n    margin-bottom: 0.2em;\n}\n.post-title>a{\n    color: #000000\n}\n\n.post-title:hover {\n    color: #4d85d1;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: \"tt\";\n    color: #444;\n    line-height: 1.8em;\n}\n.post-description>p{\n    color: #999999;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #000000;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #000000;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's default mobile first theme\n   ========================================================================== */\n\n/* Default theme styles for the background */\n\n.remodal-bg.remodal-is-opening,\n.remodal-bg.remodal-is-opened {\n    -webkit-filter: blur(3px);\n    filter: blur(3px);\n}\n\n/* Default theme styles of the overlay */\n\n.remodal-overlay {\n    background: rgba(43, 46, 56, 0.9);\n}\n\n.remodal-overlay.remodal-is-opening,\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal-overlay.remodal-is-opening {\n    -webkit-animation-name: remodal-overlay-opening-keyframes;\n    animation-name: remodal-overlay-opening-keyframes;\n}\n\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-name: remodal-overlay-closing-keyframes;\n    animation-name: remodal-overlay-closing-keyframes;\n}\n\n/* Default theme styles of the wrapper */\n\n.remodal-wrapper {\n    padding: 10px 10px 0;\n}\n\n/* Default theme styles of the modal dialog */\n\n.remodal {\n    box-sizing: border-box;\n    width: 100%;\n    margin-bottom: 10px;\n    padding: 35px;\n\n    -webkit-transform: translate3d(0, 0, 0);\n    transform: translate3d(0, 0, 0);\n\n    color: #2b2e38;\n    background: #fff;\n}\n\n.remodal.remodal-is-opening,\n.remodal.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal.remodal-is-opening {\n    -webkit-animation-name: remodal-opening-keyframes;\n    animation-name: remodal-opening-keyframes;\n}\n\n.remodal.remodal-is-closing {\n    -webkit-animation-name: remodal-closing-keyframes;\n    animation-name: remodal-closing-keyframes;\n}\n\n/* Vertical align of the modal dialog */\n\n.remodal,\n.remodal-wrapper:after {\n    vertical-align: middle;\n}\n\n/* Close button */\n\n.remodal-close {\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n    overflow: visible;\n\n    width: 35px;\n    height: 35px;\n    margin: 0;\n    padding: 0;\n\n    cursor: pointer;\n    -webkit-transition: color 0.2s;\n    transition: color 0.2s;\n    text-decoration: none;\n\n    color: #95979c;\n    border: 0;\n    outline: 0;\n    background: transparent;\n}\n\n.remodal-close:hover,\n.remodal-close:focus {\n    color: #2b2e38;\n}\n\n.remodal-close:before {\n    font-family: Arial, \"Helvetica CY\", \"Nimbus Sans L\", sans-serif !important;\n    font-size: 25px;\n    line-height: 35px;\n\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n\n    width: 35px;\n\n    content: \"\\D7\";\n    text-align: center;\n}\n\n/* Dialog buttons */\n\n.remodal-confirm,\n.remodal-cancel {\n    font: inherit;\n\n    display: inline-block;\n    overflow: visible;\n\n    min-width: 110px;\n    margin: 0;\n    padding: 12px 0;\n\n    cursor: pointer;\n    -webkit-transition: background 0.2s;\n    transition: background 0.2s;\n    text-align: center;\n    vertical-align: middle;\n    text-decoration: none;\n\n    border: 0;\n    outline: 0;\n}\n\n.remodal-confirm {\n    color: #fff;\n    background: #81c784;\n}\n\n.remodal-confirm:hover,\n.remodal-confirm:focus {\n    background: #66bb6a;\n}\n\n.remodal-cancel {\n    color: #fff;\n    background: #e57373;\n}\n\n.remodal-cancel:hover,\n.remodal-cancel:focus {\n    background: #ef5350;\n}\n\n/* Remove inner padding and border in Firefox 4+ for the button tag. */\n\n.remodal-confirm::-moz-focus-inner,\n.remodal-cancel::-moz-focus-inner,\n.remodal-close::-moz-focus-inner {\n    padding: 0;\n\n    border: 0;\n}\n\n/* Keyframes\n   ========================================================================== */\n\n@-webkit-keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n/* Media queries\n   ========================================================================== */\n\n@media only screen and (min-width: 641px) {\n    .remodal {\n        max-width: 700px;\n    }\n}\n\n/* IE8\n   ========================================================================== */\n\n.lt-ie9 .remodal-overlay {\n    background: #2b2e38;\n}\n\n.lt-ie9 .remodal {\n    width: 700px;\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's necessary styles\n   ========================================================================== */\n\n/* Hide scroll bar */\n\nhtml.remodal-is-locked {\n    overflow: hidden;\n\n    -ms-touch-action: none;\n    touch-action: none;\n}\n\n/* Anti FOUC */\n\n.remodal,\n[data-remodal-id] {\n    display: none;\n}\n\n/* Necessary styles of the overlay */\n\n.remodal-overlay {\n    position: fixed;\n    z-index: 9999;\n    top: -5000px;\n    right: -5000px;\n    bottom: -5000px;\n    left: -5000px;\n\n    display: none;\n}\n\n/* Necessary styles of the wrapper */\n\n.remodal-wrapper {\n    position: fixed;\n    z-index: 10000;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n\n    display: none;\n    overflow: auto;\n\n    text-align: center;\n\n    -webkit-overflow-scrolling: touch;\n}\n\n.remodal-wrapper:after {\n    display: inline-block;\n\n    height: 100%;\n    margin-left: -0.05em;\n\n    content: \"\";\n}\n\n/* Fix iPad, iPhone glitches */\n\n.remodal-overlay,\n.remodal-wrapper {\n    -webkit-backface-visibility: hidden;\n    backface-visibility: hidden;\n}\n\n/* Necessary styles of the modal dialog */\n\n.remodal {\n    position: relative;\n\n    outline: none;\n\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;\n    text-size-adjust: 100%;\n}\n\n.remodal-is-initialized {\n    /* Disable Anti-FOUC */\n    display: inline-block;\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n    height: 300px;\n}\n\n#content-title {\n    width: 100%;\n}\n.content-text{\n    padding-top: 20px;\n    padding-bottom: 20px;\n}\n.padding-5px{\n    padding: 5px;\n}\n\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 171 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "f5326e1cab3f01a61da850cc5b93ab3f.ttf";
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "22b5c33ba122844efaa4c52937afd379.jpg";
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+
+	function createMarkup(str) {
+	    return {__html: str};
+	};
+
+
+	var Comments = React.createClass({displayName: "Comments",
+
+
+
+	    render: function () {
+
+	        //var itemJsx, type = "", list = [];
+	        //var imgList = [
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
+	        //];
+	        var value = "##就是测试啊,怎么回事\n";
+	        value += "***\n"
+	        value += "#就是测试啊,怎么回事\n";
+	        value += "> 就是测试啊,怎么回事\n\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
+	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
+	        value += "hello[^hello]";
+
+	        value = this.props.content;
+
+	        var html = markdown.toHTML(value, 'Maruku')
+
+	        return (
+
+	            React.createElement("div", {className: "content-text"}, 
+	                React.createElement("div", {dangerouslySetInnerHTML: createMarkup(html)})
+	            )
+
+
+	        )
+	    }
+	});
+
+	module.exports = Comments;
 
 /***/ }
 /******/ ]);

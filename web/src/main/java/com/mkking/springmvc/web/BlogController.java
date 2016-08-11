@@ -47,7 +47,7 @@ public class BlogController {
 
 	@RequestMapping(value = "/Page", method = RequestMethod.GET)
 	@ResponseBody
-	public void WeChart(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void GetBlogByPage(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String reult = "测试", partPath = "resource/picture/";
 
 		FileReader fr = new FileReader();
@@ -144,12 +144,22 @@ public class BlogController {
 		Map<String, String[]> params = request.getParameterMap();
 		String title = params.get("title")[0].toString();
 		String content = params.get("content")[0].toString();
+		String classname = params.get("class")[0].toString();
 
 		String summary = content.length() > 100 ? content.substring(0, 100) + "....." : content;
 		ArticleWithBLOBs article = new ArticleWithBLOBs();
 
-		// Short i = 2;
-		// article.setArticleId(i);
+		String ip = request.getHeader("x-forwarded-for");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+
 		Long timeLong = new Date().getTime();
 		String timeStr = timeLong.toString();
 		int time = Integer.parseInt(timeStr.substring(0, 8));
@@ -157,14 +167,14 @@ public class BlogController {
 		// Short id = 2;
 		// article.setArticleId(id);
 		article.setArticleClick(0);
-		article.setArticleIp("123");
+		article.setArticleIp(ip);
 		article.setArticleName(title);
 		article.setArticleTime(time);
 		article.setArticleUp(up);
 		article.setArticleContent(content);
 		article.setArticleSummary(summary);
 		article.setUserId(1);
-		article.setSortArticleId(2);
+		article.setSortArticleId(Integer.parseInt(classname));
 		articleService.insert(article);
 
 		reult = String.valueOf(article.getArticleId());
@@ -193,7 +203,7 @@ public class BlogController {
 		Map<String, String> item = new HashMap<String, String>();
 		item.put("content", article.getArticleContent());
 		item.put("title", article.getArticleName());
-		item.put("type", "Text");
+		item.put("type", "Article");
 		item.put("id", article.getArticleId().toString());
 		jsonObj.put("article", item);
 

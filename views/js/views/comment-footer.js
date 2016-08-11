@@ -16,6 +16,7 @@ var CommentFooter = React.createClass({
     },
     render: function () {
         var mod;
+        debugger;
         var nextHref = "#/page/"+(Number(this.state.currentPage)+1);
         var lastHref = "#/page/"+(Number(this.state.currentPage)-1);
         debugger;
@@ -24,7 +25,7 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a href={nextHref} className='pure-button down-page' onClick={this.downPage}>下一页</a>
+                            <a href={nextHref} className='pure-button down-page' >下一页</a>
                         </li>
                     </ul>);
                 break;
@@ -32,10 +33,10 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a href={lastHref} className='pure-button up-page' onClick={this.upPage}>上一页</a>
+                            <a href={lastHref} className='pure-button up-page' >上一页</a>
                         </li>
                         <li className='nav-item'>
-                            <a href={nextHref} className='pure-button down-page' onClick={this.downPage}>下一页</a>
+                            <a href={nextHref} className='pure-button down-page' >下一页</a>
                         </li>
                     </ul>);
                 break;
@@ -43,7 +44,7 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a href={lastHref} className='pure-button up-page' onClick={this.upPage}>上一页</a>
+                            <a href={lastHref} className='pure-button up-page' >上一页</a>
                         </li>
                     </ul>);
                 break;
@@ -72,30 +73,6 @@ var CommentFooter = React.createClass({
     },
     componentWillUnmount: function () {
         CommentStore.removeChangeListener(this.onChange);
-    },
-
-    upPage: function () {
-        $('html, body,#app').animate({scrollTop:0}, 'slow');
-        this.page = this.state.currentPage;
-        this.page = (this.page - 1) < 0 ? 0 : (this.page - 1);
-        data = {};
-        data.start = (this.page - 1) * 5;
-        data.end = 5;
-        data.state = "up";
-        CommentStore.setCurrentPage(this.page);
-        CommentActionCreators.reFlashData(data)
-    },
-    downPage: function () {
-        debugger;
-        $('html, body,#app').animate({scrollTop:0}, 'slow');
-        this.page = this.state.currentPage;
-        this.page = this.page + 1;
-        data = {};
-        data.start = (this.page - 1) * 5;
-        data.end = 6;
-        data.state = "down";
-        CommentStore.setCurrentPage(this.page);
-        CommentActionCreators.reFlashData(data)
     }
 });
 

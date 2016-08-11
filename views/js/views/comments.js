@@ -9,7 +9,7 @@ var CommentImg = require('../views/comment-img');
 var CommentLogin = require('../views/comment-login');
 var CommentRegister = require('../views/comment-register');
 var CommentInsert = require('../views/comment-insert');
-var CommentFooter = require('../views/comment-footer');
+var CommentsTextView = require('../views/comment-text-view');
 
 function getStateFromStore() {
     return {
@@ -58,7 +58,9 @@ var Comments = React.createClass({
                                            text={this.state.state[i].summary}/>;
                     break;
                 case "Img":
-                    itemJsx = <CommentImg list={this.state.state[i].list} title='近期分享照片' author='Jack'/>;
+                    itemJsx = <CommentImg list={this.state.state[i].list}
+                                          title='近期分享照片'
+                                          author='Jack'/>;
                     break;
                 case "Login":
                     itemJsx = <CommentLogin/>;
@@ -72,8 +74,9 @@ var Comments = React.createClass({
                 case "Insert":
                     itemJsx = <CommentInsert/>;
                     break;
-                case "Footer":
-                    itemJsx = <CommentFooter/>;
+                case "Article":
+                    itemJsx = <CommentsTextView id={this.state.state[i].id}
+                                                content={this.state.state[i].content}/>;
                     break;
 
             }
