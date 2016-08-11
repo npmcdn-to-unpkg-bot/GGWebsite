@@ -16,13 +16,15 @@ var CommentFooter = React.createClass({
     },
     render: function () {
         var mod;
+        var nextHref = "#/page/"+(Number(this.state.currentPage)+1);
+        var lastHref = "#/page/"+(Number(this.state.currentPage)-1);
         debugger;
         switch (this.state.pageState) {
             case "FIRSTPAGE":
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a href='#down' className='pure-button down-page' onClick={this.downPage}>下一页</a>
+                            <a href={nextHref} className='pure-button down-page' onClick={this.downPage}>下一页</a>
                         </li>
                     </ul>);
                 break;
@@ -30,10 +32,10 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a href='#up' className='pure-button up-page' onClick={this.upPage}>上一页</a>
+                            <a href={lastHref} className='pure-button up-page' onClick={this.upPage}>上一页</a>
                         </li>
                         <li className='nav-item'>
-                            <a href='#down' className='pure-button down-page' onClick={this.downPage}>下一页</a>
+                            <a href={nextHref} className='pure-button down-page' onClick={this.downPage}>下一页</a>
                         </li>
                     </ul>);
                 break;
@@ -41,7 +43,7 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a href='#up' className='pure-button up-page' onClick={this.upPage}>上一页</a>
+                            <a href={lastHref} className='pure-button up-page' onClick={this.upPage}>上一页</a>
                         </li>
                     </ul>);
                 break;

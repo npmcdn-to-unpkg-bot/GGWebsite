@@ -35,13 +35,13 @@ var CommentHeader = React.createClass({
             case "LISTVIEW":
                 button = (
                     <li className='nav-item'>
-                        <a className='pure-button' onClick={this.insertview}>发布新文章</a>
+                        <a className='pure-button' href="#public" onClick={this.insertview}>发布新文章</a>
                     </li>);
                 break;
             case "ARTICLEVIEW":
                 button = (
                     <li className='nav-item'>
-                        <a className='pure-button' onClick={this.reFlashData}>返回</a>
+                        <a className='pure-button' href="#home" onClick={this.reFlashData}>返回</a>
                     </li>);
                 break;
         }
@@ -71,12 +71,6 @@ var CommentHeader = React.createClass({
     componentWillUnmount: function () {
         CommentStore.removeChangeListener(this.onChange);
         CommentStore.removeViewChangeListener(this.onChange);
-    },
-
-    reFlashData: function () {
-        $('html, body,#app').animate({scrollTop:0}, 'slow');
-        var data = {start: 0, end: 5};
-        CommentActionCreators.reFlashData(data);
     },
     login: function (e) {
         debugger;

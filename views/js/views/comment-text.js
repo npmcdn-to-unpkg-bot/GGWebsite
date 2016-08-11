@@ -10,6 +10,7 @@ var CommentText = React.createClass({
         debugger;
         var time = this.props.time + "00";
         var date = this.getLocalTime(time);
+        var hrefStr = "#atricleid/" + this.props.id;
         var tap;
         switch (this.props.sort) {
             case "1":
@@ -29,10 +30,10 @@ var CommentText = React.createClass({
                     <header className='post-header'>
                         <img className='post-avatar' alt='Tilo Mitra&#x27;s avatar' height='48' width='48'
                              src='/spingmvc/resource/img/icon.jpg'/>
-                        <h2 onClick={this.enter} className='post-title'>{this.props.title}</h2>
+                        <h2 onClick={this.enter} className='post-title'><a href={hrefStr}>{this.props.title}</a></h2>
                         <p className='post-meta'>
                             <a className='post-author'>{this.props.author}</a>
-                            <a>      点赞留言功能尚未开通      </a>
+                            <a> 点赞留言功能尚未开通 </a>
                             {tap}
                         </p>
                     </header>
@@ -44,7 +45,8 @@ var CommentText = React.createClass({
                 </section>
             </div>
 
-        );
+        )
+            ;
     },
     enter: function () {
         $('html, body,#app').animate({scrollTop: 0}, 'slow');

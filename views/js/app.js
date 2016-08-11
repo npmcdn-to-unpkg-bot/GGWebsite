@@ -1,6 +1,5 @@
 var React = require('react');
 
-var CommentActionCreators = require('./actions/comment-action-creators');
 var CommentStore = require('./stores/comment-store');
 
 var Comments = require('./views/comments');
@@ -8,19 +7,16 @@ var CommentsTextView = require('./views/comment-text-view');
 var CommentHeader = require('./views/comment-header');
 var CommentFooter = require('./views/comment-footer');
 var CommentModal = require('./views/comment-modal');
+var CommentRouter = require('./router/comment-router');
 
 var comment = null;
 var commentFooter = null;
 require('./../style/style.css')
 
-function getQueryString(name) {
-    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-    var r = window.location.search.substr(1).match(reg);
-    if (r != null) {
-        return unescape(r[2]);
-    }
-    return null;
-}
+CommentRouter.init();
+window.location.hash = window.location.hash || "home";
+
+
 function getStateFromStore() {
     return {
         article: CommentStore.getAll() || {},
@@ -30,16 +26,6 @@ function getStateFromStore() {
 
 var App = React.createClass({
     getInitialState: function () {
-        if (getQueryString("ArticleId")) {
-            var data = {
-                ArticleId: getQueryString("ArticleId")
-            }
-            CommentActionCreators.getArticle(data);
-        } else {
-            var data = {start: 0, end: 5};
-            CommentActionCreators.reFlashData(data);
-        }
-        debugger;
         return getStateFromStore() || {};
     },
     componentDidMount: function () {
@@ -58,16 +44,16 @@ var App = React.createClass({
     render: function () {
         debugger;
         var title = "发现光明";
-
         switch (this.state.viewState) {
             case "LISTVIEW":
                 comment = (<Comments />);
                 commentFooter = (<CommentFooter />);
                 break;
             case "ARTICLEVIEW":
-                comment = (<CommentsTextView id={this.state.article.id}
-                                             content={this.state.article.content}>
-                </CommentsTextView>);
+                comment = (
+                    <CommentsTextView id={this.state.article.id}
+                                      content={this.state.article.content}>
+                    </CommentsTextView>);
                 title = this.state.article.title;
                 commentFooter = null;
                 break;
