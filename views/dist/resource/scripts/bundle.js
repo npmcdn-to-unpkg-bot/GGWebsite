@@ -49,13 +49,13 @@
 
 	var Comments = __webpack_require__(148);
 
-	var CommentHeader = __webpack_require__(164);
-	var CommentFooter = __webpack_require__(166);
-	var CommentModal = __webpack_require__(165);
-	var CommentRouter = __webpack_require__(167);
+	var CommentHeader = __webpack_require__(165);
+	var CommentFooter = __webpack_require__(167);
+	var CommentModal = __webpack_require__(166);
+	var CommentRouter = __webpack_require__(168);
 
 
-	__webpack_require__(169)
+	__webpack_require__(170)
 
 	CommentRouter.init();
 	window.location.hash = window.location.hash || "home";
@@ -18976,7 +18976,7 @@
 	var CommentLogin = __webpack_require__(161);
 	var CommentRegister = __webpack_require__(162);
 	var CommentInsert = __webpack_require__(163);
-	var CommentsTextView = __webpack_require__(175);
+	var CommentsTextView = __webpack_require__(164);
 
 	function getStateFromStore() {
 	    return {
@@ -19083,6 +19083,71 @@
 	var viewState = "LISTVIEW";
 	var currentTitle = "发现光明";
 
+	var getLocate = function () {
+	    var options = {
+	        enableHighAccuracy: true,
+	        maximumAge: 1000
+	    }
+	    if (navigator.geolocation) {
+	        //浏览器支持geolocation
+	        navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+	    } else {
+	        //浏览器不支持geolocation
+	        alert('您的浏览器不支持地理位置定位');
+	    }
+	}
+
+	//成功时
+	function onSuccess(position) {
+	    //返回用户位置
+	    //经度
+	    var longitude = position.coords.longitude;
+	    //纬度
+	    var latitude = position.coords.latitude;
+	    //alert('当前地址的经纬度：经度' + longitude + '，纬度' + latitude);
+	    postData(longitude, latitude);
+	}
+	//失败时
+	function onError(error) {
+	    switch (error.code) {
+	        case 1:
+	            alert("位置服务被拒绝");
+	            break;
+	        case 2:
+	            alert("暂时获取不到位置信息");
+	            break;
+	        case 3:
+	            alert("获取信息超时");
+	            break;
+	        case 4:
+	            alert("未知错误");
+	            break;
+	    }
+	    // 这里后面可以写你的后续操作了
+	    //经度
+	    var longitude = 23.1823780000;
+	    //纬度
+	    var latitude = 113.4233310000;
+	    postData(longitude, latitude);
+	}
+
+	function postData(lon, lat) {
+	    var url = "/spingmvc/Locate"
+	    var data = {
+	        lat: lat,
+	        lng: lon,
+	        userid: 1
+	    }
+	    $.ajax({
+	        type: 'GET',
+	        url: url,
+	        data: data,
+	        success: function (e) {
+	            //alert(e);
+	        }
+	    });
+	}
+
 	var CommentStore = assign({}, EventEmitter.prototype, {
 
 	    emitChange: function () {
@@ -19115,7 +19180,7 @@
 	    },
 	    getAll: function () {
 	        return comments;
-	    },getTitle:function(){
+	    }, getTitle: function () {
 	        return currentTitle;
 	    }
 
@@ -19129,6 +19194,9 @@
 	            //提交注册信息
 	            var url = "/spingmvc/Page"
 	            var data = action.comment;
+	            if (data.isLocate) {
+	                getLocate();
+	            }
 	            currentPage = ((data.start / 5) + 1)
 	            data.end = (currentPage == 1 ? 5 : 6);
 	            $.ajax({
@@ -19156,6 +19224,7 @@
 
 	                    result = result.reverse();
 	                    comments = result;
+	                    currentTitle = "发现光明";
 	                    CommentStore.emitChange();
 	                },
 	                dataType: "json"
@@ -20368,9 +20437,60 @@
 
 	var React = __webpack_require__(1);
 
+
+	function createMarkup(str) {
+	    return {__html: str};
+	};
+
+
+	var Comments = React.createClass({displayName: "Comments",
+
+
+
+	    render: function () {
+
+	        //var itemJsx, type = "", list = [];
+	        //var imgList = [
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
+	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
+	        //];
+	        var value = "##就是测试啊,怎么回事\n";
+	        value += "***\n"
+	        value += "#就是测试啊,怎么回事\n";
+	        value += "> 就是测试啊,怎么回事\n\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "* 就是测试啊,怎么回事\n";
+	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
+	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
+	        value += "hello[^hello]";
+
+	        value = this.props.content;
+
+	        var html = markdown.toHTML(value, 'Maruku')
+
+	        return (
+
+	            React.createElement("div", {className: "content-text"}, 
+	                React.createElement("div", {dangerouslySetInnerHTML: createMarkup(html)})
+	            )
+
+
+	        )
+	    }
+	});
+
+	module.exports = Comments;
+
+/***/ },
+/* 165 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
 	var CommentActionCreators = __webpack_require__(156);
 	var CommentStore = __webpack_require__(149);
-	var CommentModal = __webpack_require__(165);
+	var CommentModal = __webpack_require__(166);
 
 	function getStateFromStore() {
 	    return {
@@ -20456,7 +20576,7 @@
 	module.exports = CommentHeader;
 
 /***/ },
-/* 165 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -20492,7 +20612,7 @@
 	module.exports = CommentModal;
 
 /***/ },
-/* 166 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -20514,8 +20634,8 @@
 	    render: function () {
 	        var mod;
 	        debugger;
-	        var nextHref = "#/page/"+(Number(this.state.currentPage)+1);
-	        var lastHref = "#/page/"+(Number(this.state.currentPage)-1);
+	        var nextHref = "#/page/" + (Number(this.state.currentPage) + 1);
+	        var lastHref = "#/page/" + (Number(this.state.currentPage) - 1);
 	        debugger;
 	        switch (this.state.pageState) {
 	            case "FIRSTPAGE":
@@ -20551,13 +20671,21 @@
 	        }
 
 	        return (
-	            React.createElement("div", {className: "pure-u-1"}, 
-	                React.createElement("div", {className: "footer"}, 
-	                    React.createElement("nav", {className: "nav"}, 
-	                        mod
+	            React.createElement("div", {className: "pure-u-1 footer"}, 
+	                React.createElement("div", {className: "pure-u-1 pure-u-md-1-4"}
+
+	                ), 
+	                React.createElement("div", {className: "pure-u-1 pure-u-md-3-4"}, 
+	                    React.createElement("hr", {width: "100%"}), 
+	                    React.createElement("div", null, 
+	                        React.createElement("nav", {className: "nav"}, 
+	                            mod
+	                        )
 	                    )
 	                )
 	            )
+
+
 
 	        );
 	    },
@@ -20576,10 +20704,10 @@
 	module.exports = CommentFooter;
 
 /***/ },
-/* 167 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CommentRouter = __webpack_require__(168).Router;
+	var CommentRouter = __webpack_require__(169).Router;
 	var CommentActionCreators = __webpack_require__(156);
 
 	var router = new CommentRouter({
@@ -20596,6 +20724,10 @@
 	        var data = {start: 0, end: 5};
 	        CommentActionCreators.reFlashData(data);
 	    },
+	    '/locate': function () {
+	        var data = {start: 0, end: 5, isLocate: true};
+	        CommentActionCreators.reFlashData(data);
+	    },
 	    '/page/:num': function (num) {
 	        $('html, body,#app').animate({scrollTop: 0}, 'slow');
 	        num = Number(num);
@@ -20608,7 +20740,7 @@
 	module.exports = router;
 
 /***/ },
-/* 168 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -21338,16 +21470,16 @@
 	}( true ? exports : window));
 
 /***/ },
-/* 169 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(170);
+	var content = __webpack_require__(171);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(174)(content, {});
+	var update = __webpack_require__(175)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -21364,21 +21496,21 @@
 	}
 
 /***/ },
-/* 170 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(171)();
+	exports = module.exports = __webpack_require__(172)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #000000;\n}\n\nimg[alt=\"mark\"] {\n    width: 100%;\n}\n\np, a {\n    word-break: break-all;\n}\n\n#app {\n    overflow-x: auto;\n    overflow-y: auto;\n    -webkit-overflow-scrolling: touch;\n}\n\n/*------------------------样式-------------------------*/\n\n* {\n    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;\n\n}\n\n/*指定PC端加载字体*/\n@media (min-width: 48em) {\n    @font-face {\n        font-family: \"tt\"; /*这里是说明调用来的字体名字*/\n        src: url(" + __webpack_require__(172) + "); /*这里是字体文件路径*/\n    }\n    * {\n        font-family: \"tt\";\n    }\n}\n\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    border-radius: 10px;\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background-image: url(" + __webpack_require__(173) + ");\n    background-repeat: no-repeat;\n    background-size: cover;\n    /*background: rgb(61, 79, 93);*/\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n    color:black;\n}\n\n.brand-title {\n    text-transform: uppercase;\n    font-size: 4em;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(0, 0, 0);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(0, 0, 0);\n    color: black;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #000000;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 2em;\n}\n\n.post-title {\n    cursor: pointer;\n    font-size: 2em;\n    color: #000000;\n    margin-bottom: 0.2em;\n}\n.post-title>a{\n    color: #000000\n}\n\n.post-title:hover {\n    color: #4d85d1;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: \"tt\";\n    color: #444;\n    line-height: 1.8em;\n}\n.post-description>p{\n    color: #999999;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #000000;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer a {\n    color: #000000;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 2em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 80% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    line-height:0.5;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's default mobile first theme\n   ========================================================================== */\n\n/* Default theme styles for the background */\n\n.remodal-bg.remodal-is-opening,\n.remodal-bg.remodal-is-opened {\n    -webkit-filter: blur(3px);\n    filter: blur(3px);\n}\n\n/* Default theme styles of the overlay */\n\n.remodal-overlay {\n    background: rgba(43, 46, 56, 0.9);\n}\n\n.remodal-overlay.remodal-is-opening,\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal-overlay.remodal-is-opening {\n    -webkit-animation-name: remodal-overlay-opening-keyframes;\n    animation-name: remodal-overlay-opening-keyframes;\n}\n\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-name: remodal-overlay-closing-keyframes;\n    animation-name: remodal-overlay-closing-keyframes;\n}\n\n/* Default theme styles of the wrapper */\n\n.remodal-wrapper {\n    padding: 10px 10px 0;\n}\n\n/* Default theme styles of the modal dialog */\n\n.remodal {\n    box-sizing: border-box;\n    width: 100%;\n    margin-bottom: 10px;\n    padding: 35px;\n\n    -webkit-transform: translate3d(0, 0, 0);\n    transform: translate3d(0, 0, 0);\n\n    color: #2b2e38;\n    background: #fff;\n}\n\n.remodal.remodal-is-opening,\n.remodal.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal.remodal-is-opening {\n    -webkit-animation-name: remodal-opening-keyframes;\n    animation-name: remodal-opening-keyframes;\n}\n\n.remodal.remodal-is-closing {\n    -webkit-animation-name: remodal-closing-keyframes;\n    animation-name: remodal-closing-keyframes;\n}\n\n/* Vertical align of the modal dialog */\n\n.remodal,\n.remodal-wrapper:after {\n    vertical-align: middle;\n}\n\n/* Close button */\n\n.remodal-close {\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n    overflow: visible;\n\n    width: 35px;\n    height: 35px;\n    margin: 0;\n    padding: 0;\n\n    cursor: pointer;\n    -webkit-transition: color 0.2s;\n    transition: color 0.2s;\n    text-decoration: none;\n\n    color: #95979c;\n    border: 0;\n    outline: 0;\n    background: transparent;\n}\n\n.remodal-close:hover,\n.remodal-close:focus {\n    color: #2b2e38;\n}\n\n.remodal-close:before {\n    font-family: Arial, \"Helvetica CY\", \"Nimbus Sans L\", sans-serif !important;\n    font-size: 25px;\n    line-height: 35px;\n\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n\n    width: 35px;\n\n    content: \"\\D7\";\n    text-align: center;\n}\n\n/* Dialog buttons */\n\n.remodal-confirm,\n.remodal-cancel {\n    font: inherit;\n\n    display: inline-block;\n    overflow: visible;\n\n    min-width: 110px;\n    margin: 0;\n    padding: 12px 0;\n\n    cursor: pointer;\n    -webkit-transition: background 0.2s;\n    transition: background 0.2s;\n    text-align: center;\n    vertical-align: middle;\n    text-decoration: none;\n\n    border: 0;\n    outline: 0;\n}\n\n.remodal-confirm {\n    color: #fff;\n    background: #81c784;\n}\n\n.remodal-confirm:hover,\n.remodal-confirm:focus {\n    background: #66bb6a;\n}\n\n.remodal-cancel {\n    color: #fff;\n    background: #e57373;\n}\n\n.remodal-cancel:hover,\n.remodal-cancel:focus {\n    background: #ef5350;\n}\n\n/* Remove inner padding and border in Firefox 4+ for the button tag. */\n\n.remodal-confirm::-moz-focus-inner,\n.remodal-cancel::-moz-focus-inner,\n.remodal-close::-moz-focus-inner {\n    padding: 0;\n\n    border: 0;\n}\n\n/* Keyframes\n   ========================================================================== */\n\n@-webkit-keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n/* Media queries\n   ========================================================================== */\n\n@media only screen and (min-width: 641px) {\n    .remodal {\n        max-width: 700px;\n    }\n}\n\n/* IE8\n   ========================================================================== */\n\n.lt-ie9 .remodal-overlay {\n    background: #2b2e38;\n}\n\n.lt-ie9 .remodal {\n    width: 700px;\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's necessary styles\n   ========================================================================== */\n\n/* Hide scroll bar */\n\nhtml.remodal-is-locked {\n    overflow: hidden;\n\n    -ms-touch-action: none;\n    touch-action: none;\n}\n\n/* Anti FOUC */\n\n.remodal,\n[data-remodal-id] {\n    display: none;\n}\n\n/* Necessary styles of the overlay */\n\n.remodal-overlay {\n    position: fixed;\n    z-index: 9999;\n    top: -5000px;\n    right: -5000px;\n    bottom: -5000px;\n    left: -5000px;\n\n    display: none;\n}\n\n/* Necessary styles of the wrapper */\n\n.remodal-wrapper {\n    position: fixed;\n    z-index: 10000;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n\n    display: none;\n    overflow: auto;\n\n    text-align: center;\n\n    -webkit-overflow-scrolling: touch;\n}\n\n.remodal-wrapper:after {\n    display: inline-block;\n\n    height: 100%;\n    margin-left: -0.05em;\n\n    content: \"\";\n}\n\n/* Fix iPad, iPhone glitches */\n\n.remodal-overlay,\n.remodal-wrapper {\n    -webkit-backface-visibility: hidden;\n    backface-visibility: hidden;\n}\n\n/* Necessary styles of the modal dialog */\n\n.remodal {\n    position: relative;\n\n    outline: none;\n\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;\n    text-size-adjust: 100%;\n}\n\n.remodal-is-initialized {\n    /* Disable Anti-FOUC */\n    display: inline-block;\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n    height: 300px;\n}\n\n#content-title {\n    width: 100%;\n}\n.content-text{\n    padding-top: 20px;\n    padding-bottom: 20px;\n}\n.padding-5px{\n    padding: 5px;\n}\n\n", ""]);
+	exports.push([module.id, "\nhtml, body, #app {\n    width: 100%;\n    height: 100%;\n}\n\nbody {\n    color: #000000;\n}\n\nimg[alt=\"mark\"] {\n    width: 100%;\n}\n\np, a {\n    word-break: break-all;\n}\n\n#app {\n    overflow-x: auto;\n    overflow-y: auto;\n    -webkit-overflow-scrolling: touch;\n}\n\n/*------------------------样式-------------------------*/\n\n* {\n    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;\n\n}\n\n/*指定PC端加载字体*/\n@media (min-width: 48em) {\n    @font-face {\n        font-family: \"tt\"; /*这里是说明调用来的字体名字*/\n        src: url(" + __webpack_require__(173) + "); /*这里是字体文件路径*/\n    }\n    * {\n        font-family: \"tt\";\n    }\n}\n\n* {\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\na {\n    text-decoration: none;\n    color: rgb(61, 146, 201);\n}\n\na:hover,\na:focus {\n    text-decoration: underline;\n}\n\nh3 {\n    font-weight: 100;\n}\n\n/* LAYOUT CSS */\n.pure-img-responsive {\n    border-radius: 10px;\n    max-width: 100%;\n    height: auto;\n}\n\n#layout {\n    padding: 0;\n}\n\n.header {\n    text-align: center;\n    top: auto;\n    margin: 3em auto;\n}\n\n.sidebar {\n    background-image: url(" + __webpack_require__(174) + ");\n    background-repeat: no-repeat;\n    background-size: cover;\n    /*background: rgb(61, 79, 93);*/\n    color: #fff;\n}\n\n.brand-title,\n.brand-tagline {\n    margin: 0;\n    color:white;\n}\n\n.brand-title {\n    text-transform: uppercase;\n    font-size: 2em;\n}\n\n.brand-tagline {\n    font-weight: 300;\n    color: rgb(255, 255, 255);\n}\n\n.nav-list {\n    margin: 0;\n    padding: 0;\n    list-style: none;\n}\n\n.nav-item {\n    display: inline-block;\n    *display: inline;\n    zoom: 1;\n}\n\n.nav-item a {\n    background: transparent;\n    border: 2px solid rgb(255, 255, 255);\n    color: white;\n    margin-top: 1em;\n    letter-spacing: 0.05em;\n    text-transform: uppercase;\n    font-size: 85%;\n}\n\n.nav-item a:hover,\n.nav-item a:focus {\n    border: 2px solid rgb(61, 146, 201);\n    text-decoration: none;\n}\n\n.content-subhead {\n    text-transform: uppercase;\n    color: #000000;\n    border-bottom: 1px solid #eee;\n    padding: 0.4em 0;\n    font-size: 80%;\n    font-weight: 500;\n    letter-spacing: 0.1em;\n}\n\n.content {\n    padding: 2em 1em 0;\n}\n\n.post {\n    padding-bottom: 0em;\n}\n\n.post-title {\n    cursor: pointer;\n    font-size: 2em;\n    color: #000000;\n    margin-bottom: 0.2em;\n}\n.post-title>a{\n    color: #000000\n}\n\n.post-title:hover {\n    color: #4d85d1;\n}\n\n.post-avatar {\n    border-radius: 50px;\n    float: right;\n    margin-left: 1em;\n}\n\n.post-description {\n    font-family: \"tt\";\n    color: #444;\n    line-height: 1.8em;\n}\n.post-description>p{\n    color: #999999;\n}\n\n.post-meta {\n    color: #999;\n    font-size: 90%;\n    margin: 0;\n}\n\n.post-category {\n    margin: 0 0.1em;\n    padding: 0.3em 1em;\n    color: #fff;\n    background: #999;\n    font-size: 80%;\n}\n\n.post-category-design {\n    background: #5aba59;\n}\n\n.post-category-pure {\n    background: #4d85d1;\n}\n\n.post-category-yui {\n    background: #8156a7;\n}\n\n.post-category-js {\n    background: #df2d4f;\n}\n\n.post-images {\n    margin: 1em 0;\n}\n\n.post-image-meta {\n    margin-top: -3.5em;\n    margin-left: 1em;\n    color: #000000;\n    text-shadow: 0 1px 1px #333;\n}\n\n.footer {\n    text-align: center;\n    padding: 1em 0;\n}\n\n.footer hr{\n    margin: 0px!important;\n}\n\n.footer a {\n    color: #000000;\n    font-size: 80%;\n}\n\n.footer .pure-menu a:hover,\n.footer .pure-menu a:focus {\n    background: none;\n}\n\n@media (min-width: 48em) {\n    .content {\n        padding: 1em 3em 0;\n        margin-left: 25%;\n    }\n\n    .header {\n        margin: 95% 2em 0;\n        text-align: right;\n    }\n\n    .sidebar {\n        position: fixed;\n        top: 0;\n        bottom: 0;\n    }\n}\n\n/*---------------------------------*/\n.pure-button {\n    margin-left: 2px;\n    margin-right: 2px;\n}\n\n/* Alert */\n\n#alert {\n    position: relative;\n}\n\n#alert:hover:after {\n    background: hsla(0, 0%, 0%, .8);\n    border-radius: 3px;\n    color: #f6f6f6;\n    content: 'Click to dismiss';\n    font: bold 12px/30px sans-serif;\n    height: 30px;\n    left: 50%;\n    margin-left: -60px;\n    position: absolute;\n    text-align: center;\n    top: 50px;\n    width: 120px;\n}\n\n#alert:hover:before {\n    border-bottom: 10px solid hsla(0, 0%, 0%, .8);\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    content: '';\n    height: 0;\n    left: 50%;\n    margin-left: -10px;\n    position: absolute;\n    top: 40px;\n    width: 0;\n}\n\n#alert:target {\n    display: none;\n}\n\n.alert {\n\n    background-color: #c4453c;\n    background-image: -webkit-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .05) 25%,\n    hsla(0, 0%, 0%, .05) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .05) 75%,\n    hsla(0, 0%, 0%, .05));\n    background-image: -moz-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -ms-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: -o-linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-image: linear-gradient(135deg, transparent,\n    transparent 25%, hsla(0, 0%, 0%, .1) 25%,\n    hsla(0, 0%, 0%, .1) 50%, transparent 50%,\n    transparent 75%, hsla(0, 0%, 0%, .1) 75%,\n    hsla(0, 0%, 0%, .1));\n    background-size: 20px 20px;\n    box-shadow: 0 5px 0 hsla(0, 0%, 0%, .1);\n    color: #f6f6f6;\n    display: block;\n    font: bold 16px/40px sans-serif;\n    height: 40px;\n    position: absolute;\n    text-align: center;\n    text-decoration: none;\n    top: -45px;\n    width: 100%;\n    line-height:0.5;\n    -webkit-animation: alert 1s ease forwards;\n    -moz-animation: alert 1s ease forwards;\n    -ms-animation: alert 1s ease forwards;\n    -o-animation: alert 1s ease forwards;\n    animation: alert 1s ease forwards;\n}\n\n/* Animation */\n\n@-webkit-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-moz-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-ms-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@-o-keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n@keyframes alert {\n    0% {\n        opacity: 0;\n    }\n    50% {\n        opacity: 1;\n    }\n    100% {\n        top: 0;\n    }\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's default mobile first theme\n   ========================================================================== */\n\n/* Default theme styles for the background */\n\n.remodal-bg.remodal-is-opening,\n.remodal-bg.remodal-is-opened {\n    -webkit-filter: blur(3px);\n    filter: blur(3px);\n}\n\n/* Default theme styles of the overlay */\n\n.remodal-overlay {\n    background: rgba(43, 46, 56, 0.9);\n}\n\n.remodal-overlay.remodal-is-opening,\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal-overlay.remodal-is-opening {\n    -webkit-animation-name: remodal-overlay-opening-keyframes;\n    animation-name: remodal-overlay-opening-keyframes;\n}\n\n.remodal-overlay.remodal-is-closing {\n    -webkit-animation-name: remodal-overlay-closing-keyframes;\n    animation-name: remodal-overlay-closing-keyframes;\n}\n\n/* Default theme styles of the wrapper */\n\n.remodal-wrapper {\n    padding: 10px 10px 0;\n}\n\n/* Default theme styles of the modal dialog */\n\n.remodal {\n    box-sizing: border-box;\n    width: 100%;\n    margin-bottom: 10px;\n    padding: 35px;\n\n    -webkit-transform: translate3d(0, 0, 0);\n    transform: translate3d(0, 0, 0);\n\n    color: #2b2e38;\n    background: #fff;\n}\n\n.remodal.remodal-is-opening,\n.remodal.remodal-is-closing {\n    -webkit-animation-duration: 0.3s;\n    animation-duration: 0.3s;\n    -webkit-animation-fill-mode: forwards;\n    animation-fill-mode: forwards;\n}\n\n.remodal.remodal-is-opening {\n    -webkit-animation-name: remodal-opening-keyframes;\n    animation-name: remodal-opening-keyframes;\n}\n\n.remodal.remodal-is-closing {\n    -webkit-animation-name: remodal-closing-keyframes;\n    animation-name: remodal-closing-keyframes;\n}\n\n/* Vertical align of the modal dialog */\n\n.remodal,\n.remodal-wrapper:after {\n    vertical-align: middle;\n}\n\n/* Close button */\n\n.remodal-close {\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n    overflow: visible;\n\n    width: 35px;\n    height: 35px;\n    margin: 0;\n    padding: 0;\n\n    cursor: pointer;\n    -webkit-transition: color 0.2s;\n    transition: color 0.2s;\n    text-decoration: none;\n\n    color: #95979c;\n    border: 0;\n    outline: 0;\n    background: transparent;\n}\n\n.remodal-close:hover,\n.remodal-close:focus {\n    color: #2b2e38;\n}\n\n.remodal-close:before {\n    font-family: Arial, \"Helvetica CY\", \"Nimbus Sans L\", sans-serif !important;\n    font-size: 25px;\n    line-height: 35px;\n\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    display: block;\n\n    width: 35px;\n\n    content: \"\\D7\";\n    text-align: center;\n}\n\n/* Dialog buttons */\n\n.remodal-confirm,\n.remodal-cancel {\n    font: inherit;\n\n    display: inline-block;\n    overflow: visible;\n\n    min-width: 110px;\n    margin: 0;\n    padding: 12px 0;\n\n    cursor: pointer;\n    -webkit-transition: background 0.2s;\n    transition: background 0.2s;\n    text-align: center;\n    vertical-align: middle;\n    text-decoration: none;\n\n    border: 0;\n    outline: 0;\n}\n\n.remodal-confirm {\n    color: #fff;\n    background: #81c784;\n}\n\n.remodal-confirm:hover,\n.remodal-confirm:focus {\n    background: #66bb6a;\n}\n\n.remodal-cancel {\n    color: #fff;\n    background: #e57373;\n}\n\n.remodal-cancel:hover,\n.remodal-cancel:focus {\n    background: #ef5350;\n}\n\n/* Remove inner padding and border in Firefox 4+ for the button tag. */\n\n.remodal-confirm::-moz-focus-inner,\n.remodal-cancel::-moz-focus-inner,\n.remodal-close::-moz-focus-inner {\n    padding: 0;\n\n    border: 0;\n}\n\n/* Keyframes\n   ========================================================================== */\n\n@-webkit-keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-opening-keyframes {\n    from {\n        -webkit-transform: scale(1.05);\n        transform: scale(1.05);\n\n        opacity: 0;\n    }\n    to {\n        -webkit-transform: none;\n        transform: none;\n\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-closing-keyframes {\n    from {\n        -webkit-transform: scale(1);\n        transform: scale(1);\n\n        opacity: 1;\n    }\n    to {\n        -webkit-transform: scale(0.95);\n        transform: scale(0.95);\n\n        opacity: 0;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@keyframes remodal-overlay-opening-keyframes {\n    from {\n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n    }\n}\n\n@-webkit-keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n@keyframes remodal-overlay-closing-keyframes {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n/* Media queries\n   ========================================================================== */\n\n@media only screen and (min-width: 641px) {\n    .remodal {\n        max-width: 700px;\n    }\n}\n\n/* IE8\n   ========================================================================== */\n\n.lt-ie9 .remodal-overlay {\n    background: #2b2e38;\n}\n\n.lt-ie9 .remodal {\n    width: 700px;\n}\n\n/*\n *  Remodal - v1.1.0\n *  Responsive, lightweight, fast, synchronized with CSS animations, fully customizable modal window plugin with declarative configuration and hash tracking.\n *  http://vodkabears.github.io/remodal/\n *\n *  Made by Ilya Makarov\n *  Under MIT License\n */\n\n/* ==========================================================================\n   Remodal's necessary styles\n   ========================================================================== */\n\n/* Hide scroll bar */\n\nhtml.remodal-is-locked {\n    overflow: hidden;\n\n    -ms-touch-action: none;\n    touch-action: none;\n}\n\n/* Anti FOUC */\n\n.remodal,\n[data-remodal-id] {\n    display: none;\n}\n\n/* Necessary styles of the overlay */\n\n.remodal-overlay {\n    position: fixed;\n    z-index: 9999;\n    top: -5000px;\n    right: -5000px;\n    bottom: -5000px;\n    left: -5000px;\n\n    display: none;\n}\n\n/* Necessary styles of the wrapper */\n\n.remodal-wrapper {\n    position: fixed;\n    z-index: 10000;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n\n    display: none;\n    overflow: auto;\n\n    text-align: center;\n\n    -webkit-overflow-scrolling: touch;\n}\n\n.remodal-wrapper:after {\n    display: inline-block;\n\n    height: 100%;\n    margin-left: -0.05em;\n\n    content: \"\";\n}\n\n/* Fix iPad, iPhone glitches */\n\n.remodal-overlay,\n.remodal-wrapper {\n    -webkit-backface-visibility: hidden;\n    backface-visibility: hidden;\n}\n\n/* Necessary styles of the modal dialog */\n\n.remodal {\n    position: relative;\n\n    outline: none;\n\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;\n    text-size-adjust: 100%;\n}\n\n.remodal-is-initialized {\n    /* Disable Anti-FOUC */\n    display: inline-block;\n}\n\n/*针对项目配置*/\n#content {\n    width: 100%;\n    height: 300px;\n}\n\n#content-title {\n    width: 100%;\n}\n.content-text{\n    padding-top: 20px;\n    padding-bottom: 20px;\n}\n.padding-5px{\n    padding: 5px;\n}\n\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 171 */
+/* 172 */
 /***/ function(module, exports) {
 
 	/*
@@ -21434,19 +21566,19 @@
 
 
 /***/ },
-/* 172 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "f5326e1cab3f01a61da850cc5b93ab3f.ttf";
 
 /***/ },
-/* 173 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "22b5c33ba122844efaa4c52937afd379.jpg";
+	module.exports = __webpack_require__.p + "63c40b88dda34e2f879e2597464c4d03.jpg";
 
 /***/ },
-/* 174 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -21696,57 +21828,6 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
-
-/***/ },
-/* 175 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-
-
-	function createMarkup(str) {
-	    return {__html: str};
-	};
-
-
-	var Comments = React.createClass({displayName: "Comments",
-
-
-
-	    render: function () {
-
-	        //var itemJsx, type = "", list = [];
-	        //var imgList = [
-	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
-	        //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
-	        //];
-	        var value = "##就是测试啊,怎么回事\n";
-	        value += "***\n"
-	        value += "#就是测试啊,怎么回事\n";
-	        value += "> 就是测试啊,怎么回事\n\n";
-	        value += "* 就是测试啊,怎么回事\n";
-	        value += "* 就是测试啊,怎么回事\n";
-	        value += "* 就是测试啊,怎么回事\n";
-	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
-	        value += "[foo]: http://example.com/  \"Optional Title Her\"\n";
-	        value += "hello[^hello]";
-
-	        value = this.props.content;
-
-	        var html = markdown.toHTML(value, 'Maruku')
-
-	        return (
-
-	            React.createElement("div", {className: "content-text"}, 
-	                React.createElement("div", {dangerouslySetInnerHTML: createMarkup(html)})
-	            )
-
-
-	        )
-	    }
-	});
-
-	module.exports = Comments;
 
 /***/ }
 /******/ ]);

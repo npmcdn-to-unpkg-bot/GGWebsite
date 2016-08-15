@@ -88,17 +88,17 @@ h3 {
 .brand-title,
 .brand-tagline {
     margin: 0;
-    color:black;
+    color:white;
 }
 
 .brand-title {
     text-transform: uppercase;
-    font-size: 4em;
+    font-size: 2em;
 }
 
 .brand-tagline {
     font-weight: 300;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
 }
 
 .nav-list {
@@ -115,8 +115,8 @@ h3 {
 
 .nav-item a {
     background: transparent;
-    border: 2px solid rgb(0, 0, 0);
-    color: black;
+    border: 2px solid rgb(255, 255, 255);
+    color: white;
     margin-top: 1em;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -144,7 +144,7 @@ h3 {
 }
 
 .post {
-    padding-bottom: 2em;
+    padding-bottom: 0em;
 }
 
 .post-title {
@@ -222,6 +222,10 @@ h3 {
     padding: 1em 0;
 }
 
+.footer hr{
+    margin: 0px!important;
+}
+
 .footer a {
     color: #000000;
     font-size: 80%;
@@ -234,12 +238,12 @@ h3 {
 
 @media (min-width: 48em) {
     .content {
-        padding: 2em 3em 0;
+        padding: 1em 3em 0;
         margin-left: 25%;
     }
 
     .header {
-        margin: 80% 2em 0;
+        margin: 95% 2em 0;
         text-align: right;
     }
 

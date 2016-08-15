@@ -15,6 +15,10 @@ var router = new CommentRouter({
         var data = {start: 0, end: 5};
         CommentActionCreators.reFlashData(data);
     },
+    '/locate': function () {
+        var data = {start: 0, end: 5, isLocate: true};
+        CommentActionCreators.reFlashData(data);
+    },
     '/page/:num': function (num) {
         $('html, body,#app').animate({scrollTop: 0}, 'slow');
         num = Number(num);
