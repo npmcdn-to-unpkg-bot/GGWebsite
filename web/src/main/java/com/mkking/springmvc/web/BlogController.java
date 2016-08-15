@@ -2,7 +2,8 @@ package com.mkking.springmvc.web;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.net.URLDecoder;
+import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.icreate.entity.Article;
 import com.icreate.entity.ArticleWithBLOBs;
 import com.icreate.entity.User;
 import com.icreate.service.ArticleService;
+import com.icreate.service.LocateService;
 import com.icreate.service.UserService;
 import com.mkking.springmvc.service.HelloService;
 import com.mkking.springmvc.util.FileReader;
@@ -38,6 +39,9 @@ public class BlogController {
 
 	@Autowired
 	private ArticleService articleService = null;
+
+	@Autowired
+	private LocateService locateService = null;
 
 	// 在控制器中注入HelloService类
 	@Autowired
@@ -136,6 +140,49 @@ public class BlogController {
 
 	}
 
+	@RequestMapping(value = "/Locate", method = RequestMethod.GET)
+	@ResponseBody
+	public void Locate(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String userIdStr = request.getParameter("userid"), lat = request.getParameter("lat"),
+				lng = request.getParameter("lng");
+		long userId = Long.parseLong(userIdStr), flag = 1;
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String dateNowStr = sdf.format(d);
+		String title = dateNowStr, locateModel = "POINT (%s %s)";
+		String location = String.format(locateModel, lng, lat);
+		locateService.insertFromWkt(userId, title, "f", flag, title, location);
+
+		PrintWriter out = response.getWriter();
+		String reult = "succeed";
+
+		out.print(reult);
+
+	}
+
+	@RequestMapping(value = "/GetLocate", method = RequestMethod.GET)
+	@ResponseBody
+	public void GetLocate(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		com.icreate.entity.Locate locate = locateService.selectNewData();
+
+		double[] t = helloService.convertToEntityAttribute(locate.getOgcGeom());
+		PrintWriter out = response.getWriter();
+		String reult = "succeed";
+
+		JSONObject jsonObj = new JSONObject("{}");
+		Map<String, String> item = new HashMap<String, String>();
+		item.put("lat", String.valueOf(t[1]));
+		item.put("lng", String.valueOf(t[0]));
+		item.put("userid", "1");
+		jsonObj.put("locate", item);
+
+		reult = jsonObj.toString();
+
+		out.print(reult);
+
+	}
+
 	@RequestMapping(value = "/InsertBlog", method = RequestMethod.POST)
 	@ResponseBody
 	public void InsertBlog(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -148,17 +195,6 @@ public class BlogController {
 
 		String summary = content.length() > 100 ? content.substring(0, 100) + "....." : content;
 		ArticleWithBLOBs article = new ArticleWithBLOBs();
-
-//		String ip = request.getHeader("x-forwarded-for");
-//		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-//			ip = request.getHeader("Proxy-Client-IP");
-//		}
-//		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-//			ip = request.getHeader("WL-Proxy-Client-IP");
-//		}
-//		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-//			ip = request.getRemoteAddr();
-//		}
 
 		Long timeLong = new Date().getTime();
 		String timeStr = timeLong.toString();

@@ -52,8 +52,20 @@ public class HelloController {
 
 	@RequestMapping("/cc")
 	public String cc() {
-
 		return "index";
+	}
+	
+	@RequestMapping("locate")
+	public String locate() {
+
+		return "locate";
+
+	}
+	
+	@RequestMapping("viewlocate")
+	public String viewlocate() {
+
+		return "leaflet/index";
 
 	}
 

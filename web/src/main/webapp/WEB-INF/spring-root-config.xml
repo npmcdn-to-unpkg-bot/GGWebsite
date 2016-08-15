@@ -63,4 +63,8 @@
 	<bean id="articleService" class="com.icreate.service.impl.ArticleServiceImpl">
 		<property name="articleMapper" ref="articleMapper"></property>
 	</bean>
+	
+	<bean id="locateService" class="com.icreate.service.impl.LocateServiceImpl">
+		<property name="locateMapper" ref="locateMapper"></property>
+	</bean>
 </beans>

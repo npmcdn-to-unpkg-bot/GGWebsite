@@ -10,4 +10,6 @@ public interface HelloService {
 
 	public String toString();
 
+	public double[] convertToEntityAttribute(byte[] dbData);
+
 }
