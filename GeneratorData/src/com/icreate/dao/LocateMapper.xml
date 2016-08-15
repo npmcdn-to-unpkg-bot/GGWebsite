@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icreate.dao.LocateMapper">
+  <resultMap id="BaseResultMap" type="com.icreate.entity.Locate">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="UserID" jdbcType="BIGINT" property="userid" />
+    <result column="TITLE" jdbcType="VARCHAR" property="title" />
+    <result column="ICON" jdbcType="VARCHAR" property="icon" />
+    <result column="FLAG" jdbcType="BIGINT" property="flag" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.icreate.entity.Locate">
+    <result column="ogc_geom" jdbcType="BINARY" property="ogcGeom" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, UserID, TITLE, ICON, FLAG, REMARK
+  </sql>
+  <sql id="Blob_Column_List">
+    ogc_geom
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from locate
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from locate
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icreate.entity.Locate">
+    insert into locate (ID, UserID, TITLE, 
+      ICON, FLAG, REMARK, 
+      ogc_geom)
+    values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, 
+      #{icon,jdbcType=VARCHAR}, #{flag,jdbcType=BIGINT}, #{remark,jdbcType=VARCHAR}, 
+      #{ogcGeom,jdbcType=BINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icreate.entity.Locate">
+    insert into locate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="userid != null">
+        UserID,
+      </if>
+      <if test="title != null">
+        TITLE,
+      </if>
+      <if test="icon != null">
+        ICON,
+      </if>
+      <if test="flag != null">
+        FLAG,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="ogcGeom != null">
+        ogc_geom,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="ogcGeom != null">
+        #{ogcGeom,jdbcType=BINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icreate.entity.Locate">
+    update locate
+    <set>
+      <if test="userid != null">
+        UserID = #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        TITLE = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        ICON = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null">
+        FLAG = #{flag,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="ogcGeom != null">
+        ogc_geom = #{ogcGeom,jdbcType=BINARY},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.icreate.entity.Locate">
+    update locate
+    set UserID = #{userid,jdbcType=BIGINT},
+      TITLE = #{title,jdbcType=VARCHAR},
+      ICON = #{icon,jdbcType=VARCHAR},
+      FLAG = #{flag,jdbcType=BIGINT},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      ogc_geom = #{ogcGeom,jdbcType=BINARY}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icreate.entity.Locate">
+    update locate
+    set UserID = #{userid,jdbcType=BIGINT},
+      TITLE = #{title,jdbcType=VARCHAR},
+      ICON = #{icon,jdbcType=VARCHAR},
+      FLAG = #{flag,jdbcType=BIGINT},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.icreate.entity.Locate">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="UserID" jdbcType="BIGINT" property="userid" />
+    <result column="TITLE" jdbcType="VARCHAR" property="title" />
+    <result column="ICON" jdbcType="VARCHAR" property="icon" />
+    <result column="INCOLOR" jdbcType="VARCHAR" property="incolor" />
+    <result column="OUTCOLOR" jdbcType="VARCHAR" property="outcolor" />
+    <result column="FLAG" jdbcType="BIGINT" property="flag" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.icreate.entity.Locate">
+    <result column="ogc_geom" jdbcType="BINARY" property="ogcGeom" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, UserID, TITLE, ICON, INCOLOR, OUTCOLOR, FLAG, REMARK
+  </sql>
+  <sql id="Blob_Column_List">
+    ogc_geom
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from locate
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from locate
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icreate.entity.Locate">
+    insert into locate (ID, UserID, TITLE, 
+      ICON, INCOLOR, OUTCOLOR, 
+      FLAG, REMARK, ogc_geom
+      )
+    values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, 
+      #{icon,jdbcType=VARCHAR}, #{incolor,jdbcType=VARCHAR}, #{outcolor,jdbcType=VARCHAR}, 
+      #{flag,jdbcType=BIGINT}, #{remark,jdbcType=VARCHAR}, #{ogcGeom,jdbcType=BINARY}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.icreate.entity.Locate">
+    insert into locate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="userid != null">
+        UserID,
+      </if>
+      <if test="title != null">
+        TITLE,
+      </if>
+      <if test="icon != null">
+        ICON,
+      </if>
+      <if test="incolor != null">
+        INCOLOR,
+      </if>
+      <if test="outcolor != null">
+        OUTCOLOR,
+      </if>
+      <if test="flag != null">
+        FLAG,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="ogcGeom != null">
+        ogc_geom,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="incolor != null">
+        #{incolor,jdbcType=VARCHAR},
+      </if>
+      <if test="outcolor != null">
+        #{outcolor,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="ogcGeom != null">
+        #{ogcGeom,jdbcType=BINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icreate.entity.Locate">
+    update locate
+    <set>
+      <if test="userid != null">
+        UserID = #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        TITLE = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        ICON = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="incolor != null">
+        INCOLOR = #{incolor,jdbcType=VARCHAR},
+      </if>
+      <if test="outcolor != null">
+        OUTCOLOR = #{outcolor,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null">
+        FLAG = #{flag,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="ogcGeom != null">
+        ogc_geom = #{ogcGeom,jdbcType=BINARY},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.icreate.entity.Locate">
+    update locate
+    set UserID = #{userid,jdbcType=BIGINT},
+      TITLE = #{title,jdbcType=VARCHAR},
+      ICON = #{icon,jdbcType=VARCHAR},
+      INCOLOR = #{incolor,jdbcType=VARCHAR},
+      OUTCOLOR = #{outcolor,jdbcType=VARCHAR},
+      FLAG = #{flag,jdbcType=BIGINT},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      ogc_geom = #{ogcGeom,jdbcType=BINARY}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icreate.entity.Locate">
+    update locate
+    set UserID = #{userid,jdbcType=BIGINT},
+      TITLE = #{title,jdbcType=VARCHAR},
+      ICON = #{icon,jdbcType=VARCHAR},
+      INCOLOR = #{incolor,jdbcType=VARCHAR},
+      OUTCOLOR = #{outcolor,jdbcType=VARCHAR},
+      FLAG = #{flag,jdbcType=BIGINT},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
