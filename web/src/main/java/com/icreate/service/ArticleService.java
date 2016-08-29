@@ -21,5 +21,7 @@ public interface ArticleService {
 
 	public int updateByPrimaryKey(Article record);
 
-	public List<ArticleWithBLOBs> selectByPage(Short start, Short end);
+	public List<ArticleWithBLOBs> selectByPage(Short start, Short end,String sort);
+	
+	public ArticleWithBLOBs linkComment(Short articleId);
 }

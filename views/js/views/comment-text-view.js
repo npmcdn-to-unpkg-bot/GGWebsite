@@ -9,7 +9,19 @@ function createMarkup(str) {
 var Comments = React.createClass({
 
 
+    componentDidMount:function(){
+        var style = "";
+        var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+        if (arr != null) style = unescape(arr[2]);
 
+        if (style == "nomal") {
+            $("a,p,h1,h2,h3,h4,h5").css("font-family", "'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif");
+        } else if (style == "pen") {
+            $("a,p,h1,h2,h3,h4,h5").css("font-family", "tt");
+        }
+
+
+    },
     render: function () {
 
         //var itemJsx, type = "", list = [];
@@ -31,7 +43,6 @@ var Comments = React.createClass({
         value = this.props.content;
 
         var html = markdown.toHTML(value, 'Maruku')
-
         return (
 
             <div className='content-text'>

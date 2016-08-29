@@ -35,3 +35,18 @@ CREATE TABLE article_sort (
  PRIMARY KEY (sort_article_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;
 
+
+CREATE TABLE user_comment (
+ c_id mediumint(8) NOT NULL AUTO_INCREMENT COMMENT '评论自增ID号',
+
+ commit_id mediumint(8) NOT NULL COMMENT '评论内容的ID',
+ commit_title varchar(50) NOT NULL COMMENT '评论内容',
+ commit_content varchar(255) NOT NULL COMMENT '评论内容',
+ commit_user_id mediumint(8) NOT NULL COMMENT '评论者ID',
+  commit_user_name varchar(20) NOT NULL COMMENT '评论者名称',
+ commit_time int(13) NOT NULL COMMENT '评论时间',
+ commit_ip varchar(15) NOT NULL COMMENT '评论时的IP地址',
+ PRIMARY KEY (c_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;
+ 
+

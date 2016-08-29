@@ -21,10 +21,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.icreate.entity.ArticleWithBLOBs;
 import com.icreate.entity.User;
+import com.icreate.entity.UserComment;
 import com.icreate.service.ArticleService;
 import com.icreate.service.LocateService;
+import com.icreate.service.UserCommentService;
 import com.icreate.service.UserService;
 import com.mkking.springmvc.service.HelloService;
+import com.mkking.springmvc.util.BlogUtil;
 import com.mkking.springmvc.util.FileReader;
 
 @Controller
@@ -42,6 +45,9 @@ public class BlogController {
 
 	@Autowired
 	private LocateService locateService = null;
+
+	@Autowired
+	private UserCommentService userCommentService = null;
 
 	// 在控制器中注入HelloService类
 	@Autowired
@@ -71,15 +77,20 @@ public class BlogController {
 		request.setCharacterEncoding("UTF-8");
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
 
+		String sort = (request.getParameter("sort") == null || request.getParameter("sort") == "") ? "%%"
+				: request.getParameter("sort");
 		Short start = Short.valueOf(request.getParameter("start")), end = Short.valueOf(request.getParameter("end"));
-		List<ArticleWithBLOBs> li = articleService.selectByPage(start, end);
 		JSONObject jsonObj = new JSONObject("{}");
 		// 判断第一页的时候有图喔
-		if (Short.valueOf(request.getParameter("start")) == 0) {
+		if (Short.valueOf(request.getParameter("start")) == 0
+				&& (request.getParameter("sort") == null || request.getParameter("sort") == "")) {
 			Map<String, Object> img = fr.showAllFiles(root, basePath);
 			jsonObj.put("img", img);
+			int i = end - (short) 1;
+			end = (short) i;
 		}
 
+		List<ArticleWithBLOBs> li = articleService.selectByPage(start, end, sort);
 		for (ArticleWithBLOBs i : li) {
 			Map<String, String> item = new HashMap<String, String>();
 			item.put("id", i.getArticleId().toString());
@@ -233,23 +244,54 @@ public class BlogController {
 
 		Short idS = Short.valueOf(id);
 
-		ArticleWithBLOBs article = articleService.selectByPrimaryKey(idS);
-
-		JSONObject jsonObj = new JSONObject("{}");
-		Map<String, String> item = new HashMap<String, String>();
-		item.put("content", article.getArticleContent());
-		item.put("title", article.getArticleName());
-		item.put("type", "Article");
-		item.put("id", article.getArticleId().toString());
-		jsonObj.put("article", item);
-
-		reult = jsonObj.toString();
+		ArticleWithBLOBs article = articleService.linkComment(idS);
+		BlogUtil bu = new BlogUtil();
+		reult = bu.getArticle(article);
 
 		PrintWriter out = response.getWriter();
 
 		// reult = URLDecoder.decode(reult, "utf-8");
 		out.print(reult);
 
+		out.flush();
+		out.close();
+
+	}
+
+	@RequestMapping(value = "/InsertComment", method = RequestMethod.POST)
+	@ResponseBody
+	public void InsertComment(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		response.setContentType("charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		request.setCharacterEncoding("UTF-8");
+		response.setHeader("Content-type", "text/html;charset=UTF-8");
+		
+		PrintWriter out = response.getWriter();
+		String reult = "";
+		
+		Map<String, String[]> params = request.getParameterMap();
+		String name = params.get("name")[0].toString();
+		String title = params.get("title")[0].toString();
+		String content = params.get("content")[0].toString();
+		String articleId = params.get("articleId")[0].toString();
+
+		UserComment comment = new UserComment();
+		comment.setCommitId(Integer.valueOf(articleId));
+		comment.setCommitIp("1");
+		comment.setCommitTime(123);
+		comment.setCommitUserName(name);
+		comment.setCommitUserId(1);
+		comment.setCommitContent(content);
+		comment.setCommitTitle(title);
+
+		userCommentService.insert(comment);
+		
+		ArticleWithBLOBs article = articleService.linkComment(Short.valueOf(articleId));
+		BlogUtil bu = new BlogUtil();
+		reult = bu.getArticle(article);
+
+
+		out.print(reult);
 		out.flush();
 		out.close();
 

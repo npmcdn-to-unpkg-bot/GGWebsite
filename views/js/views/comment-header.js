@@ -8,7 +8,8 @@ function getStateFromStore() {
     return {
         viewState: CommentStore.getViewState(),
         userData: "",
-        title:CommentStore.getTitle()
+        title: CommentStore.getTitle(),
+        article_class: CommentStore.getArticleClass()
     }
 }
 //<nav className='nav'>
@@ -32,11 +33,24 @@ var CommentHeader = React.createClass({
     },
     render: function () {
         var button = null;
+
         switch (this.state.viewState) {
+            case "VISITERVIEW":
+                button = [];
+                for (var i in this.state.article_class) {
+                    var href = "#sort/" + i;
+                    var item = (
+                        <li className='nav-item'>
+                            <a className='pure-button' href={href}>{this.state.article_class[i].name}</a>
+                        </li>);
+                    button.push(item);
+                }
+                break;
             case "LISTVIEW":
                 button = (
                     <li className='nav-item'>
-                        <a className='pure-button' href="#public" onClick={this.insertview}>发布新文章</a>
+                        <a className='pure-button' href="#public" onClick={this.insertview}>
+                            发布新文章</a>
                     </li>);
                 break;
             case "ARTICLEVIEW":
@@ -48,6 +62,12 @@ var CommentHeader = React.createClass({
         }
         return (
             <div className='sidebar pure-u-1 pure-u-md-1-4'>
+                <div className='font-selection'>
+                    <a id="select-nomal" href="#fontchange/nomal">
+                        <i className='fa fa-font fa-lg'/></a>&nbsp;&nbsp;
+                    <a id="select-pen" href="#fontchange/pen">
+                        <i className='fa fa-pencil fa-lg'/></a>
+                </div>
                 <div className='header'>
                     <h1 className='brand-title' onClick={this.reload}>{this.state.title}</h1>
                     <h4 className='brand-tagline'>这里没有诗,但是会走向远方!</h4>
@@ -62,6 +82,7 @@ var CommentHeader = React.createClass({
 
         );
     },
+
     onChange: function () {
         this.setState(getStateFromStore());
     },

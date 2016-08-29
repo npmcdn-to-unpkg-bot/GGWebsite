@@ -1,21 +1,27 @@
 var AppDispatcher = require('../dispatcher/app-dispatcher');
-
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 
 
-var comments = {};
-var user = {};
-var currentPage = 1;
-var pageState = "FIRSTPAGE";
-var viewState = "LISTVIEW";
-var currentTitle = "发现光明";
+var comments = {};//列表信息
+var user = {state: "LISTVIEW"};//用户信息
+var currentPage = 1;//当前页码
+var pageState = "FIRSTPAGE";//MIDDLEPAGE,LASTPAGE
+var viewState = "LISTVIEW";//ARTICLEVIEW,VISITERVIEW
+var defaultTitle = "发现光明";//默认的标题
+var currentTitle = defaultTitle;//当前标题
+var article_class = {
+    "1": {"class": "post-category-pure", "name": "日常"},
+    "2": {"class": "post-category-design", "name": "技术"},
+    "3": {"class": "post-category-pure", "name": "摄影"},
+    "4": {"class": "post-category-design", "name": "不知"}
+}
 
 var getLocate = function () {
     var options = {
         enableHighAccuracy: true,
         maximumAge: 1000
-    }
+    };
     if (navigator.geolocation) {
         //浏览器支持geolocation
         navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
@@ -76,6 +82,48 @@ function postData(lon, lat) {
     });
 }
 
+function getPage(data, url) {
+    if (data.isLocate) {
+        getLocate();
+    }
+    currentPage = ((data.start / 5) + 1)
+    data.end = 6;
+    $.ajax({
+        type: 'GET',
+        url: url,
+        data: data,
+        error: function () {
+            alert(arguments[1]);
+        },
+        success: function (e) {
+            viewState = user.state;
+            var result = []
+            for (var i in e) {
+                result.push(e[i]);
+            }
+            debugger;
+            if (data.start == 0 && result.length >= 6) {
+                pageState = "FIRSTPAGE";
+                result.splice(0, 1);
+            } else if (data.start == 0 && result.length < 6) {
+                pageState = "NONEPAGE";
+            } else if (result.length < 6) {
+                pageState = "LASTPAGE";
+            } else {
+                result.pop();
+                pageState = "MIDDLEPAGE";
+            }
+
+
+            result = result.reverse();
+            comments = result;
+            currentTitle = defaultTitle;
+            CommentStore.emitChange();
+        },
+        dataType: "json"
+    });
+}
+
 var CommentStore = assign({}, EventEmitter.prototype, {
 
     emitChange: function () {
@@ -99,8 +147,8 @@ var CommentStore = assign({}, EventEmitter.prototype, {
         return currentPage;
     },
 
-    setCurrentPage: function (page) {
-        currentPage = page;
+    getCurrentUser: function () {
+        return user;
     },
 
     getViewState: function () {
@@ -108,8 +156,12 @@ var CommentStore = assign({}, EventEmitter.prototype, {
     },
     getAll: function () {
         return comments;
-    }, getTitle: function () {
+    },
+    getTitle: function () {
         return currentTitle;
+    },
+    getArticleClass: function () {
+        return article_class;
     }
 
 
@@ -122,51 +174,26 @@ AppDispatcher.register(function (action) {
             //提交注册信息
             var url = "/spingmvc/Page"
             var data = action.comment;
-            if (data.isLocate) {
-                getLocate();
-            }
-            currentPage = ((data.start / 5) + 1)
-            data.end = (currentPage == 1 ? 5 : 6);
-            $.ajax({
-                type: 'GET',
-                url: url,
-                data: data,
-                error: function () {
-                    alert(arguments[1]);
-                },
-                success: function (e) {
-                    viewState = "LISTVIEW";
-                    var result = []
-                    for (var i in e) {
-                        result.push(e[i]);
-                    }
-                    if (data.start == 0) {
-                        pageState = "FIRSTPAGE";
-                    } else if (result.length < 6) {
-                        pageState = "LASTPAGE";
-                    } else {
-                        result.pop();
-                        pageState = "MIDDLEPAGE";
-                    }
-
-
-                    result = result.reverse();
-                    comments = result;
-                    currentTitle = "发现光明";
-                    CommentStore.emitChange();
-                },
-                dataType: "json"
-            });
+            getPage.call(this, data, url);
             break;
         case "LOGIN":
-            pageState = "NONE";
+            pageState = "NONEPAGE";
             currentPage = 1;
             var login = {id: 1, type: "Login"}
             comments = [login];
             CommentStore.emitChange();
             break;
+        case "RESUME":
+           // user = action.comment;
+            viewState = "ARTICLEVIEW";
+            pageState = "NONEPAGE";
+            currentPage = 1;
+            var resume = {id: 1, type: "Resume"}
+            comments = [resume];
+            CommentStore.emitChange();
+            break;
         case "REGISTER":
-            pageState = "NONE";
+            pageState = "NONEPAGE";
             currentPage = 1;
             //跳到注册面板
             var register = {id: 1, type: "Register"}
@@ -174,7 +201,7 @@ AppDispatcher.register(function (action) {
             CommentStore.emitChange();
             break;
         case "INSERTVIEW":
-            pageState = "NONE";
+            pageState = "NONEPAGE";
             currentPage = 1;
             //跳到注册面板
             var register = {id: 1, type: "Insert"}
@@ -205,18 +232,23 @@ AppDispatcher.register(function (action) {
             break;
         case "LOGINUSER":
             debugger;
-            var url = "/spingmvc/Login"
-            var data = action.comment;
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: data,
-                success: function (e) {
-                    debugger;
-                    comments = [register];
-                    CommentStore.emitChange();
-                }
-            });
+            user = action.comment;
+            viewState = action.comment.state;
+            var url = "/spingmvc/Page"
+
+            getPage.call(this, {start: 0, end: 5}, url);
+            //var url = "/spingmvc/Login"
+            //var data = action.comment;
+            //$.ajax({
+            //    type: 'POST',
+            //    url: url,
+            //    data: data,
+            //    success: function (e) {
+            //        debugger;
+            //        comments = [register];
+            //        CommentStore.emitChange();
+            //    }
+            //});
 
             break;
         case "INSERTARTICLE":
@@ -234,6 +266,21 @@ AppDispatcher.register(function (action) {
                 }
             });
 
+            break;
+        case "SBMSG":
+            var data = action.comment;
+            var url = "/spingmvc/InsertComment"
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function (e) {
+                    currentTitle = e.article.title;
+                    comments = [e.article];
+                    CommentStore.emitChange();
+                },
+                dataType: "json"
+            });
             break;
         case "GETARTICLE":
             debugger;

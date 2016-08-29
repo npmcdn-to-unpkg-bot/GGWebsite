@@ -2,11 +2,13 @@ var React = require('react');
 
 var CommentActionCreators = require('../actions/comment-action-creators');
 var CommentStore = require('../stores/comment-store');
+var CommentsMessage = require('../views/comment-message');
 
 function getStateFromStore() {
     return {
         pageState: CommentStore.getPageState(),
-        currentPage: CommentStore.getCuttentPage()
+        currentPage: CommentStore.getCuttentPage(),
+        comment: CommentStore.getAll()
     }
 }
 var CommentFooter = React.createClass({
@@ -16,16 +18,17 @@ var CommentFooter = React.createClass({
     },
     render: function () {
         var mod;
-        debugger;
+        var msg = null;
         var nextHref = "#/page/" + (Number(this.state.currentPage) + 1);
         var lastHref = "#/page/" + (Number(this.state.currentPage) - 1);
-        debugger;
+
         switch (this.state.pageState) {
             case "FIRSTPAGE":
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a href={nextHref} className='pure-button down-page'>下一页</a>
+                            <a href={nextHref} className='pure-button down-page'><i
+                                className='fa fa-chevron-right fa-lg'/></a>
                         </li>
                     </ul>);
                 break;
@@ -33,10 +36,11 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a href={lastHref} className='pure-button up-page'>上一页</a>
+                            <a href={lastHref} className='pure-button up-page'><i className='fa fa-chevron-left fa-lg'/></a>
                         </li>
                         <li className='nav-item'>
-                            <a href={nextHref} className='pure-button down-page'>下一页</a>
+                            <a href={nextHref} className='pure-button down-page'><i
+                                className='fa fa-chevron-right fa-lg'/></a>
                         </li>
                     </ul>);
                 break;
@@ -44,12 +48,16 @@ var CommentFooter = React.createClass({
                 mod = (
                     <ul className='nav-list'>
                         <li className='nav-item'>
-                            <a href={lastHref} className='pure-button up-page'>上一页</a>
+                            <a href={lastHref} className='pure-button up-page'><i className='fa fa-chevron-left fa-lg'/></a>
                         </li>
                     </ul>);
                 break;
+            case "NONEPAGE":
+                mod = null;
+                break;
             case "NONE":
                 mod = null;
+                msg = (<CommentsMessage id={this.state.comment[0].id} comments={this.state.comment[0].comments}/>);
                 break;
         }
 
@@ -65,6 +73,7 @@ var CommentFooter = React.createClass({
                             {mod}
                         </nav>
                     </div>
+                    {msg}
                 </div>
             </div>
 

@@ -1,5 +1,6 @@
 var React = require('react');
 
+
 var CommentActionCreators = require('../actions/comment-action-creators');
 var BlogImg = require('../views/widgets/blogimg');
 var CommentImg = React.createClass({
@@ -11,15 +12,19 @@ var CommentImg = React.createClass({
         }
 
         return (
+
             <div className='posts'>
                 <h1 className='content-subhead'>{this.getTime()}</h1>
                 <section className='post'>
                     <header className='post-header'>
-                        <img className='post-avatar' alt='Tilo Mitra&#x27;s avatar' height='48' width='48'
-                             src='/spingmvc/resource/img/icon1.jpg'/>
+                        <a href="#resume">
+                            <img className='post-avatar' alt='Tilo Mitra&#x27;s avatar' height='48' width='48'
+                                 src='/spingmvc/resource/img/icon1.jpg'/>
+                        </a>
+
                         <h2 className='post-title'>{this.props.title}</h2>
                         <p className='post-meta'>
-                            By <a href='#' className='post-author'>{this.props.author}</a>  置顶  <a
+                            By <a href='#' className='post-author'>{this.props.author}</a> 置顶 <a
                             className='post-category post-category-design' href='#'>美图</a> <a
                             className='post-category post-category-pure' href='#'>近照</a>
                         </p>
@@ -31,9 +36,9 @@ var CommentImg = React.createClass({
                         </div>
                     </div>
                 </section>
-
-
             </div>
+
+
 
         );
     },

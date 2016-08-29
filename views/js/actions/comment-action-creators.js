@@ -67,6 +67,20 @@ module.exports = {
             comment: comment
         }
         AppDispatcher.dispatch(action);
+    },
+    resume: function (comment) {
+        var action = {
+            actionType: "RESUME",
+            comment: comment
+        }
+        AppDispatcher.dispatch(action);
+    },
+    submitMessage: function (comment) {
+        var action = {
+            actionType: "SBMSG",
+            comment: comment
+        }
+        AppDispatcher.dispatch(action);
     }
 
 }

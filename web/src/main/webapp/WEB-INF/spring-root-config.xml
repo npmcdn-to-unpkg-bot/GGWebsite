@@ -67,4 +67,8 @@
 	<bean id="locateService" class="com.icreate.service.impl.LocateServiceImpl">
 		<property name="locateMapper" ref="locateMapper"></property>
 	</bean>
+	
+	<bean id="userCommentService" class="com.icreate.service.impl.UserCommentServiceImpl">
+		<property name="userCommentMapper" ref="userCommentMapper"></property>
+	</bean>
 </beans>

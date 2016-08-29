@@ -9,23 +9,29 @@ var CommentModal = require('./views/comment-modal');
 var CommentRouter = require('./router/comment-router');
 
 
-require('./../style/style.css')
+require('./../style/style.css');
+require('./../style/font-awesome.min.css');
+
+
 
 CommentRouter.init();
-window.location.hash = window.location.hash || "home";
+window.location.hash = window.location.hash || "visiter";
 
 
 
 var App = React.createClass({
+    componentDidMount:function(){
+        $("table").wrap("<div class='table-responsive'></div>");
+        $("table").addClass("table table-bordered table-striped")
 
+    },
     render: function () {
-        debugger;
         return (
             <div id='layout' className='pure-g'>
                 <CommentHeader/>
                 <Comments />
                 <CommentFooter />
-                <CommentModal></CommentModal>
+                <CommentModal />
             </div>
         );
     }

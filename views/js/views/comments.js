@@ -1,4 +1,5 @@
 var React = require('react');
+var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
 
 var CommentStore = require('../stores/comment-store');
 var CommentActionCreators = require('../actions/comment-action-creators');
@@ -10,6 +11,7 @@ var CommentLogin = require('../views/comment-login');
 var CommentRegister = require('../views/comment-register');
 var CommentInsert = require('../views/comment-insert');
 var CommentsTextView = require('../views/comment-text-view');
+var CommentsResume = require('../views/comment-resume');
 
 function getStateFromStore() {
     return {
@@ -25,9 +27,6 @@ var Comments = React.createClass({
     },
 
     getInitialState: function () {
-        //alert($.getUrlParam("name"));
-        //var data = {start: 0, end: 5};
-        //CommentActionCreators.reFlashData(data);
         return getStateFromStore();
     },
 
@@ -47,10 +46,13 @@ var Comments = React.createClass({
         //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7448/8915936174_8d54ec76c6.jpg'},
         //    {title: '就是测试', url: 'http://farm8.staticflickr.com/7382/8907351301_bd7460cffb.jpg'}
         //];
+
         for (var i in this.state.state) {
+            var key = "key-"+this.state.state[i].id;
             switch (this.state.state[i].type) {
                 case "Text":
-                    itemJsx = <CommentText id={this.state.state[i].id}
+                    itemJsx = <CommentText key={key}
+                                           id={this.state.state[i].id}
                                            title={this.state.state[i].title}
                                            time={this.state.state[i].time}
                                            sort={this.state.state[i].sort}
@@ -58,7 +60,8 @@ var Comments = React.createClass({
                                            text={this.state.state[i].summary}/>;
                     break;
                 case "Img":
-                    itemJsx = <CommentImg list={this.state.state[i].list}
+                    itemJsx = <CommentImg key={Date.now()}
+                                          list={this.state.state[i].list}
                                           title='近期分享照片'
                                           author='Jack'/>;
                     break;
@@ -78,6 +81,9 @@ var Comments = React.createClass({
                     itemJsx = <CommentsTextView id={this.state.state[i].id}
                                                 content={this.state.state[i].content}/>;
                     break;
+                case "Resume":
+                    itemJsx = <CommentsResume />;
+                    break;
 
             }
             list.push(itemJsx);
@@ -86,7 +92,9 @@ var Comments = React.createClass({
 
         return (
             <div className='content pure-u-1 pure-u-md-3-4'>
-                {list}
+                <ReactCSSTransitionGroup transitionName="example" transitionAppear={true}>
+                    {list}
+                </ReactCSSTransitionGroup>
             </div>
 
         )

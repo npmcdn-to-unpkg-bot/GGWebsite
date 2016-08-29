@@ -15,6 +15,21 @@
     <result column="article_content" jdbcType="LONGVARCHAR" property="articleContent" />
     <result column="article_summary" jdbcType="LONGVARCHAR" property="articleSummary" />
   </resultMap>
+   <resultMap id="LinkComment" type="com.icreate.entity.ArticleWithBLOBs">
+    <id column="article_id" jdbcType="SMALLINT" property="articleId" />
+    <result column="article_name" jdbcType="VARCHAR" property="articleName" />
+    <result column="article_content" jdbcType="LONGVARCHAR" property="articleContent" />
+    <result column="article_summary" jdbcType="LONGVARCHAR" property="articleSummary" />
+    <collection property="comment" javaType="java.util.List" ofType="com.icreate.entity.UserComment">  
+        <id column="c_id" jdbcType="INTEGER" property="cId" />
+	    <result column="commit_id" jdbcType="INTEGER" property="commitId" />
+	    <result column="commit_title" jdbcType="VARCHAR" property="commitTitle" />
+	    <result column="commit_content" jdbcType="VARCHAR" property="commitContent" />
+	    <result column="commit_user_id" jdbcType="INTEGER" property="commitUserId" />
+	    <result column="commit_user_name" jdbcType="VARCHAR" property="commitUserName" />
+	    <result column="commit_time" jdbcType="INTEGER" property="commitTime" />
+     </collection>  
+  </resultMap>
   <sql id="Base_Column_List">
     article_id, article_name, article_time, article_ip, article_click, sort_article_id, 
     user_id, article_up
@@ -22,10 +37,29 @@
   <sql id="Blob_Column_List">
     article_content, article_summary
   </sql>
-
+ <select id="linkComment" resultMap="LinkComment" parameterType="java.lang.Short">
+  	 SELECT  
+          u.article_id,  
+          u.article_name,
+          u.article_content,  
+          u.article_summary,  
+          r.commit_id ,  
+          r.commit_title ,  
+          r.commit_content ,  
+          r.commit_user_id ,  
+          r.commit_user_name ,  
+          r.commit_time   
+        FROM  
+          article u  
+        LEFT JOIN  
+          user_comment r  
+        ON  
+          u.article_id = r.commit_id
+         where  u.article_id = #{articleId,jdbcType=SMALLINT}
+  </select>
   <select id="selectByPage" resultMap="ResultMapWithBLOBs">
   	select * from (select *
-    from article  ORDER BY article_id DESC ) t where t.article_id LIMIT 
+    from article where sort_article_id like #{sort}  ORDER BY article_id DESC ) t where t.article_id LIMIT 
      #{start,jdbcType=SMALLINT},#{end,jdbcType=SMALLINT} 
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="ResultMapWithBLOBs">
