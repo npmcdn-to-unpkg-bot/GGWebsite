@@ -211,10 +211,21 @@ public class BlogController {
 		String timeStr = timeLong.toString();
 		int time = Integer.parseInt(timeStr.substring(0, 8));
 		byte up = 0;
+		String ip = request.getHeader("x-forwarded-for");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+		ip = ip.substring(0, 15);
 		// Short id = 2;
 		// article.setArticleId(id);
 		article.setArticleClick(0);
-		article.setArticleIp("null");
+		article.setArticleIp(ip);
 		article.setArticleName(title);
 		article.setArticleTime(time);
 		article.setArticleUp(up);
@@ -266,6 +277,18 @@ public class BlogController {
 		request.setCharacterEncoding("UTF-8");
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
 		
+		String ip = request.getHeader("x-forwarded-for");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+		ip = ip.substring(0, 15);
+		
 		PrintWriter out = response.getWriter();
 		String reult = "";
 		
@@ -277,7 +300,7 @@ public class BlogController {
 
 		UserComment comment = new UserComment();
 		comment.setCommitId(Integer.valueOf(articleId));
-		comment.setCommitIp("1");
+		comment.setCommitIp(ip);
 		comment.setCommitTime(123);
 		comment.setCommitUserName(name);
 		comment.setCommitUserId(1);

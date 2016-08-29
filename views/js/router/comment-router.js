@@ -48,6 +48,7 @@ var router = new CommentRouter({
     '/visiter': function () {
         var style = getCookie("fontstyle");
         changeStyle(style);
+        var data = {state: "VISITERVIEW"};
         CommentActionCreators.loginUser(data);
     },
     '/resume': function () {

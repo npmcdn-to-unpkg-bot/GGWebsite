@@ -11,6 +11,9 @@ var Comments = React.createClass({
 
     componentDidMount:function(){
         var style = "";
+        $("table").wrap("<div class='table-responsive'></div>");
+        $("table").addClass("table table-bordered table-striped");
+
         var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
         if (arr != null) style = unescape(arr[2]);
 

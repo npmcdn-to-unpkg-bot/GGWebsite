@@ -60,14 +60,15 @@ var CommentHeader = React.createClass({
                     </li>);
                 break;
         }
+        //<div className='font-selection'>
+        //    <a id="select-nomal" href="#fontchange/nomal">
+        //        <i className='fa fa-font fa-lg'/></a>&nbsp;&nbsp;
+        //    <a id="select-pen" href="#fontchange/pen">
+        //        <i className='fa fa-pencil fa-lg'/></a>
+        //</div>
         return (
             <div className='sidebar pure-u-1 pure-u-md-1-4'>
-                <div className='font-selection'>
-                    <a id="select-nomal" href="#fontchange/nomal">
-                        <i className='fa fa-font fa-lg'/></a>&nbsp;&nbsp;
-                    <a id="select-pen" href="#fontchange/pen">
-                        <i className='fa fa-pencil fa-lg'/></a>
-                </div>
+
                 <div className='header'>
                     <h1 className='brand-title' onClick={this.reload}>{this.state.title}</h1>
                     <h4 className='brand-tagline'>这里没有诗,但是会走向远方!</h4>
