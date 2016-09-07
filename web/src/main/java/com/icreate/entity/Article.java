@@ -18,6 +18,8 @@ public class Article {
     private Integer userId;
 
     private Byte articleUp;
+    
+    private int commentCount;
 
     private List<UserComment> comment;  
     
@@ -92,4 +94,14 @@ public class Article {
 	public void setComment(List<UserComment> comment) {
 		this.comment = comment;
 	}
+
+	public int getCommentCount() {
+		return commentCount;
+	}
+
+	public void setCommentCount(int commentCount) {
+		this.commentCount = commentCount;
+	}
+
+	
 }

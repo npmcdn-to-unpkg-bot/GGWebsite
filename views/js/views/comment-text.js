@@ -63,17 +63,21 @@ var CommentText = React.createClass({
                             <img className='post-avatar' alt='Tilo Mitra&#x27;s avatar' height='48' width='48'
                                  src='/spingmvc/resource/img/icon.jpg'/></a>
 
-                        <h2 className='post-title'><a href={hrefStr}>{this.props.title}</a></h2>
+                        <h2 className='post-title'><a href={hrefStr+"/top"}>{this.props.title}</a></h2>
                         <p className='post-meta'>
                             <a>作者:</a>
                             <a className='post-author'>{this.props.author}</a>
                             <a>&nbsp;|&nbsp;所属于:</a>
                             {tap}
+                            <a href={hrefStr+"/bottom"}>&nbsp;|&nbsp;评论:</a>
+                            <a>{this.props.commentCount}</a>
+                            <a >&nbsp;|&nbsp;浏览次数:</a>
+                            <a>{this.props.click}</a>
                         </p>
                     </header>
                     <div id={this.props.id} className='post-description'>
                         <p>
-                            {this.props.text}
+                            {this.props.text}<a href={hrefStr+"/top"}>&nbsp;阅读全文</a>
                         </p>
                     </div>
                 </section>

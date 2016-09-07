@@ -9,6 +9,7 @@
     <result column="article_click" jdbcType="INTEGER" property="articleClick" />
     <result column="sort_article_id" jdbcType="INTEGER" property="sortArticleId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="comment_count" jdbcType="INTEGER" property="commentCount" />
     <result column="article_up" jdbcType="TINYINT" property="articleUp" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.icreate.entity.ArticleWithBLOBs">
@@ -19,6 +20,7 @@
     <id column="article_id" jdbcType="SMALLINT" property="articleId" />
     <result column="article_name" jdbcType="VARCHAR" property="articleName" />
     <result column="article_content" jdbcType="LONGVARCHAR" property="articleContent" />
+    <result column="article_click" jdbcType="LONGVARCHAR" property="articleClick" />
     <result column="article_summary" jdbcType="LONGVARCHAR" property="articleSummary" />
     <collection property="comment" javaType="java.util.List" ofType="com.icreate.entity.UserComment">  
         <id column="c_id" jdbcType="INTEGER" property="cId" />
@@ -41,7 +43,8 @@
   	 SELECT  
           u.article_id,  
           u.article_name,
-          u.article_content,  
+          u.article_content, 
+          u.article_click, 
           u.article_summary,  
           r.commit_id ,  
           r.commit_title ,  
@@ -58,9 +61,12 @@
          where  u.article_id = #{articleId,jdbcType=SMALLINT}
   </select>
   <select id="selectByPage" resultMap="ResultMapWithBLOBs">
-  	select * from (select *
-    from article where sort_article_id like #{sort}  ORDER BY article_id DESC ) t where t.article_id LIMIT 
-     #{start,jdbcType=SMALLINT},#{end,jdbcType=SMALLINT} 
+   
+	select * from (select * from article a  LEFT JOIN 
+		(select commit_id,count(*) comment_count FROM user_comment GROUP BY commit_id ) b
+		on a.article_id=b.commit_id where sort_article_id like  #{sort}  ORDER BY article_id DESC) t where t.article_id LIMIT 
+       #{start,jdbcType=SMALLINT},#{end,jdbcType=SMALLINT}
+         
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="ResultMapWithBLOBs">
     select 
@@ -200,12 +206,7 @@
   <update id="updateByPrimaryKey" parameterType="com.icreate.entity.Article">
     update article
     set article_name = #{articleName,jdbcType=VARCHAR},
-      article_time = #{articleTime,jdbcType=INTEGER},
-      article_ip = #{articleIp,jdbcType=VARCHAR},
-      article_click = #{articleClick,jdbcType=INTEGER},
-      sort_article_id = #{sortArticleId,jdbcType=INTEGER},
-      user_id = #{userId,jdbcType=INTEGER},
-      article_up = #{articleUp,jdbcType=TINYINT}
+      article_click = #{articleClick,jdbcType=INTEGER}
     where article_id = #{articleId,jdbcType=SMALLINT}
   </update>
 </mapper>

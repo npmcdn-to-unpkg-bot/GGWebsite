@@ -31,18 +31,15 @@ var CommentMessage = React.createClass({
 
     submit: function () {
         SetCookie("name", $("#msg-name").val());
-        $("#msg-title").val("");
+
         $("#msg-content").val("");
         message.articleId = this.props.id;
         message.name = $("#msg-name").val();
         CommentActionCreators.submitMessage(message);
-    },
-    titleChange: function (e) {
-        message.title = e.target.value;
     }, contentChange: function (e) {
         message.content = e.target.value;
     },
-    componentDidMount:function(){
+    componentDidMount: function () {
         var name = getCookie("name") || "";
         $("#msg-name").val(name);
     },
@@ -53,8 +50,8 @@ var CommentMessage = React.createClass({
             var item = (
                 <div className="message-item pure-g">
                     <div className="pure-u-3-4">
-                        <h5 className="message-name">{this.props.comments[i].username}</h5>
-                        <h4 className="message-subject">{this.props.comments[i].title}</h4>
+                        <h5 className="message-name">{this.props.comments[i].username + "     说:"}</h5>
+
                         <p className="message-desc">
                             {this.props.comments[i].content}
                         </p>
@@ -78,11 +75,8 @@ var CommentMessage = React.createClass({
                                 </fieldset>
 
                                 <fieldset className="pure-group">
-                                    <input id="msg-title" type="text" onChange={this.titleChange}
-                                           className="pure-input-1"
-                                           placeholder="标题"/>
                                     <textarea id="msg-content" className="pure-input-1" onChange={this.contentChange}
-                                              placeholder="你懂的"></textarea>
+                                              placeholder="内容"></textarea>
                                 </fieldset>
 
                                 <button type="submit" onClick={this.submit}

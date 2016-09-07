@@ -56,7 +56,7 @@ var CommentHeader = React.createClass({
             case "ARTICLEVIEW":
                 button = (
                     <li className='nav-item'>
-                        <a className='pure-button' href="#home">返回</a>
+                        <a className='pure-button' href="#visiter">返回</a>
                     </li>);
                 break;
         }

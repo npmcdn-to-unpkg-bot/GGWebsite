@@ -4,17 +4,17 @@ var assign = require('object-assign');
 
 
 var comments = {};//列表信息
-var user = {state: "LISTVIEW"};//用户信息
+var user = {state: "VISITERVIEW"};//用户信息
 var currentPage = 1;//当前页码
 var pageState = "FIRSTPAGE";//MIDDLEPAGE,LASTPAGE
-var viewState = "LISTVIEW";//ARTICLEVIEW,VISITERVIEW
+var viewState = "VISITERVIEW";//ARTICLEVIEW,VISITERVIEW,LISTVIEW
 var defaultTitle = "发现光明";//默认的标题
 var currentTitle = defaultTitle;//当前标题
 var article_class = {
     "1": {"class": "post-category-pure", "name": "日常"},
     "2": {"class": "post-category-design", "name": "技术"},
     "3": {"class": "post-category-pure", "name": "摄影"},
-    "4": {"class": "post-category-design", "name": "不知"}
+    "%%": {"class": "post-category-design", "name": "全部"}
 }
 
 var getLocate = function () {
@@ -88,6 +88,10 @@ function getPage(data, url) {
     }
     currentPage = ((data.start / 5) + 1)
     data.end = 6;
+    $('#loading').show();
+    var maxPage = 7;
+    if(data.sort)
+        maxPage = 6;
     $.ajax({
         type: 'GET',
         url: url,
@@ -96,16 +100,17 @@ function getPage(data, url) {
             alert(arguments[1]);
         },
         success: function (e) {
+            $('#loading').hide()
             viewState = user.state;
             var result = []
             for (var i in e) {
                 result.push(e[i]);
             }
             debugger;
-            if (data.start == 0 && result.length >= 6) {
+            if (data.start == 0 && result.length >= maxPage) {
                 pageState = "FIRSTPAGE";
                 result.splice(0, 1);
-            } else if (data.start == 0 && result.length < 6) {
+            } else if (data.start == 0 && result.length < maxPage) {
                 pageState = "NONEPAGE";
             } else if (result.length < 6) {
                 pageState = "LASTPAGE";
@@ -184,7 +189,7 @@ AppDispatcher.register(function (action) {
             CommentStore.emitChange();
             break;
         case "RESUME":
-           // user = action.comment;
+            // user = action.comment;
             viewState = "ARTICLEVIEW";
             pageState = "NONEPAGE";
             currentPage = 1;
@@ -286,14 +291,17 @@ AppDispatcher.register(function (action) {
             debugger;
             var url = "/spingmvc/GetBlogById"
             var data = action.comment;
+            $('#loading').show()
             $.ajax({
                 type: 'POST',
                 url: url,
                 data: data,
                 success: function (e) {
+                    $('#loading').hide();
                     pageState = "NONE";
                     viewState = "ARTICLEVIEW";
                     currentTitle = e.article.title;
+                    e.article.position = data.Position;
                     comments = [e.article];
                     CommentStore.emitChange();
                 },

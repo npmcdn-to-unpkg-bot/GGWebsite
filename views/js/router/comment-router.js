@@ -28,9 +28,9 @@ function changeStyle(type) {
 var router = new CommentRouter({
     '/public': function () {
     },
-    '/atricleid/:id': function (id) {
-        $('html, body,#app').animate({scrollTop: 0}, 'slow');
+    '/atricleid/:id/:position': function (id,position) {
         var data = {
+            Position:position,
             ArticleId: id
         }
         CommentActionCreators.getArticle(data);
@@ -38,8 +38,8 @@ var router = new CommentRouter({
     '/home': function () {
         var style = getCookie("fontstyle");
         changeStyle(style);
-        var data = {start: 0, end: 5};
-        CommentActionCreators.reFlashData(data);
+        var data = {state: "LISTVIEW"};
+        CommentActionCreators.loginUser(data);
     },
     '/locate': function () {
         var data = {start: 0, end: 5, isLocate: true};
@@ -52,19 +52,16 @@ var router = new CommentRouter({
         CommentActionCreators.loginUser(data);
     },
     '/resume': function () {
-        $('html, body,#app').animate({scrollTop: 0}, 'slow');
         var data = {state: "VISITERVIEW"};
         CommentActionCreators.resume(data);
     },
     '/sort/:id': function (id) {
-        $('html, body,#app').animate({scrollTop: 0}, 'slow');
         num = 1;
         sort = id;
         var data = {start: (num - 1) * 5, sort: sort};
         CommentActionCreators.reFlashData(data);
     },
     '/page/:num': function (num) {
-        $('html, body,#app').animate({scrollTop: 0}, 'slow');
         num = Number(num);
         var data = {start: (num - 1) * 5, sort: sort};
         CommentActionCreators.reFlashData(data);

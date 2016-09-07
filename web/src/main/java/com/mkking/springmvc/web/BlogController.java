@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.icreate.entity.Article;
 import com.icreate.entity.ArticleWithBLOBs;
 import com.icreate.entity.User;
 import com.icreate.entity.UserComment;
@@ -82,12 +83,10 @@ public class BlogController {
 		Short start = Short.valueOf(request.getParameter("start")), end = Short.valueOf(request.getParameter("end"));
 		JSONObject jsonObj = new JSONObject("{}");
 		// 判断第一页的时候有图喔
-		if (Short.valueOf(request.getParameter("start")) == 0
-				&& (request.getParameter("sort") == null || request.getParameter("sort") == "")) {
+		if (Short.valueOf(request.getParameter("start")) == 0 && (request.getParameter("sort") == null
+				|| request.getParameter("sort") == "" || request.getParameter("sort") == "%%")) {
 			Map<String, Object> img = fr.showAllFiles(root, basePath);
 			jsonObj.put("img", img);
-			int i = end - (short) 1;
-			end = (short) i;
 		}
 
 		List<ArticleWithBLOBs> li = articleService.selectByPage(start, end, sort);
@@ -98,7 +97,9 @@ public class BlogController {
 			item.put("summary", i.getArticleSummary());
 			item.put("time", i.getArticleTime().toString());
 			item.put("title", i.getArticleName());
+			item.put("click", i.getArticleClick().toString());
 			item.put("sort", i.getSortArticleId().toString());
+			item.put("commentCount", String.valueOf(i.getCommentCount()));
 			item.put("type", "Text");
 			jsonObj.put(i.getArticleId().toString(), item);
 		}
@@ -254,8 +255,23 @@ public class BlogController {
 		String id = params.get("ArticleId")[0].toString();
 
 		Short idS = Short.valueOf(id);
-
 		ArticleWithBLOBs article = articleService.linkComment(idS);
+
+		Article record = new Article();
+		record.setArticleId(article.getArticleId());
+		int articleClick = article.getArticleClick() == null ? 0 : article.getArticleClick();
+		articleClick = articleClick + 1;
+		record.setArticleClick(articleClick);
+		record.setArticleIp("0");
+		record.setArticleName(article.getArticleName());
+		record.setUserId(article.getUserId());
+		record.setSortArticleId(article.getSortArticleId());
+		record.setArticleUp(article.getArticleUp());
+		record.setArticleTime(article.getArticleTime());
+		record.setCommentCount(0);
+		record.setComment(null);
+		articleService.updateByPrimaryKey(record);
+
 		BlogUtil bu = new BlogUtil();
 		reult = bu.getArticle(article);
 
@@ -276,7 +292,7 @@ public class BlogController {
 		response.setCharacterEncoding("UTF-8");
 		request.setCharacterEncoding("UTF-8");
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
-		
+
 		String ip = request.getHeader("x-forwarded-for");
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
 			ip = request.getHeader("Proxy-Client-IP");
@@ -287,14 +303,14 @@ public class BlogController {
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddr();
 		}
-		ip = ip.substring(0, 15);
-		
+		ip = ip.length() > 15 ? ip.substring(0, 15) : ip;
+
 		PrintWriter out = response.getWriter();
 		String reult = "";
-		
+
 		Map<String, String[]> params = request.getParameterMap();
 		String name = params.get("name")[0].toString();
-		String title = params.get("title")[0].toString();
+		// String title = params.get("title")[0].toString();
 		String content = params.get("content")[0].toString();
 		String articleId = params.get("articleId")[0].toString();
 
@@ -305,14 +321,13 @@ public class BlogController {
 		comment.setCommitUserName(name);
 		comment.setCommitUserId(1);
 		comment.setCommitContent(content);
-		comment.setCommitTitle(title);
+		comment.setCommitTitle("没有标题了");
 
 		userCommentService.insert(comment);
-		
+
 		ArticleWithBLOBs article = articleService.linkComment(Short.valueOf(articleId));
 		BlogUtil bu = new BlogUtil();
 		reult = bu.getArticle(article);
-
 
 		out.print(reult);
 		out.flush();
