@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icreate.dao.UserCommentMapper">
+  <resultMap id="BaseResultMap" type="com.icreate.entity.UserComment">
+    <id column="c_id" jdbcType="INTEGER" property="cId" />
+    <result column="commit_id" jdbcType="INTEGER" property="commitId" />
+    <result column="commit_title" jdbcType="VARCHAR" property="commitTitle" />
+    <result column="commit_content" jdbcType="VARCHAR" property="commitContent" />
+    <result column="commit_user_id" jdbcType="INTEGER" property="commitUserId" />
+    <result column="commit_user_name" jdbcType="VARCHAR" property="commitUserName" />
+    <result column="commit_time" jdbcType="INTEGER" property="commitTime" />
+    <result column="commit_ip" jdbcType="VARCHAR" property="commitIp" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    c_id, commit_id, commit_title, commit_content, commit_user_id, commit_user_name, 
+    commit_time, commit_ip
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_comment
+    where c_id = #{cId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user_comment
+    where c_id = #{cId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icreate.entity.UserComment">
+    insert into user_comment (c_id, commit_id, commit_title, 
+      commit_content, commit_user_id, commit_user_name, 
+      commit_time, commit_ip)
+    values (#{cId,jdbcType=INTEGER}, #{commitId,jdbcType=INTEGER}, #{commitTitle,jdbcType=VARCHAR}, 
+      #{commitContent,jdbcType=VARCHAR}, #{commitUserId,jdbcType=INTEGER}, #{commitUserName,jdbcType=VARCHAR}, 
+      #{commitTime,jdbcType=INTEGER}, #{commitIp,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icreate.entity.UserComment">
+    insert into user_comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cId != null">
+        c_id,
+      </if>
+      <if test="commitId != null">
+        commit_id,
+      </if>
+      <if test="commitTitle != null">
+        commit_title,
+      </if>
+      <if test="commitContent != null">
+        commit_content,
+      </if>
+      <if test="commitUserId != null">
+        commit_user_id,
+      </if>
+      <if test="commitUserName != null">
+        commit_user_name,
+      </if>
+      <if test="commitTime != null">
+        commit_time,
+      </if>
+      <if test="commitIp != null">
+        commit_ip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cId != null">
+        #{cId,jdbcType=INTEGER},
+      </if>
+      <if test="commitId != null">
+        #{commitId,jdbcType=INTEGER},
+      </if>
+      <if test="commitTitle != null">
+        #{commitTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="commitContent != null">
+        #{commitContent,jdbcType=VARCHAR},
+      </if>
+      <if test="commitUserId != null">
+        #{commitUserId,jdbcType=INTEGER},
+      </if>
+      <if test="commitUserName != null">
+        #{commitUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="commitTime != null">
+        #{commitTime,jdbcType=INTEGER},
+      </if>
+      <if test="commitIp != null">
+        #{commitIp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icreate.entity.UserComment">
+    update user_comment
+    <set>
+      <if test="commitId != null">
+        commit_id = #{commitId,jdbcType=INTEGER},
+      </if>
+      <if test="commitTitle != null">
+        commit_title = #{commitTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="commitContent != null">
+        commit_content = #{commitContent,jdbcType=VARCHAR},
+      </if>
+      <if test="commitUserId != null">
+        commit_user_id = #{commitUserId,jdbcType=INTEGER},
+      </if>
+      <if test="commitUserName != null">
+        commit_user_name = #{commitUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="commitTime != null">
+        commit_time = #{commitTime,jdbcType=INTEGER},
+      </if>
+      <if test="commitIp != null">
+        commit_ip = #{commitIp,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where c_id = #{cId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icreate.entity.UserComment">
+    update user_comment
+    set commit_id = #{commitId,jdbcType=INTEGER},
+      commit_title = #{commitTitle,jdbcType=VARCHAR},
+      commit_content = #{commitContent,jdbcType=VARCHAR},
+      commit_user_id = #{commitUserId,jdbcType=INTEGER},
+      commit_user_name = #{commitUserName,jdbcType=VARCHAR},
+      commit_time = #{commitTime,jdbcType=INTEGER},
+      commit_ip = #{commitIp,jdbcType=VARCHAR}
+    where c_id = #{cId,jdbcType=INTEGER}
+  </update>
+</mapper>
