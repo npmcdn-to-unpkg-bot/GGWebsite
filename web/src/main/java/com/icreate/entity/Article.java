@@ -1,5 +1,7 @@
 package com.icreate.entity;
 
+import java.util.List;
+
 public class Article {
     private Short articleId;
 
@@ -16,7 +18,11 @@ public class Article {
     private Integer userId;
 
     private Byte articleUp;
+    
+    private int commentCount;
 
+    private List<UserComment> comment;  
+    
     public Short getArticleId() {
         return articleId;
     }
@@ -80,4 +86,22 @@ public class Article {
     public void setArticleUp(Byte articleUp) {
         this.articleUp = articleUp;
     }
+
+	public List<UserComment> getComment() {
+		return comment;
+	}
+
+	public void setComment(List<UserComment> comment) {
+		this.comment = comment;
+	}
+
+	public int getCommentCount() {
+		return commentCount;
+	}
+
+	public void setCommentCount(int commentCount) {
+		this.commentCount = commentCount;
+	}
+
+	
 }

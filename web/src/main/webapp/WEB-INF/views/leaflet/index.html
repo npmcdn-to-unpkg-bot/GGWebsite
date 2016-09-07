@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>map</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+	<style type="text/css">
+		img{display:block;}
+		img{vertical-align:top;}
+		html,body{
+			width: 100%;
+			height: 100%;
+			margin: 0px;
+		}
+		
+		.point{
+			z-index: 999;
+			position: relative;
+			top: 50px;
+			left: 50px;
+
+			content: "";
+		    display: inline-block;
+		    position: absolute;
+		    width: 12px;
+		    height: 12px;
+		    border-radius: 10px;
+		    
+		    -webkit-transition: all .5s ease;
+		       -moz-transition: all .5s ease;
+		        -ms-transition: all .5s ease;
+		         -o-transition: all .5s ease;
+		            transition: all .5s ease;
+		    
+		  -webkit-animation:myfirst .5s infinite ;  
+			 -moz-animation:myfirst .5s infinite ;  
+			  -ms-animation:myfirst .5s infinite ;  
+			   -o-animation:myfirst .5s infinite ;  
+			      animation:myfirst .5s infinite ; 
+		    
+		}
+
+		@-webkit-keyframes myfirst
+    	{
+        	from {
+        	    background: #283446;
+	    		background: gradient-gradient(#36455b, #283446);
+	    		box-shadow: inset 0 1px 0 rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(185,231,253,0), inset 0 0 8px rgba(0,0,0,0.9), inset 0 -2px 5px rgba(0,0,0,0.3), inset 0 -5px 5px rgba(0,0,0,0.5);
+        	
+       		}
+	        to {
+		        background: #00ff00;
+			    background: gradient-gradient(#ffffff, #77c36a);
+			    box-shadow: inset 0 1px 0 rgba(0,0,0,0.1), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(100,231,253,1), inset 0 0 8px rgba( 61,157,247,0.8), inset 0 -2px 5px rgba(185,231,253,0.3), inset 0 -3px 8px rgba(185,231,253,0.5);	
+	        }
+   		}
+   		
+   		@-moz-keyframes myfirst
+    	{
+        	from {
+        	    background: #283446;
+	    		background: gradient-gradient(#36455b, #283446);
+	    		box-shadow: inset 0 1px 0 rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(185,231,253,0), inset 0 0 8px rgba(0,0,0,0.9), inset 0 -2px 5px rgba(0,0,0,0.3), inset 0 -5px 5px rgba(0,0,0,0.5);
+        	
+       		}
+	        to {
+		        background: #00ff00;
+			    background: gradient-gradient(#ffffff, #77c36a);
+			    box-shadow: inset 0 1px 0 rgba(0,0,0,0.1), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(100,231,253,1), inset 0 0 8px rgba( 61,157,247,0.8), inset 0 -2px 5px rgba(185,231,253,0.3), inset 0 -3px 8px rgba(185,231,253,0.5);	
+	        }
+   		}
+   		
+   		@-ms-keyframes myfirst
+    	{
+        	from {
+        	    background: #283446;
+	    		background: gradient-gradient(#36455b, #283446);
+	    		box-shadow: inset 0 1px 0 rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(185,231,253,0), inset 0 0 8px rgba(0,0,0,0.9), inset 0 -2px 5px rgba(0,0,0,0.3), inset 0 -5px 5px rgba(0,0,0,0.5);
+        	
+       		}
+	        to {
+		        background: #00ff00;
+			    background: gradient-gradient(#ffffff, #77c36a);
+			    box-shadow: inset 0 1px 0 rgba(0,0,0,0.1), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(100,231,253,1), inset 0 0 8px rgba( 61,157,247,0.8), inset 0 -2px 5px rgba(185,231,253,0.3), inset 0 -3px 8px rgba(185,231,253,0.5);	
+	        }
+   		}
+   		
+   		@-o-keyframes myfirst
+    	{
+        	from {
+        	    background: #283446;
+	    		background: gradient-gradient(#36455b, #283446);
+	    		box-shadow: inset 0 1px 0 rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(185,231,253,0), inset 0 0 8px rgba(0,0,0,0.9), inset 0 -2px 5px rgba(0,0,0,0.3), inset 0 -5px 5px rgba(0,0,0,0.5);
+        	
+       		}
+	        to {
+		        background: #00ff00;
+			    background: gradient-gradient(#ffffff, #77c36a);
+			    box-shadow: inset 0 1px 0 rgba(0,0,0,0.1), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(100,231,253,1), inset 0 0 8px rgba( 61,157,247,0.8), inset 0 -2px 5px rgba(185,231,253,0.3), inset 0 -3px 8px rgba(185,231,253,0.5);	
+	        }
+   		}
+   		
+   		@keyframes myfirst
+    	{
+        	from {
+        	    background: #283446;
+	    		background: gradient-gradient(#36455b, #283446);
+	    		box-shadow: inset 0 1px 0 rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(185,231,253,0), inset 0 0 8px rgba(0,0,0,0.9), inset 0 -2px 5px rgba(0,0,0,0.3), inset 0 -5px 5px rgba(0,0,0,0.5);
+        	
+       		}
+	        to {
+		        background: #00ff00;
+			    background: gradient-gradient(#ffffff, #77c36a);
+			    box-shadow: inset 0 1px 0 rgba(0,0,0,0.1), 0 1px 0 rgba(255,255,255,0.1), 0 0 10px rgba(100,231,253,1), inset 0 0 8px rgba( 61,157,247,0.8), inset 0 -2px 5px rgba(185,231,253,0.3), inset 0 -3px 8px rgba(185,231,253,0.5);	
+	        }
+   		}
+		
+		
+   		
+	</style>
+</head>
+<body>
+	<div id="mapid" style="height: 100%;width:100%"></div>
+	
+	<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+	<script src="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
+	<script>
+
+		var mymap = L.map('mapid');
+		/* http://{s}.tile.osm.org/{z}/{x}/{y}.png */
+		/* https://api.mapbox.com/styles/v1/jeffmerrick/cihz2gbd400siaikoi4mfn3qb/tiles/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiamVmZm1lcnJpY2siLCJhIjoiVUVsV3E3ayJ9.cLqSLNQ6IdNDBhzAHVAOAQ */
+		L.tileLayer('https://api.mapbox.com/styles/v1/jeffmerrick/cihz2gbd400siaikoi4mfn3qb/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamVmZm1lcnJpY2siLCJhIjoiVUVsV3E3ayJ9.cLqSLNQ6IdNDBhzAHVAOAQ ', {
+			maxZoom: 18,
+			attribution: '',
+			id: 'mapbox.streets'
+		}).addTo(mymap);
+
+		var url = "/spingmvc/Locate"
+			var myIcon = L.divIcon({
+						 className:"point",
+						 iconAnchor:[50,50],
+						 popupAnchor:[6,0],
+						 iconSize:[12,12]
+					 });
+		
+            $.ajax({
+                type: 'GET',
+                url: "/spingmvc/GetLocate",
+                dataType:"json",
+                success: function (e) {
+                   L.marker([e.locate.lat, e.locate.lng],{icon:myIcon}).addTo(mymap)
+					.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+                   mymap.setView([e.locate.lat, e.locate.lng], 13);
+
+                }
+            });
+		
+	
+
+	</script>
+</body>
+</html>

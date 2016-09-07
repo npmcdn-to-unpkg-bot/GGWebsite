@@ -22,7 +22,7 @@ public interface ArticleMapper {
 
 	int updateByPrimaryKey(Article record);
 
-	List<ArticleWithBLOBs> selectByPage(@Param("start") Short start, @Param("end") Short end);
-
-	List<ArticleWithBLOBs> updateByPrimaryKey(Short start, Short end);
+	List<ArticleWithBLOBs> selectByPage(@Param("start") Short start, @Param("end") Short end,@Param("sort") String sort);
+	
+	ArticleWithBLOBs linkComment(Short articleId);
 }

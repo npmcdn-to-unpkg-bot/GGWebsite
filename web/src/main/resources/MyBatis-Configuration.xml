@@ -6,5 +6,7 @@
 		<mapper resource="com/icreate/dao/UserMapper.xml" />
 		<mapper resource="com/icreate/dao/MsgDataMapper.xml" />
 		<mapper resource="com/icreate/dao/ArticleMapper.xml" />
+		<mapper resource="com/icreate/dao/LocateMapper.xml" />
+		<mapper resource="com/icreate/dao/UserCommentMapper.xml" />
 	</mappers>
 </configuration>

@@ -52,8 +52,20 @@ public class HelloController {
 
 	@RequestMapping("/cc")
 	public String cc() {
-
 		return "index";
+	}
+	
+	@RequestMapping("locate")
+	public String locate() {
+
+		return "locate";
+
+	}
+	
+	@RequestMapping("viewlocate")
+	public String viewlocate() {
+
+		return "leaflet/index";
 
 	}
 
@@ -90,7 +102,7 @@ public class HelloController {
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddr();
 		}
-		out.print(ip);
+		out.print(ip.substring(0, 15));
 		out.print("中文");
 		out.print("中文".getBytes());
 		out.print("中文".getBytes("GB2312"));

@@ -68,7 +68,6 @@ public class WeMsgFactoryImpl implements WeMsgFactory {
 				textMsg.setContent(item.getElementsByTagName("Content").item(0).getFirstChild().getNodeValue());
 				msgMod = textMsg;
 				break;
-
 			}
 
 		} catch (Exception e) {

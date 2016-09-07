@@ -7,7 +7,9 @@ var CommentModal = require('../views/comment-modal');
 function getStateFromStore() {
     return {
         viewState: CommentStore.getViewState(),
-        userData: ""
+        userData: "",
+        title: CommentStore.getTitle(),
+        article_class: CommentStore.getArticleClass()
     }
 }
 //<nav className='nav'>
@@ -31,25 +33,45 @@ var CommentHeader = React.createClass({
     },
     render: function () {
         var button = null;
+
         switch (this.state.viewState) {
+            case "VISITERVIEW":
+                button = [];
+                for (var i in this.state.article_class) {
+                    var href = "#sort/" + i;
+                    var item = (
+                        <li className='nav-item'>
+                            <a className='pure-button' href={href}>{this.state.article_class[i].name}</a>
+                        </li>);
+                    button.push(item);
+                }
+                break;
             case "LISTVIEW":
                 button = (
                     <li className='nav-item'>
-                        <a className='pure-button' href="#public" onClick={this.insertview}>发布新文章</a>
+                        <a className='pure-button' href="#public" onClick={this.insertview}>
+                            发布新文章</a>
                     </li>);
                 break;
             case "ARTICLEVIEW":
                 button = (
                     <li className='nav-item'>
-                        <a className='pure-button' href="#home" onClick={this.reFlashData}>返回</a>
+                        <a className='pure-button' href="#visiter">返回</a>
                     </li>);
                 break;
         }
+        //<div className='font-selection'>
+        //    <a id="select-nomal" href="#fontchange/nomal">
+        //        <i className='fa fa-font fa-lg'/></a>&nbsp;&nbsp;
+        //    <a id="select-pen" href="#fontchange/pen">
+        //        <i className='fa fa-pencil fa-lg'/></a>
+        //</div>
         return (
             <div className='sidebar pure-u-1 pure-u-md-1-4'>
+
                 <div className='header'>
-                    <h1 className='brand-title' onClick={this.reload}>{this.props.title}</h1>
-                    <h2 className='brand-tagline'>这里没有诗,但是会走向远方!</h2>
+                    <h1 className='brand-title' onClick={this.reload}>{this.state.title}</h1>
+                    <h4 className='brand-tagline'>这里没有诗,但是会走向远方!</h4>
 
                     <nav className='nav'>
                         <ul className='nav-list'>
@@ -61,16 +83,17 @@ var CommentHeader = React.createClass({
 
         );
     },
+
     onChange: function () {
         this.setState(getStateFromStore());
     },
     componentDidMount: function () {
         CommentStore.addChangeListener(this.onChange);
-        CommentStore.addViewChangeListener(this.onChange);
+
     },
     componentWillUnmount: function () {
         CommentStore.removeChangeListener(this.onChange);
-        CommentStore.removeViewChangeListener(this.onChange);
+
     },
     login: function (e) {
         debugger;
@@ -81,12 +104,6 @@ var CommentHeader = React.createClass({
     },
     insertview: function (e) {
         CommentActionCreators.insertview();
-    }, reload: function () {
-        var obj = {
-            start: 0,
-            end: 5
-        }
-        CommentActionCreators.reFlashData(obj);
     }
 });
 

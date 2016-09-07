@@ -52,9 +52,9 @@ public class ArticleServiceImpl implements ArticleService {
 		// TODO Auto-generated method stub
 		return articleMapper.updateByPrimaryKey(record);
 	}
-	
-	public List<ArticleWithBLOBs> selectByPage(Short start, Short end){
-		return articleMapper.selectByPage(start,end);
+
+	public List<ArticleWithBLOBs> selectByPage(Short start, Short end, String sort) {
+		return articleMapper.selectByPage(start, end, sort);
 	}
 
 	public ArticleMapper getArticleMapper() {
@@ -64,7 +64,9 @@ public class ArticleServiceImpl implements ArticleService {
 	public void setArticleMapper(ArticleMapper articleMapper) {
 		this.articleMapper = articleMapper;
 	}
-	
 
+	public ArticleWithBLOBs linkComment(Short articleId) {
+		return this.articleMapper.linkComment(articleId);
+	}
 
 }
